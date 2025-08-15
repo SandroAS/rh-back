@@ -19,8 +19,6 @@ const trial_entity_1 = require("./trial.entity");
 const payment_intention_entity_1 = require("./payment-intention.entity");
 const sale_entity_1 = require("./sale.entity");
 const system_module_entity_1 = require("./system-module.entity");
-const service_entity_1 = require("./service.entity");
-const odontogram_category_entity_1 = require("./odontogram-category.entity");
 let Account = class Account {
     generateUuid() {
         this.uuid = (0, uuid_1.v4)();
@@ -116,14 +114,6 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], Account.prototype, "systemModules", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => service_entity_1.Service, (service) => service.account),
-    __metadata("design:type", Array)
-], Account.prototype, "services", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => odontogram_category_entity_1.OdontogramCategory, (odontogramCategory) => odontogramCategory.account),
-    __metadata("design:type", Array)
-], Account.prototype, "odontogramCategories", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)

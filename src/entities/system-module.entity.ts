@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, ManyToMany, OneToMany } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { Account } from './account.entity';
-import { Service } from './service.entity';
 
 export enum SystemModuleName {
   DENTISTRY = 'DENTISTRY',
@@ -32,9 +31,6 @@ export class SystemModule {
 
   @ManyToMany(() => Account, (account) => account.systemModules)
   accounts: Account[];
-
-  @OneToMany(() => Service, (service) => service.systemModule)
-  services: Service[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

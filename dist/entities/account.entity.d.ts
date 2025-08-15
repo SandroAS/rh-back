@@ -5,8 +5,6 @@ import { Trial } from './trial.entity';
 import { PaymentIntention } from './payment-intention.entity';
 import { Sale } from './sale.entity';
 import { SystemModule } from './system-module.entity';
-import { Service } from './service.entity';
-import { OdontogramCategory } from './odontogram-category.entity';
 export declare class Account {
     id: number;
     uuid: string;
@@ -26,8 +24,6 @@ export declare class Account {
     sales: Sale[];
     paymentIntentions: PaymentIntention[];
     systemModules: SystemModule[];
-    services: Service[];
-    odontogramCategories: OdontogramCategory[];
     created_at: Date;
     updated_at: Date;
 }

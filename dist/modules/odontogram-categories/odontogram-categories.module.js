@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OdontogramCategoriesModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const odontogram_category_entity_1 = require("../../entities/odontogram-category.entity");
+const odontogram_category_entity_1 = require("@/entities/odontogram-category.entity");
 const odontogram_categories_service_1 = require("./odontogram-categories.service");
 const odontogram_categories_controller_1 = require("./odontogram-categories.controller");
 let OdontogramCategoriesModule = class OdontogramCategoriesModule {

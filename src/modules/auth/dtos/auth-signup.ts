@@ -26,7 +26,6 @@ export class AuthSignupDto {
 
   @IsString({ message: 'O tipo de clínica deve ser uma string.' })
   @IsNotEmpty({ message: 'O tipo de clínica é obrigatório.' })
-  // Se 'clinicType' tiver valores fixos, pode usar @IsIn(['odontologica', 'psicologia'])
   clinicType: SystemModuleName;
 
   @IsString({ message: 'A senha deve ser uma string.' })

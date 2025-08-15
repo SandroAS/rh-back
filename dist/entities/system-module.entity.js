@@ -13,7 +13,6 @@ exports.SystemModule = exports.SystemModuleName = void 0;
 const typeorm_1 = require("typeorm");
 const uuid_1 = require("uuid");
 const account_entity_1 = require("./account.entity");
-const service_entity_1 = require("./service.entity");
 var SystemModuleName;
 (function (SystemModuleName) {
     SystemModuleName["DENTISTRY"] = "DENTISTRY";
@@ -53,10 +52,6 @@ __decorate([
     (0, typeorm_1.ManyToMany)(() => account_entity_1.Account, (account) => account.systemModules),
     __metadata("design:type", Array)
 ], SystemModule.prototype, "accounts", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => service_entity_1.Service, (service) => service.systemModule),
-    __metadata("design:type", Array)
-], SystemModule.prototype, "services", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)
