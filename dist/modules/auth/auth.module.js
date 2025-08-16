@@ -19,7 +19,6 @@ const accounts_module_1 = require("../accounts/accounts.module");
 const trials_module_1 = require("../trials/trials.module");
 const passport_1 = require("@nestjs/passport");
 const user_metas_module_1 = require("../user-metas/user-metas.module");
-const services_module_1 = require("../services/services.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -39,8 +38,7 @@ exports.AuthModule = AuthModule = __decorate([
             accounts_module_1.AccountsModule,
             trials_module_1.TrialsModule,
             passport_1.PassportModule,
-            user_metas_module_1.UserMetasModule,
-            services_module_1.ServicesModule
+            user_metas_module_1.UserMetasModule
         ],
         providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy, google_strategy_1.GoogleStrategy],
         exports: [auth_service_1.AuthService],

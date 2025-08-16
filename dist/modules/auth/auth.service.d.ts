@@ -7,15 +7,13 @@ import { GoogleProfileParsed } from './dtos/google-profile-parsed.dta';
 import { AuthSignupDto } from './dtos/auth-signup';
 import { UserMetasService } from '../user-metas/user-metas.service';
 import { UserMetasResponseDto } from '../user-metas/dtos/user-metas-response.dto';
-import { ServicesService } from '../services/services.service';
 export declare class AuthService {
     private usersService;
     private jwtService;
     private readonly accountsService;
     private readonly trialsService;
     private readonly userMetasService;
-    private readonly servicesService;
-    constructor(usersService: UsersService, jwtService: JwtService, accountsService: AccountsService, trialsService: TrialsService, userMetasService: UserMetasService, servicesService: ServicesService);
+    constructor(usersService: UsersService, jwtService: JwtService, accountsService: AccountsService, trialsService: TrialsService, userMetasService: UserMetasService);
     whoami(userId: number): Promise<AuthResponseDto>;
     signup(controllerProfile?: AuthSignupDto, googleProfile?: GoogleProfileParsed): Promise<{
         user: AuthResponseDto;

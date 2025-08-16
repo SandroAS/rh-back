@@ -15,10 +15,15 @@ const uuid_1 = require("uuid");
 const account_entity_1 = require("./account.entity");
 var SystemModuleName;
 (function (SystemModuleName) {
-    SystemModuleName["DENTISTRY"] = "DENTISTRY";
-    SystemModuleName["PSYCHOLOGY"] = "PSYCHOLOGY";
-    SystemModuleName["NUTRITION"] = "NUTRITION";
-    SystemModuleName["PHYSIOTHERAPY"] = "PHYSIOTHERAPY";
+    SystemModuleName["EMPLOYEE_MANAGEMENT"] = "employee_management";
+    SystemModuleName["RECRUITMENT"] = "recruitment";
+    SystemModuleName["PERFORMANCE_MANAGEMENT"] = "performance_management";
+    SystemModuleName["CAREER_DEVELOPMENT"] = "career_development";
+    SystemModuleName["TRAINING_DEVELOPMENT"] = "training_development";
+    SystemModuleName["PAYROLL"] = "payroll";
+    SystemModuleName["TIME_ATTENDANCE"] = "time_attendance";
+    SystemModuleName["BENEFITS_COMPENSATION"] = "benefits_compensation";
+    SystemModuleName["ONBOARDING_OFFBOARDING"] = "onboarding_offboarding";
 })(SystemModuleName || (exports.SystemModuleName = SystemModuleName = {}));
 let SystemModule = class SystemModule {
     generateUuid() {

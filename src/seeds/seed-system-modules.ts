@@ -3,10 +3,15 @@ import { SystemModule, SystemModuleName } from '../entities/system-module.entity
 
 export async function seedSystemModules() {
   const systemModules = [
-    { name: SystemModuleName.DENTISTRY },
-    { name: SystemModuleName.PSYCHOLOGY },
-    { name: SystemModuleName.NUTRITION },
-    { name: SystemModuleName.PHYSIOTHERAPY },
+    { name: SystemModuleName.EMPLOYEE_MANAGEMENT },
+    { name: SystemModuleName.RECRUITMENT },
+    { name: SystemModuleName.PERFORMANCE_MANAGEMENT },
+    { name: SystemModuleName.CAREER_DEVELOPMENT },
+    { name: SystemModuleName.TRAINING_DEVELOPMENT },
+    { name: SystemModuleName.PAYROLL },
+    { name: SystemModuleName.TIME_ATTENDANCE },
+    { name: SystemModuleName.BENEFITS_COMPENSATION },
+    { name: SystemModuleName.ONBOARDING_OFFBOARDING }
   ];
 
   const systemModuleRepo = AppDataSource.getRepository(SystemModule);

@@ -36,9 +36,9 @@ export class AccountsService {
   async create(data: CreateAccountDto, manager?: EntityManager): Promise<Account> {
     const accountRepository = manager ? manager.getRepository(Account) : this.accountRepository;
 
-    const dentistryModule = await this.systemModuleService.findOneByName(SystemModuleName.DENTISTRY);
+    const dentistryModule = await this.systemModuleService.findOneByName(SystemModuleName.CAREER_DEVELOPMENT);
     if (!dentistryModule) {
-      throw new NotFoundException(`Módulo do Sistema ${SystemModuleName.DENTISTRY} não encontrado.`);
+      throw new NotFoundException(`Módulo do Sistema ${SystemModuleName.CAREER_DEVELOPMENT} não encontrado.`);
     }
 
     const account = accountRepository.create(data);

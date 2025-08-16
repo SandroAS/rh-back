@@ -24,17 +24,15 @@ const class_transformer_1 = require("class-transformer");
 const user_metas_service_1 = require("../user-metas/user-metas.service");
 const user_metas_response_dto_1 = require("../user-metas/dtos/user-metas-response.dto");
 const roles_types_dto_1 = require("../roles/dtos/roles-types.dto");
-const services_service_1 = require("../services/services.service");
 const system_module_entity_1 = require("../../entities/system-module.entity");
 const scrypt = (0, util_1.promisify)(crypto_1.scrypt);
 let AuthService = class AuthService {
-    constructor(usersService, jwtService, accountsService, trialsService, userMetasService, servicesService) {
+    constructor(usersService, jwtService, accountsService, trialsService, userMetasService) {
         this.usersService = usersService;
         this.jwtService = jwtService;
         this.accountsService = accountsService;
         this.trialsService = trialsService;
         this.userMetasService = userMetasService;
-        this.servicesService = servicesService;
     }
     async whoami(userId) {
         const user = await this.usersService.findOne(userId, ['account.lastTrial', 'account.systemModules', 'role.permissions', 'userMetas', 'companies.address']);
@@ -79,7 +77,6 @@ let AuthService = class AuthService {
             await this.usersService.update(user.id, { account_id: account.id }, queryRunner.manager);
             let selectedClinicType;
             selectedClinicType = system_module_entity_1.SystemModuleName.DENTISTRY;
-            await this.servicesService.createDefaultServicesForNewAccount(selectedClinicType, account.id, queryRunner.manager);
             await queryRunner.commitTransaction();
             const authUser = (0, class_transformer_1.plainToInstance)(user_entity_1.User, {
                 ...user,
@@ -144,7 +141,6 @@ exports.AuthService = AuthService = __decorate([
         jwt_1.JwtService,
         accounts_service_1.AccountsService,
         trials_service_1.TrialsService,
-        user_metas_service_1.UserMetasService,
-        services_service_1.ServicesService])
+        user_metas_service_1.UserMetasService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map
