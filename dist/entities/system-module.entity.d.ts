@@ -1,14 +1,14 @@
 import { Account } from './account.entity';
 export declare enum SystemModuleName {
-    EMPLOYEE_MANAGEMENT = "employee_management",
-    RECRUITMENT = "recruitment",
-    PERFORMANCE_MANAGEMENT = "performance_management",
-    CAREER_DEVELOPMENT = "career_development",
-    TRAINING_DEVELOPMENT = "training_development",
-    PAYROLL = "payroll",
-    TIME_ATTENDANCE = "time_attendance",
-    BENEFITS_COMPENSATION = "benefits_compensation",
-    ONBOARDING_OFFBOARDING = "onboarding_offboarding"
+    EMPLOYEE_MANAGEMENT = "EMPLOYEE_MANAGEMENT",
+    RECRUITMENT = "RECRUITMENT",
+    PERFORMANCE_MANAGEMENT = "PERFORMANCE_MANAGEMENT",
+    CAREER_DEVELOPMENT = "CAREER_DEVELOPMENT",
+    TRAINING_DEVELOPMENT = "TRAINING_DEVELOPMENT",
+    PAYROLL = "PAYROLL",
+    TIME_ATTENDANCE = "TIME_ATTENDANCE",
+    BENEFITS_COMPENSATION = "BENEFITS_COMPENSATION",
+    ONBOARDING_OFFBOARDING = "ONBOARDING_OFFBOARDING"
 }
 export declare class SystemModule {
     id: number;

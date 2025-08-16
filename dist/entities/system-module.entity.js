@@ -15,15 +15,15 @@ const uuid_1 = require("uuid");
 const account_entity_1 = require("./account.entity");
 var SystemModuleName;
 (function (SystemModuleName) {
-    SystemModuleName["EMPLOYEE_MANAGEMENT"] = "employee_management";
-    SystemModuleName["RECRUITMENT"] = "recruitment";
-    SystemModuleName["PERFORMANCE_MANAGEMENT"] = "performance_management";
-    SystemModuleName["CAREER_DEVELOPMENT"] = "career_development";
-    SystemModuleName["TRAINING_DEVELOPMENT"] = "training_development";
-    SystemModuleName["PAYROLL"] = "payroll";
-    SystemModuleName["TIME_ATTENDANCE"] = "time_attendance";
-    SystemModuleName["BENEFITS_COMPENSATION"] = "benefits_compensation";
-    SystemModuleName["ONBOARDING_OFFBOARDING"] = "onboarding_offboarding";
+    SystemModuleName["EMPLOYEE_MANAGEMENT"] = "EMPLOYEE_MANAGEMENT";
+    SystemModuleName["RECRUITMENT"] = "RECRUITMENT";
+    SystemModuleName["PERFORMANCE_MANAGEMENT"] = "PERFORMANCE_MANAGEMENT";
+    SystemModuleName["CAREER_DEVELOPMENT"] = "CAREER_DEVELOPMENT";
+    SystemModuleName["TRAINING_DEVELOPMENT"] = "TRAINING_DEVELOPMENT";
+    SystemModuleName["PAYROLL"] = "PAYROLL";
+    SystemModuleName["TIME_ATTENDANCE"] = "TIME_ATTENDANCE";
+    SystemModuleName["BENEFITS_COMPENSATION"] = "BENEFITS_COMPENSATION";
+    SystemModuleName["ONBOARDING_OFFBOARDING"] = "ONBOARDING_OFFBOARDING";
 })(SystemModuleName || (exports.SystemModuleName = SystemModuleName = {}));
 let SystemModule = class SystemModule {
     generateUuid() {

@@ -76,7 +76,7 @@ let AuthService = class AuthService {
             await this.accountsService.update(account.id, { last_trial_id: trial.id }, queryRunner.manager);
             await this.usersService.update(user.id, { account_id: account.id }, queryRunner.manager);
             let selectedClinicType;
-            selectedClinicType = system_module_entity_1.SystemModuleName.DENTISTRY;
+            selectedClinicType = system_module_entity_1.SystemModuleName.CAREER_DEVELOPMENT;
             await queryRunner.commitTransaction();
             const authUser = (0, class_transformer_1.plainToInstance)(user_entity_1.User, {
                 ...user,

@@ -39,13 +39,13 @@ let AccountsService = class AccountsService {
     }
     async create(data, manager) {
         const accountRepository = manager ? manager.getRepository(account_entity_1.Account) : this.accountRepository;
-        const dentistryModule = await this.systemModuleService.findOneByName(system_module_entity_1.SystemModuleName.CAREER_DEVELOPMENT);
-        if (!dentistryModule) {
+        const careerDevelopmentModule = await this.systemModuleService.findOneByName(system_module_entity_1.SystemModuleName.CAREER_DEVELOPMENT);
+        if (!careerDevelopmentModule) {
             throw new common_1.NotFoundException(`Módulo do Sistema ${system_module_entity_1.SystemModuleName.CAREER_DEVELOPMENT} não encontrado.`);
         }
         const account = accountRepository.create(data);
         account.systemModules = account.systemModules || [];
-        account.systemModules.push(dentistryModule);
+        account.systemModules.push(careerDevelopmentModule);
         const savedAccount = await accountRepository.save(account);
         savedAccount.systemModules = account.systemModules;
         return savedAccount;
