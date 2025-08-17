@@ -5,9 +5,9 @@ var RolesTypes;
 (function (RolesTypes) {
     RolesTypes["SUPER_ADMIN"] = "SUPER_ADMIN";
     RolesTypes["ADMIN"] = "ADMIN";
-    RolesTypes["ASSISTANT"] = "ASSISTANT";
-    RolesTypes["HEALTHCARE_PROFESSIONAL"] = "HEALTHCARE_PROFESSIONAL";
-    RolesTypes["PATIENT"] = "PATIENT";
+    RolesTypes["MANAGER"] = "MANAGER";
+    RolesTypes["LEADER"] = "LEADER";
+    RolesTypes["MEMBER"] = "MEMBER";
 })(RolesTypes || (exports.RolesTypes = RolesTypes = {}));
 ;
 //# sourceMappingURL=roles-types.dto.js.map

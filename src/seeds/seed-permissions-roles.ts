@@ -23,64 +23,36 @@ const allPermissions = [
   'permissions_settings_create',
   'permissions_settings_update',
   'permissions_settings_delete',
-  'patients_read',
-  'patients_create',
-  'patients_update',
-  'patients_delete',
-  'patients_record_read',
-  'patients_record_profile_read',
-  'patients_record_profile_update',
-  'patients_record_anamnesis_read',
-  'patients_record_anamnesis_update',
-  'patients_record_recipes_read',
-  'patients_record_recipes_create',
-  'patients_record_recipes_update',
-  'patients_record_recipes_delete',
-  'patients_record_attests_read',
-  'patients_record_attests_create',
-  'patients_record_attests_update',
-  'patients_record_attests_delete',
-  'patients_record_contracts_read',
-  'patients_record_contracts_create',
-  'patients_record_contracts_update',
-  'patients_record_contracts_delete',
-  'patients_record_files_read',
-  'patients_record_files_create',
-  'patients_record_files_update',
-  'patients_record_files_delete',
-  'budgets_read',
-  'budgets_create',
-  'budgets_update_status',
-  'budgets_update',
-  'budgets_view',
-  'budgets_send_whatsapp',
-  'budgets_schedule',
-  'budgets_start_appointment',
-  'appointments_read',
-  'appointments_create',
-  'appointments_update',
-  'appointments_delete',
-  'schedules_read',
-  'schedules_create',
-  'schedules_update',
-  'schedules_delete',
-  'models_read',
-  'recipes_models_read',
-  'recipes_models_create',
-  'recipes_models_update',
-  'recipes_models_delete',
-  'attests_models_read',
-  'attests_models_create',
-  'attests_models_update',
-  'attests_models_delete',
-  'contracts_models_read',
-  'contracts_models_create',
-  'contracts_models_update',
-  'contracts_models_delete',
+  'job_positions_read',
+  'job_positions_create',
+  'job_positions_update',
+  'job_positions_delete',
+  'levels_groups_read',
+  'levels_groups_create',
+  'levels_groups_update',
+  'levels_groups_delete',
+  'teams_read',
+  'teams_create',
+  'teams_update',
+  'teams_delete',
+  'drd_read',
+  'drd_create',
+  'drd_update',
+  'drd_delete',
+  'career_plans_read',
+  'career_plans_create',
+  'career_plans_update',
+  'career_plans_delete',
+  'evaluations_read',
+  'evaluations_create',
+  'evaluations_update',
+  'evaluations_delete',
+  'team_panel_read',
+  'user_panel_read',
 ];
 
 // permissões restritas por role
-const restrictedByAssistant = [
+const restrictedByManager = [
   'users_settings_read',
   'users_settings_update',
   'users_settings_create',
@@ -89,20 +61,39 @@ const restrictedByAssistant = [
   'permissions_settings_create',
   'permissions_settings_update',
   'permissions_settings_delete',
-  'subscriptions_settings_cancel',
-  'subscriptions_settings_upgrade',
-  'patients_record_recipes_create',
-  'patients_record_recipes_update',
-  'patients_record_recipes_delete',
-  'patients_record_attests_create',
-  'patients_record_attests_update',
-  'patients_record_attests_delete',
-  'appointments_create',
-  'appointments_update',
-  'appointments_delete',
+  'job_positions_read',
+  'job_positions_create',
+  'job_positions_update',
+  'job_positions_delete',
+  'levels_groups_read',
+  'levels_groups_create',
+  'levels_groups_update',
+  'levels_groups_delete',
+  'teams_read',
+  'teams_create',
+  'teams_update',
+  'teams_delete',
+  'drd_read',
+  'drd_create',
+  'drd_update',
+  'drd_delete',
+  'career_plans_read',
+  'career_plans_create',
+  'career_plans_update',
+  'career_plans_delete',
+  'evaluations_read',
+  'evaluations_create',
+  'evaluations_update',
+  'evaluations_delete',
+  'team_panel_read',
+  'user_panel_read',
+  'pdi_read',
+  'pdi_create',
+  'pdi_update',
+  'pdi_delete'
 ];
 
-const restrictedByProfessional = [
+const restrictedByLeader = [
   'users_settings_read',
   'users_settings_update',
   'users_settings_create',
@@ -113,6 +104,79 @@ const restrictedByProfessional = [
   'permissions_settings_delete',
   'subscriptions_settings_cancel',
   'subscriptions_settings_upgrade',
+  'job_positions_read',
+  'job_positions_create',
+  'job_positions_update',
+  'job_positions_delete',
+  'levels_groups_read',
+  'levels_groups_create',
+  'levels_groups_update',
+  'levels_groups_delete',
+  'teams_read',
+  'teams_create',
+  'teams_update',
+  'teams_delete',
+  'drd_read',
+  'drd_create',
+  'drd_update',
+  'drd_delete',
+  'career_plans_read',
+  'career_plans_create',
+  'career_plans_update',
+  'career_plans_delete',
+  'evaluations_read',
+  'evaluations_create',
+  'evaluations_update',
+  'evaluations_delete',
+  'team_panel_read',
+  'user_panel_read',
+  'pdi_read',
+  'pdi_create',
+  'pdi_update',
+  'pdi_delete',
+];
+
+const restrictedByMember = [
+  'users_settings_read',
+  'users_settings_update',
+  'users_settings_create',
+  'users_settings_deactive',
+  'permissions_settings_read',
+  'permissions_settings_create',
+  'permissions_settings_update',
+  'permissions_settings_delete',
+  'subscriptions_settings_cancel',
+  'subscriptions_settings_upgrade',
+  'job_positions_read',
+  'job_positions_create',
+  'job_positions_update',
+  'job_positions_delete',
+  'levels_groups_read',
+  'levels_groups_create',
+  'levels_groups_update',
+  'levels_groups_delete',
+  'teams_read',
+  'teams_create',
+  'teams_update',
+  'teams_delete',
+  'drd_read',
+  'drd_create',
+  'drd_update',
+  'drd_delete',
+  'career_plans_read',
+  'career_plans_create',
+  'career_plans_update',
+  'career_plans_delete',
+  'evaluations_read',
+  'evaluations_create',
+  'evaluations_update',
+  'evaluations_delete',
+  'team_panel_read',
+  'user_panel_read',
+  'pdi_read',
+  'pdi_create',
+  'pdi_update',
+  'pdi_delete',
 ];
 
 export async function seedPermissionsRoles() {
@@ -155,35 +219,48 @@ export async function seedPermissionsRoles() {
     console.log('✅ Role ADMIN já existe.');
   }
 
-  // Criar role ASSISTANT com permissões restritas para assistentes
-  let assistantRole = await roleRepo.findOne({ where: { name: RolesTypes.ASSISTANT } });
-  if (!assistantRole) {
-    const assistantPermissions = permissionEntities.filter(
-      (p) => !restrictedByAssistant.includes(p.name)
+  let managerRole = await roleRepo.findOne({ where: { name: RolesTypes.MANAGER } });
+  if (!managerRole) {
+    const managerPermissions = permissionEntities.filter(
+      (p) => !restrictedByManager.includes(p.name)
     );
-    assistantRole = roleRepo.create({
-      name: RolesTypes.ASSISTANT,
-      permissions: assistantPermissions,
+    managerRole = roleRepo.create({
+      name: RolesTypes.MANAGER,
+      permissions: managerPermissions,
     });
-    await roleRepo.save(assistantRole);
+    await roleRepo.save(managerRole);
     console.log('✅ Role ASSISTANT criada.');
   } else {
     console.log('✅ Role ASSISTANT já existe.');
   }
 
-  // Criar role HEALTHCARE_PROFESSIONAL com permissões restritas para profissionais de saúde
-  let professionalRole = await roleRepo.findOne({ where: { name: RolesTypes.HEALTHCARE_PROFESSIONAL } });
-  if (!professionalRole) {
-    const professionalPermissions = permissionEntities.filter(
-      (p) => !restrictedByProfessional.includes(p.name)
+  let leaderRole = await roleRepo.findOne({ where: { name: RolesTypes.LEADER } });
+  if (!leaderRole) {
+    const leaderPermissions = permissionEntities.filter(
+      (p) => !restrictedByLeader.includes(p.name)
     );
-    professionalRole = roleRepo.create({
-      name: RolesTypes.HEALTHCARE_PROFESSIONAL,
-      permissions: professionalPermissions,
+    leaderRole = roleRepo.create({
+      name: RolesTypes.LEADER,
+      permissions: leaderPermissions,
     });
-    await roleRepo.save(professionalRole);
-    console.log('✅ Role HEALTHCARE_PROFESSIONAL criada.');
+    await roleRepo.save(leaderRole);
+    console.log('✅ Role LEADER criada.');
   } else {
-    console.log('✅ Role HEALTHCARE_PROFESSIONAL já existe.');
+    console.log('✅ Role LEADER já existe.');
+  }
+
+  let memberRole = await roleRepo.findOne({ where: { name: RolesTypes.MEMBER } });
+  if (!memberRole) {
+    const memberPermissions = permissionEntities.filter(
+      (p) => !restrictedByMember.includes(p.name)
+    );
+    memberRole = roleRepo.create({
+      name: RolesTypes.MEMBER,
+      permissions: memberPermissions,
+    });
+    await roleRepo.save(memberRole);
+    console.log('✅ Role MEMBER criada.');
+  } else {
+    console.log('✅ Role MEMBER já existe.');
   }
 }
