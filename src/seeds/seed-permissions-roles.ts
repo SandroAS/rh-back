@@ -47,6 +47,10 @@ const allPermissions = [
   'evaluations_create',
   'evaluations_update',
   'evaluations_delete',
+  'evaluation_applications_read',
+  'evaluation_applications_create',
+  'evaluation_applications_update',
+  'evaluation_applications_delete',
   'team_panel_read',
   'user_panel_read',
 ];
@@ -85,6 +89,10 @@ const restrictedByManager = [
   'evaluations_create',
   'evaluations_update',
   'evaluations_delete',
+  'evaluation_applications_read',
+  'evaluation_applications_create',
+  'evaluation_applications_update',
+  'evaluation_applications_delete',
   'team_panel_read',
   'user_panel_read',
   'pdi_read',
@@ -102,8 +110,6 @@ const restrictedByLeader = [
   'permissions_settings_create',
   'permissions_settings_update',
   'permissions_settings_delete',
-  'subscriptions_settings_cancel',
-  'subscriptions_settings_upgrade',
   'job_positions_read',
   'job_positions_create',
   'job_positions_update',
@@ -128,6 +134,10 @@ const restrictedByLeader = [
   'evaluations_create',
   'evaluations_update',
   'evaluations_delete',
+  'evaluation_applications_read',
+  'evaluation_applications_create',
+  'evaluation_applications_update',
+  'evaluation_applications_delete',
   'team_panel_read',
   'user_panel_read',
   'pdi_read',
@@ -137,40 +147,17 @@ const restrictedByLeader = [
 ];
 
 const restrictedByMember = [
-  'users_settings_read',
-  'users_settings_update',
-  'users_settings_create',
-  'users_settings_deactive',
-  'permissions_settings_read',
-  'permissions_settings_create',
-  'permissions_settings_update',
-  'permissions_settings_delete',
-  'subscriptions_settings_cancel',
-  'subscriptions_settings_upgrade',
   'job_positions_read',
-  'job_positions_create',
-  'job_positions_update',
-  'job_positions_delete',
   'levels_groups_read',
-  'levels_groups_create',
-  'levels_groups_update',
-  'levels_groups_delete',
   'teams_read',
-  'teams_create',
-  'teams_update',
-  'teams_delete',
   'drd_read',
-  'drd_create',
-  'drd_update',
-  'drd_delete',
   'career_plans_read',
-  'career_plans_create',
-  'career_plans_update',
-  'career_plans_delete',
   'evaluations_read',
   'evaluations_create',
   'evaluations_update',
   'evaluations_delete',
+  'evaluation_applications_read',
+  'evaluation_applications_update',
   'team_panel_read',
   'user_panel_read',
   'pdi_read',
@@ -229,9 +216,9 @@ export async function seedPermissionsRoles() {
       permissions: managerPermissions,
     });
     await roleRepo.save(managerRole);
-    console.log('✅ Role ASSISTANT criada.');
+    console.log(`✅ Role ${RolesTypes.MANAGER} criada.`);
   } else {
-    console.log('✅ Role ASSISTANT já existe.');
+    console.log(`✅ Role ${RolesTypes.MANAGER} já existe.`);
   }
 
   let leaderRole = await roleRepo.findOne({ where: { name: RolesTypes.LEADER } });
@@ -244,9 +231,9 @@ export async function seedPermissionsRoles() {
       permissions: leaderPermissions,
     });
     await roleRepo.save(leaderRole);
-    console.log('✅ Role LEADER criada.');
+    console.log(`✅ Role ${RolesTypes.LEADER} criada.`);
   } else {
-    console.log('✅ Role LEADER já existe.');
+    console.log(`✅ Role ${RolesTypes.LEADER} já existe.`);
   }
 
   let memberRole = await roleRepo.findOne({ where: { name: RolesTypes.MEMBER } });
