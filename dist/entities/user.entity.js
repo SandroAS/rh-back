@@ -20,6 +20,7 @@ const role_entity_1 = require("./role.entity");
 const user_meta_entity_1 = require("./user-meta.entity");
 const company_entity_1 = require("./company.entity");
 const address_entity_1 = require("./address.entity");
+const job_position_entity_1 = require("./job-position.entity");
 var Gender;
 (function (Gender) {
     Gender["MALE"] = "MALE";
@@ -117,14 +118,23 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "companies", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true, name: 'address_id' }),
+    __metadata("design:type", Number)
+], User.prototype, "address_id", void 0);
+__decorate([
     (0, typeorm_1.OneToOne)(() => address_entity_1.Address, { cascade: true, eager: true, onDelete: 'SET NULL', nullable: true }),
     (0, typeorm_1.JoinColumn)({ name: 'address_id' }),
     __metadata("design:type", address_entity_1.Address)
 ], User.prototype, "address", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true, name: 'address_id' }),
+    (0, typeorm_1.Column)({ nullable: true, name: 'job_position_id' }),
     __metadata("design:type", Number)
-], User.prototype, "address_id", void 0);
+], User.prototype, "job_position_id", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => job_position_entity_1.JobPosition, (jobPosition) => jobPosition.users, { onDelete: 'SET NULL', nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: 'job_position_id' }),
+    __metadata("design:type", job_position_entity_1.JobPosition)
+], User.prototype, "jobPosition", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)

@@ -8,6 +8,7 @@ import { Role } from './role.entity';
 import { UserMeta } from './user-meta.entity';
 import { Company } from './company.entity';
 import { Address } from './address.entity';
+import { JobPosition } from './job-position.entity';
 
 export enum Gender {
   MALE = 'MALE',
@@ -81,12 +82,19 @@ export class User {
   @OneToMany(() => Company, company => company.user)
   companies: Company[];
 
+  @Column({ nullable: true, name: 'address_id' })
+  address_id: number;
+
   @OneToOne(() => Address, { cascade: true, eager: true, onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'address_id' })
   address: Address;
 
-  @Column({ nullable: true, name: 'address_id' })
-  address_id: number;
+  @Column({ nullable: true, name: 'job_position_id' })
+  job_position_id: number;
+
+  @ManyToOne(() => JobPosition, (jobPosition) => jobPosition.users, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'job_position_id' })
+  jobPosition: JobPosition;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

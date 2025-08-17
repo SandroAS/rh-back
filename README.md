@@ -139,6 +139,11 @@ Criar uma migration:
 npm run migration:generate -- CreateExample
 ```
 
+Rodar migrations:
+```sh
+npm run migration:run
+```
+
 Verificar migrations existentes
 ```sh
 npx typeorm migration:show -d src/data-source.ts

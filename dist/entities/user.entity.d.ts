@@ -5,6 +5,7 @@ import { Role } from './role.entity';
 import { UserMeta } from './user-meta.entity';
 import { Company } from './company.entity';
 import { Address } from './address.entity';
+import { JobPosition } from './job-position.entity';
 export declare enum Gender {
     MALE = "MALE",
     FEMALE = "FEMALE"
@@ -30,8 +31,10 @@ export declare class User {
     role: Role;
     userMetas: UserMeta[];
     companies: Company[];
-    address: Address;
     address_id: number;
+    address: Address;
+    job_position_id: number;
+    jobPosition: JobPosition;
     created_at: Date;
     updated_at: Date;
 }

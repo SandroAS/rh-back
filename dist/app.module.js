@@ -32,6 +32,7 @@ const user_metas_module_1 = require("./modules/user-metas/user-metas.module");
 const system_modules_module_1 = require("./modules/system-modules/system-modules.module");
 const companies_module_1 = require("./modules/companies/companies.module");
 const addresses_module_1 = require("./modules/addresses/addresses.module");
+const job_positions_module_1 = require("./modules/job-positions/job-positions.module");
 const cookieSession = require('cookie-session');
 let AppModule = class AppModule {
     constructor(configService) {
@@ -85,7 +86,8 @@ exports.AppModule = AppModule = __decorate([
             user_metas_module_1.UserMetasModule,
             system_modules_module_1.SystemModulesModule,
             companies_module_1.CompaniesModule,
-            addresses_module_1.AddressesModule
+            addresses_module_1.AddressesModule,
+            job_positions_module_1.JobPositionsModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [

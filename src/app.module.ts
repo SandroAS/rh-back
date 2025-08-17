@@ -20,6 +20,7 @@ import { UserMetasModule } from './modules/user-metas/user-metas.module';
 import { SystemModulesModule } from './modules/system-modules/system-modules.module';
 import { CompaniesModule } from './modules/companies/companies.module';
 import { AddressesModule } from './modules/addresses/addresses.module';
+import { JobPositionsModule } from './modules/job-positions/job-positions.module';
 
 const cookieSession = require('cookie-session');
 
@@ -61,7 +62,8 @@ const cookieSession = require('cookie-session');
     UserMetasModule,
     SystemModulesModule,
     CompaniesModule,
-    AddressesModule
+    AddressesModule,
+    JobPositionsModule
   ],
   controllers: [AppController],
   providers: [
