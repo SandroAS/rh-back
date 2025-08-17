@@ -1,9 +1,9 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateJobPositionDto {
   @IsString()
   @IsNotEmpty()
-  job_title: string;
+  title: string;
 
   @IsString()
   @IsOptional()
@@ -12,4 +12,8 @@ export class CreateJobPositionDto {
   @IsString()
   @IsOptional()
   cbo_code?: string;
+
+  @IsNumber()
+  @IsOptional()
+  base_salary?: number
 }

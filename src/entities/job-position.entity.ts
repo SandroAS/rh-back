@@ -23,7 +23,7 @@ export class JobPosition {
   @JoinColumn({ name: 'account_id' })
   account: Account;
 
-  @Column({ name: 'job_title' })
+  @Column({ name: 'title' })
   title: string;
 
   @Column({ type: 'text', nullable: true })
@@ -31,6 +31,9 @@ export class JobPosition {
 
   @Column({ name: 'cbo_code', nullable: true })
   cbo_code: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  base_salary: number;
 
   @OneToMany(() => User, (user) => user.jobPosition)
   users: User[];
