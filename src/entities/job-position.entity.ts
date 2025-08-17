@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './user.entity';
+import { Account } from './account.entity';
 
 @Entity('job_positions')
 export class JobPosition {
@@ -14,6 +15,13 @@ export class JobPosition {
   generateUuid() {
     this.uuid = uuidv4();
   }
+
+  @Column({ name: 'account_id', nullable: true })
+  account_id: number;
+
+  @ManyToOne(() => Account, (account) => account.jobPositions, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'account_id' })
+  account: Account;
 
   @Column({ name: 'job_title' })
   title: string;

@@ -19,6 +19,7 @@ const trial_entity_1 = require("./trial.entity");
 const payment_intention_entity_1 = require("./payment-intention.entity");
 const sale_entity_1 = require("./sale.entity");
 const system_module_entity_1 = require("./system-module.entity");
+const job_position_entity_1 = require("./job-position.entity");
 let Account = class Account {
     generateUuid() {
         this.uuid = (0, uuid_1.v4)();
@@ -114,6 +115,10 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], Account.prototype, "systemModules", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => job_position_entity_1.JobPosition, (jobPosition) => jobPosition.account),
+    __metadata("design:type", Array)
+], Account.prototype, "jobPositions", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)

@@ -5,6 +5,7 @@ import { Trial } from './trial.entity';
 import { PaymentIntention } from './payment-intention.entity';
 import { Sale } from './sale.entity';
 import { SystemModule } from './system-module.entity';
+import { JobPosition } from './job-position.entity';
 export declare class Account {
     id: number;
     uuid: string;
@@ -24,6 +25,7 @@ export declare class Account {
     sales: Sale[];
     paymentIntentions: PaymentIntention[];
     systemModules: SystemModule[];
+    jobPositions: JobPosition[];
     created_at: Date;
     updated_at: Date;
 }

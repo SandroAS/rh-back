@@ -7,6 +7,7 @@ import { Trial } from './trial.entity';
 import { PaymentIntention } from './payment-intention.entity';
 import { Sale } from './sale.entity';
 import { SystemModule } from './system-module.entity';
+import { JobPosition } from './job-position.entity';
 
 @Entity('accounts')
 export class Account {
@@ -80,6 +81,9 @@ export class Account {
     },
   })
   systemModules: SystemModule[];
+
+  @OneToMany(() => JobPosition, (jobPosition) => jobPosition.account)
+  jobPositions: JobPosition[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
