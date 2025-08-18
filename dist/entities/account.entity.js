@@ -20,6 +20,8 @@ const payment_intention_entity_1 = require("./payment-intention.entity");
 const sale_entity_1 = require("./sale.entity");
 const system_module_entity_1 = require("./system-module.entity");
 const job_position_entity_1 = require("./job-position.entity");
+const job_positions_levels_group_entity_1 = require("./job-positions-levels-group.entity");
+const job_position_level_entity_1 = require("./job-position-level.entity");
 let Account = class Account {
     generateUuid() {
         this.uuid = (0, uuid_1.v4)();
@@ -119,6 +121,14 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => job_position_entity_1.JobPosition, (jobPosition) => jobPosition.account),
     __metadata("design:type", Array)
 ], Account.prototype, "jobPositions", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => job_positions_levels_group_entity_1.JobPositionsLevelsGroup, (jobPositionsLevelsGroup) => jobPositionsLevelsGroup.account),
+    __metadata("design:type", Array)
+], Account.prototype, "jobPositionsLevelsGroups", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => job_position_level_entity_1.JobPositionsLevel, (jobPositionsLevel) => jobPositionsLevel.account),
+    __metadata("design:type", Array)
+], Account.prototype, "jobPositionsLevels", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)

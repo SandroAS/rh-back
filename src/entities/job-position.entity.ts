@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToMany, ManyTo
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './user.entity';
 import { Account } from './account.entity';
+import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 
 @Entity('job_positions')
 export class JobPosition {
@@ -37,6 +38,15 @@ export class JobPosition {
 
   @OneToMany(() => User, (user) => user.jobPosition)
   users: User[];
+
+  @OneToMany(
+    () => JobPositionsLevelsGroup,
+    (levelsGroup) => levelsGroup.job_position
+  )
+  levelsGroups: JobPositionsLevelsGroup[];
+
+  @Column({ name: 'job_title' })
+  job_title: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

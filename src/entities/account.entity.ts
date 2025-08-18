@@ -8,6 +8,8 @@ import { PaymentIntention } from './payment-intention.entity';
 import { Sale } from './sale.entity';
 import { SystemModule } from './system-module.entity';
 import { JobPosition } from './job-position.entity';
+import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
+import { JobPositionsLevel } from './job-position-level.entity';
 
 @Entity('accounts')
 export class Account {
@@ -84,6 +86,12 @@ export class Account {
 
   @OneToMany(() => JobPosition, (jobPosition) => jobPosition.account)
   jobPositions: JobPosition[];
+
+  @OneToMany(() => JobPositionsLevelsGroup, (jobPositionsLevelsGroup) => jobPositionsLevelsGroup.account)
+  jobPositionsLevelsGroups: JobPositionsLevelsGroup[];
+
+  @OneToMany(() => JobPositionsLevel, (jobPositionsLevel) => jobPositionsLevel.account)
+  jobPositionsLevels: JobPositionsLevel[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

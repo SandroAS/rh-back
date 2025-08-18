@@ -6,6 +6,8 @@ import { PaymentIntention } from './payment-intention.entity';
 import { Sale } from './sale.entity';
 import { SystemModule } from './system-module.entity';
 import { JobPosition } from './job-position.entity';
+import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
+import { JobPositionsLevel } from './job-position-level.entity';
 export declare class Account {
     id: number;
     uuid: string;
@@ -26,6 +28,8 @@ export declare class Account {
     paymentIntentions: PaymentIntention[];
     systemModules: SystemModule[];
     jobPositions: JobPosition[];
+    jobPositionsLevelsGroups: JobPositionsLevelsGroup[];
+    jobPositionsLevels: JobPositionsLevel[];
     created_at: Date;
     updated_at: Date;
 }
