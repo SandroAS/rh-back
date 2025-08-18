@@ -21,6 +21,8 @@ import { SystemModulesModule } from './modules/system-modules/system-modules.mod
 import { CompaniesModule } from './modules/companies/companies.module';
 import { AddressesModule } from './modules/addresses/addresses.module';
 import { JobPositionsModule } from './modules/job-positions/job-positions.module';
+import { JobPositionsLevelsGroupsModule } from './modules/job-positions-levels-groups/job-positions-levels-groups.module';
+import { JobPositionsLevelsModule } from './modules/job-positions-levels/job-positions-levels.module';
 
 const cookieSession = require('cookie-session');
 
@@ -63,7 +65,9 @@ const cookieSession = require('cookie-session');
     SystemModulesModule,
     CompaniesModule,
     AddressesModule,
-    JobPositionsModule
+    JobPositionsModule,
+    JobPositionsLevelsGroupsModule,
+    JobPositionsLevelsModule
   ],
   controllers: [AppController],
   providers: [

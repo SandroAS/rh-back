@@ -33,6 +33,8 @@ const system_modules_module_1 = require("./modules/system-modules/system-modules
 const companies_module_1 = require("./modules/companies/companies.module");
 const addresses_module_1 = require("./modules/addresses/addresses.module");
 const job_positions_module_1 = require("./modules/job-positions/job-positions.module");
+const job_positions_levels_groups_module_1 = require("./modules/job-positions-levels-groups/job-positions-levels-groups.module");
+const job_positions_levels_module_1 = require("./modules/job-positions-levels/job-positions-levels.module");
 const cookieSession = require('cookie-session');
 let AppModule = class AppModule {
     constructor(configService) {
@@ -87,7 +89,9 @@ exports.AppModule = AppModule = __decorate([
             system_modules_module_1.SystemModulesModule,
             companies_module_1.CompaniesModule,
             addresses_module_1.AddressesModule,
-            job_positions_module_1.JobPositionsModule
+            job_positions_module_1.JobPositionsModule,
+            job_positions_levels_groups_module_1.JobPositionsLevelsGroupsModule,
+            job_positions_levels_module_1.JobPositionsLevelsModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [
