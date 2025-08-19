@@ -1,48 +1,55 @@
+// src/job-positions-levels/job-positions-levels.service.ts
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JobPositionsLevel } from '@/entities/job-position-level.entity';
 import { CreateJobPositionsLevelDto } from './dtos/create-job-positions-level.dto';
 import { UpdateJobPositionsLevelDto } from './dtos/update-job-positions-level.dto';
-
+import { BaseService } from '@/common/services/base.service';
+import { PaginationDto } from '@/common/dtos/pagination.dto';
 
 @Injectable()
-export class JobPositionsLevelsService {
+export class JobPositionsLevelsService extends BaseService<JobPositionsLevel> {
   constructor(
     @InjectRepository(JobPositionsLevel)
-    private readonly repository: Repository<JobPositionsLevel>,
-  ) {}
-
-  async create(dto: CreateJobPositionsLevelDto, accountId: number): Promise<JobPositionsLevel> {
-    const newLevel = this.repository.create({ ...dto, account_id: accountId });
-    return this.repository.save(newLevel);
+    protected readonly repository: Repository<JobPositionsLevel>,
+  ) {
+    super(repository);
   }
 
-  async findAll(accountId: number): Promise<JobPositionsLevel[]> {
-    return this.repository.find({ where: { account_id: accountId } });
+  async createWithAccountId(dto: CreateJobPositionsLevelDto, accountId: number): Promise<JobPositionsLevel> {
+    return await super.create({ ...dto, account_id: accountId });
   }
 
-  async findOne(uuid: string, accountId: number): Promise<JobPositionsLevel> {
-    const level = await this.repository.findOne({ where: { uuid, account_id: accountId } });
+  async findAllWithAccountId(accountId: number): Promise<JobPositionsLevel[]> {
+    return await super.findAll({ where: { account_id: accountId } });
+  }
+
+  async findAndPaginateWithAccountId(pagination: PaginationDto, accountId: number): Promise<any> {
+    const searchColumns = ['name'];
+    return await super.findAndPaginate(
+      pagination,
+      searchColumns,
+      (qb) => {
+        qb.andWhere('entity.account_id = :accountId', { accountId });
+      }
+    );
+  }
+
+  async findOneWithAccountId(uuid: string, accountId: number): Promise<JobPositionsLevel> {
+    const level = await super.findOne({ where: { uuid, account_id: accountId } });
     if (!level) {
       throw new NotFoundException(`Job position level with UUID "${uuid}" not found.`);
     }
     return level;
   }
 
-  async update(uuid: string, dto: UpdateJobPositionsLevelDto, accountId: number): Promise<JobPositionsLevel> {
-    const level = await this.repository.findOne({ where: { uuid, account_id: accountId } });
-    if (!level) {
-      throw new NotFoundException(`Job position level with UUID "${uuid}" not found.`);
-    }
-    this.repository.merge(level, dto);
-    return this.repository.save(level);
+  async updateWithAccountId(uuid: string, dto: UpdateJobPositionsLevelDto, accountId: number): Promise<JobPositionsLevel> {
+    return await super.updateByUuid(uuid, dto, accountId);
   }
 
-  async remove(uuid: string, accountId: number): Promise<void> {
-    const result = await this.repository.delete({ uuid, account_id: accountId });
-    if (result.affected === 0) {
-      throw new NotFoundException(`Job position level with UUID "${uuid}" not found.`);
-    }
+  async removeWithAccountId(uuid: string, accountId: number): Promise<void> {
+    await super.removeByUuid(uuid, accountId);
   }
 }

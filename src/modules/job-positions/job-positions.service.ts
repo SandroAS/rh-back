@@ -4,44 +4,50 @@ import { Repository } from 'typeorm';
 import { JobPosition } from '@/entities/job-position.entity';
 import { CreateJobPositionDto } from './dtos/create-job-position.dto';
 import { UpdateJobPositionDto } from './dtos/update-job-position.dto';
+import { BaseService } from '@/common/services/base.service';
+import { PaginationDto } from '@/common/dtos/pagination.dto';
 
 @Injectable()
-export class JobPositionService {
+export class JobPositionService extends BaseService<JobPosition> {
   constructor(
     @InjectRepository(JobPosition)
     private readonly jobPositionRepository: Repository<JobPosition>,
-  ) {}
-
-  async create(createJobPositionDto: CreateJobPositionDto, accountId: number): Promise<JobPosition> {
-    const jobPosition = this.jobPositionRepository.create({
-      ...createJobPositionDto,
-      account_id: accountId,
-    });
-    return this.jobPositionRepository.save(jobPosition);
+  ) {
+    super(jobPositionRepository);
   }
 
-  async findAll(accountId: number): Promise<JobPosition[]> {
-    return this.jobPositionRepository.find({ where: { account_id: accountId } });
+  async createWithAccountId(createJobPositionDto: CreateJobPositionDto, accountId: number): Promise<JobPosition> {
+    return await super.create({ ...createJobPositionDto, account_id: accountId });
   }
 
-  async findOne(uuid: string, accountId: number): Promise<JobPosition> {
-    const jobPosition = await this.jobPositionRepository.findOne({ where: { uuid, account_id: accountId } });
+  async findAllWithAccountId(accountId: number): Promise<JobPosition[]> {
+    return await super.findAll({ where: { account_id: accountId } });
+  }
+
+  async findAndPaginateWithAccountId(pagination: PaginationDto, accountId: number): Promise<any> {
+    const searchColumns = ['title', 'description', 'cbo_code'];
+    return await super.findAndPaginate(
+      pagination,
+      searchColumns,
+      (qb) => {
+        qb.andWhere('entity.account_id = :accountId', { accountId });
+      }
+    );
+  }
+
+  async findOneWithAccountId(uuid: string, accountId: number): Promise<JobPosition> {
+    const jobPosition = await super.findOne({ where: { uuid, account_id: accountId } });
+    if (!jobPosition) {
+      throw new NotFoundException(`Job position with UUID "${uuid}" not found for this account.`);
+    }
     return jobPosition;
   }
 
-  async update(uuid: string, updateJobPositionDto: UpdateJobPositionDto, accountId: number): Promise<JobPosition> {
-    const jobPosition = await this.findOne(uuid, accountId);
-    if (!jobPosition) {
-      throw new NotFoundException(`Cargo com UUID "${uuid}" não encontrado para esta conta ao tentar atualizar.`);
-    }
-    this.jobPositionRepository.merge(jobPosition, updateJobPositionDto);
-    return this.jobPositionRepository.save(jobPosition);
+  async updateWithAccountId(uuid: string, updateJobPositionDto: UpdateJobPositionDto, accountId: number): Promise<JobPosition> {
+    return await super.updateByUuid(uuid, updateJobPositionDto, accountId);
   }
 
-  async remove(uuid: string, accountId: number): Promise<void> {
-    const result = await this.jobPositionRepository.delete({ uuid, account_id: accountId });
-    if (result.affected === 0) {
-      throw new NotFoundException(`Cargo com UUID "${uuid}" não encontrado para esta conta ao tentar deletar.`);
-    }
+  async removeWithAccountId(uuid: string, accountId: number): Promise<void> {
+    await super.removeByUuid(uuid, accountId);
   }
 }

@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode, UseGuards, Query } from '@nestjs/common';
 import { AccountId } from '@/common/decorators/account-id.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { JobPositionsLevelsGroupsService } from './job-positions-levels-groups.service';
 import { CreateJobPositionsLevelsGroupDto } from './dtos/create-job-positions-levels-group.dto';
 import { JobPositionsLevelsGroup } from '@/entities/job-positions-levels-group.entity';
 import { UpdateJobPositionsLevelsGroupDto } from './dtos/update-job-positions-levels-group.dto';
+import { PaginationDto } from '@/common/dtos/pagination.dto';
 
 @Controller('job-positions-levels-groups')
 @UseGuards(JwtAuthGuard)
@@ -14,17 +15,22 @@ export class JobPositionsLevelsGroupsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() dto: CreateJobPositionsLevelsGroupDto, @AccountId() account_id: number): Promise<JobPositionsLevelsGroup> {
-    return this.service.create(dto, account_id);
+    return this.service.createWithAccountId(dto, account_id);
   }
 
   @Get()
   findAll(@AccountId() account_id: number): Promise<JobPositionsLevelsGroup[]> {
-    return this.service.findAll(account_id);
+    return this.service.findAllWithAccountId(account_id);
+  }
+
+  @Get()
+  findAllAndPaginate(@Query() query: PaginationDto, @AccountId() account_id: number): Promise<JobPositionsLevelsGroup[]> {
+    return this.service.findAndPaginateWithAccountId(query, account_id);
   }
 
   @Get(':uuid')
   findOne(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<JobPositionsLevelsGroup> {
-    return this.service.findOne(uuid, account_id);
+    return this.service.findOneWithAccountId(uuid, account_id);
   }
 
   @Patch(':uuid')
@@ -33,12 +39,12 @@ export class JobPositionsLevelsGroupsController {
     @Body() dto: UpdateJobPositionsLevelsGroupDto,
     @AccountId() account_id: number,
   ): Promise<JobPositionsLevelsGroup> {
-    return this.service.update(uuid, dto, account_id);
+    return this.service.updateWithAccountId(uuid, dto, account_id);
   }
 
   @Delete(':uuid')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<void> {
-    return this.service.remove(uuid, account_id);
+    return this.service.removeWithAccountId(uuid, account_id);
   }
 }

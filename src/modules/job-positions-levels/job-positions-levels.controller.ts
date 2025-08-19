@@ -14,17 +14,17 @@ export class JobPositionsLevelsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() dto: CreateJobPositionsLevelDto, @AccountId() account_id: number): Promise<JobPositionsLevel> {
-    return this.service.create(dto, account_id);
+    return this.service.createWithAccountId(dto, account_id);
   }
 
   @Get()
   findAll(@AccountId() account_id: number): Promise<JobPositionsLevel[]> {
-    return this.service.findAll(account_id);
+    return this.service.findAllWithAccountId(account_id);
   }
 
   @Get(':uuid')
   findOne(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<JobPositionsLevel> {
-    return this.service.findOne(uuid, account_id);
+    return this.service.findOneWithAccountId(uuid, account_id);
   }
 
   @Patch(':uuid')
@@ -33,12 +33,12 @@ export class JobPositionsLevelsController {
     @Body() dto: UpdateJobPositionsLevelDto,
     @AccountId() account_id: number,
   ): Promise<JobPositionsLevel> {
-    return this.service.update(uuid, dto, account_id);
+    return this.service.updateWithAccountId(uuid, dto, account_id);
   }
 
   @Delete(':uuid')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<void> {
-    return this.service.remove(uuid, account_id);
+    return this.service.removeWithAccountId(uuid, account_id);
   }
 }

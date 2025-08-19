@@ -45,9 +45,6 @@ export class JobPosition {
   )
   levelsGroups: JobPositionsLevelsGroup[];
 
-  @Column({ name: 'job_title' })
-  job_title: string;
-
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
