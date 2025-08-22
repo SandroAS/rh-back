@@ -4,6 +4,8 @@ export const AccountId = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
 
-    return request.user.accountId;
+    console.log("REQUEST", request)
+
+    return request.user.account_id;
   }
 );
