@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode, UseGuards, Request, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, HttpStatus, HttpCode, UseGuards, Request, Query, Put } from '@nestjs/common';
 import { JobPositionService } from './job-positions.service';
 import { CreateJobPositionDto } from './dtos/create-job-position.dto';
 import { UpdateJobPositionDto } from './dtos/update-job-position.dto';
@@ -6,6 +6,7 @@ import { JobPosition } from '@/entities/job-position.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AccountId } from '@/common/decorators/account-id.decorator';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
+import JobPositionResponseDto from './dtos/job-position-response.dto';
 
 @Controller('job-positions')
 @UseGuards(JwtAuthGuard)
@@ -14,12 +15,12 @@ export class JobPositionController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createJobPositionDto: CreateJobPositionDto, @AccountId() account_id: number): Promise<JobPosition> {
-    return this.jobPositionService.createWithAccountId(createJobPositionDto, account_id);
+  async create(@Body() createJobPositionDto: CreateJobPositionDto, @AccountId() account_id: number): Promise<JobPositionResponseDto> {
+    return new JobPositionResponseDto(await this.jobPositionService.createWithAccountId(createJobPositionDto, account_id));
   }
 
   @Get()
-  findAll(@AccountId() account_id: number): Promise<JobPosition[]> {
+  findAll(@AccountId() account_id: number): Promise<JobPositionResponseDto[]> {
     return this.jobPositionService.findAllWithAccountId(account_id);
   }
 
@@ -29,11 +30,11 @@ export class JobPositionController {
   }
 
   @Get(':uuid')
-  findOne(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<JobPosition> {
+  findOne(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<JobPositionResponseDto> {
     return this.jobPositionService.findOneWithAccountId(uuid, account_id);
   }
 
-  @Patch(':uuid')
+  @Put(':uuid')
   update(
     @Param('uuid') uuid: string,
     @Body() updateJobPositionDto: UpdateJobPositionDto,

@@ -17,7 +17,6 @@ export class JobPositionService extends BaseService<JobPosition> {
   }
 
   async createWithAccountId(createJobPositionDto: CreateJobPositionDto, accountId: number): Promise<JobPosition> {
-    console.log("TESTE", accountId)
     return await super.create({ ...createJobPositionDto, account_id: accountId });
   }
 

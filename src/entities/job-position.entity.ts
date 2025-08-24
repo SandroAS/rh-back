@@ -1,26 +1,15 @@
-import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { Entity, Column, OneToMany, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
 import { User } from './user.entity';
 import { Account } from './account.entity';
 import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
+import { BaseEntity } from '../common/entities/base.entity';
 
 @Entity('job_positions')
-export class JobPosition {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ type: 'uuid', unique: true })
-  uuid: string;
-
-  @BeforeInsert()
-  generateUuid() {
-    this.uuid = uuidv4();
-  }
-
+export class JobPosition extends BaseEntity {
   @Column({ name: 'account_id', nullable: true })
   account_id: number;
 
-  @ManyToOne(() => Account, (account) => account.jobPositions, { nullable: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Account, (account) => account.jobPositions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'account_id' })
   account: Account;
 
@@ -39,19 +28,10 @@ export class JobPosition {
   @OneToMany(() => User, (user) => user.jobPosition)
   users: User[];
 
-  @OneToMany(
-    () => JobPositionsLevelsGroup,
-    (levelsGroup) => levelsGroup.job_position
-  )
-  levelsGroups: JobPositionsLevelsGroup[];
+  @OneToOne(() => JobPositionsLevelsGroup, (levelsGroup) => levelsGroup.job_position, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'job_positions_levels_group_id' })
+  levelsGroup: JobPositionsLevelsGroup;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
-
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
-  })
-  updated_at: Date;
+  @Column({ name: 'job_positions_levels_group_id', nullable: true })
+  job_positions_levels_group_id: number;
 }
