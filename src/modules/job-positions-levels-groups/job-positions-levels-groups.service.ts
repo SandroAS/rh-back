@@ -1,5 +1,3 @@
-// src/job-positions-levels-group/job-positions-levels-group.service.ts
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -27,7 +25,7 @@ export class JobPositionsLevelsGroupsService extends BaseService<JobPositionsLev
   }
 
   async findAndPaginateWithAccountId(pagination: PaginationDto, accountId: number): Promise<any> {
-    const searchColumns = ['name',];
+    const searchColumns = ['name'];
     return await super.findAndPaginate(
       pagination,
       searchColumns,

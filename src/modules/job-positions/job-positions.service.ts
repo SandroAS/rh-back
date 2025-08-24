@@ -25,7 +25,7 @@ export class JobPositionService extends BaseService<JobPosition> {
   }
 
   async findAndPaginateWithAccountId(pagination: PaginationDto, accountId: number): Promise<any> {
-    const searchColumns = ['title', 'description', 'cbo_code'];
+    const searchColumns = ['title', 'description', 'cbo_code', 'base_salary'];
     return await super.findAndPaginate(
       pagination,
       searchColumns,
