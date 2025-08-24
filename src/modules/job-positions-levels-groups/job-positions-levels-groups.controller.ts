@@ -21,8 +21,8 @@ export class JobPositionsLevelsGroupsController {
   }
 
   @Get()
-  findAll(@AccountId() account_id: number): Promise<JobPositionsLevelsGroup[]> {
-    return this.service.findAllWithAccountId(account_id);
+  async findAll(@AccountId() account_id: number): Promise<JobPositionLevelsGroupResponseDto[]> {
+    return (await this.service.findAllWithAccountId(account_id)).map(x => new JobPositionLevelsGroupResponseDto(x));
   }
 
   @Get('pagination')
