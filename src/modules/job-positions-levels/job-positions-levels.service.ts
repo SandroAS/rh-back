@@ -1,8 +1,6 @@
-// src/job-positions-levels/job-positions-levels.service.ts
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { JobPositionsLevel } from '@/entities/job-position-level.entity';
 import { CreateJobPositionsLevelDto } from './dtos/create-job-positions-level.dto';
 import { UpdateJobPositionsLevelDto } from './dtos/update-job-positions-level.dto';
@@ -18,7 +16,13 @@ export class JobPositionsLevelsService extends BaseService<JobPositionsLevel> {
     super(repository);
   }
 
-  async createWithAccountId(dto: CreateJobPositionsLevelDto, accountId: number): Promise<JobPositionsLevel> {
+  async createWithAccountId(dto: CreateJobPositionsLevelDto, accountId: number, manager?: EntityManager): Promise<JobPositionsLevel> {
+    if(manager) {
+      const jobPositionLevelsRepository = manager.getRepository(JobPositionsLevel);
+      const newEntity = jobPositionLevelsRepository.create({ ...dto, account_id: accountId });
+      return await jobPositionLevelsRepository.save(newEntity);
+    }
+
     return await super.create({ ...dto, account_id: accountId });
   }
 
