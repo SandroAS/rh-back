@@ -25,8 +25,12 @@ export class JobPositionsLevelsGroupsService extends BaseService<JobPositionsLev
     await queryRunner.startTransaction();
 
     try {
-      const levelsGroup = await queryRunner.manager.save(JobPositionsLevelsGroup, { name: dto.name, account_id: accountId });
+      const jobPositionsLevelsGroupsRepository = queryRunner.manager.getRepository(JobPositionsLevelsGroup);
+      const newGroupEntity = jobPositionsLevelsGroupsRepository.create({ name: dto.name, account_id: accountId });
+      const levelsGroup = await jobPositionsLevelsGroupsRepository.save(newGroupEntity);
+
       if (dto.jobPositionsLevels && dto.jobPositionsLevels.length > 0) {
+        levelsGroup.jobPositionsLevels = [];
         for (const levelDto of dto.jobPositionsLevels) {
           const level = await this.jobPositionsLevelsService.createWithAccountId({
             name: levelDto.name,
