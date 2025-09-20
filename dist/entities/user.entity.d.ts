@@ -6,6 +6,7 @@ import { UserMeta } from './user-meta.entity';
 import { Company } from './company.entity';
 import { Address } from './address.entity';
 import { JobPosition } from './job-position.entity';
+import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 export declare enum Gender {
     MALE = "MALE",
     FEMALE = "FEMALE"
@@ -35,6 +36,7 @@ export declare class User {
     address: Address;
     job_position_id: number;
     jobPosition: JobPosition;
+    jobPositionsLevelsGroups: JobPositionsLevelsGroup[];
     created_at: Date;
     updated_at: Date;
 }

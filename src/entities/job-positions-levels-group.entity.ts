@@ -3,6 +3,7 @@ import { Account } from './account.entity';
 import { JobPosition } from './job-position.entity';
 import { JobPositionsLevel } from './job-position-level.entity';
 import { BaseEntity } from '../common/entities/base.entity';
+import { User } from './user.entity'; // Importe a entidade User
 
 @Entity('job_positions_levels_groups')
 export class JobPositionsLevelsGroup extends BaseEntity {
@@ -12,6 +13,13 @@ export class JobPositionsLevelsGroup extends BaseEntity {
   @ManyToOne(() => Account, (account) => account.jobPositionsLevelsGroups, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'account_id' })
   account: Account;
+
+  @Column({ name: 'created_by_user_id'})
+  created_by_user_id: number;
+
+  @ManyToOne(() => User, (user) => user.jobPositionsLevelsGroups)
+  @JoinColumn({ name: 'created_by_user_id' })
+  createdBy: User;
 
   @Column()
   name: string;

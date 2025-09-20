@@ -21,6 +21,7 @@ const user_meta_entity_1 = require("./user-meta.entity");
 const company_entity_1 = require("./company.entity");
 const address_entity_1 = require("./address.entity");
 const job_position_entity_1 = require("./job-position.entity");
+const job_positions_levels_group_entity_1 = require("./job-positions-levels-group.entity");
 var Gender;
 (function (Gender) {
     Gender["MALE"] = "MALE";
@@ -135,6 +136,10 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'job_position_id' }),
     __metadata("design:type", job_position_entity_1.JobPosition)
 ], User.prototype, "jobPosition", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => job_positions_levels_group_entity_1.JobPositionsLevelsGroup, (jobPositionsLevelsGroup) => jobPositionsLevelsGroup.createdBy),
+    __metadata("design:type", Array)
+], User.prototype, "jobPositionsLevelsGroups", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)

@@ -9,6 +9,7 @@ import { UserMeta } from './user-meta.entity';
 import { Company } from './company.entity';
 import { Address } from './address.entity';
 import { JobPosition } from './job-position.entity';
+import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 
 export enum Gender {
   MALE = 'MALE',
@@ -95,6 +96,9 @@ export class User {
   @ManyToOne(() => JobPosition, (jobPosition) => jobPosition.users, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'job_position_id' })
   jobPosition: JobPosition;
+
+  @OneToMany(() => JobPositionsLevelsGroup, (jobPositionsLevelsGroup) => jobPositionsLevelsGroup.createdBy)
+  jobPositionsLevelsGroups: JobPositionsLevelsGroup[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
