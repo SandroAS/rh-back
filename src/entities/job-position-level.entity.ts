@@ -18,6 +18,9 @@ export class JobPositionsLevel extends BaseEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   salary: number;
 
+  @Column({ default: 0 })
+  order: number;
+
   @ManyToOne(
     () => JobPositionsLevelsGroup,
     (jobPositionsLevelsGroup) => jobPositionsLevelsGroup.jobPositionsLevels,

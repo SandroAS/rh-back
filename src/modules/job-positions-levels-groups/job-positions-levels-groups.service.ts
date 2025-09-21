@@ -73,6 +73,7 @@ export class JobPositionsLevelsGroupsService extends BaseService<JobPositionsLev
         qb.leftJoin('entity.createdBy', 'createdBy');
         qb.addSelect([ 'createdBy.uuid', 'createdBy.name', 'createdBy.profile_img_url' ]);
         qb.leftJoinAndSelect('entity.jobPositionsLevels', 'jobPositionsLevels');
+        // qb.addOrderBy('jobPositionsLevels.created_at', 'ASC');
         qb.andWhere('entity.account_id = :accountId', { accountId });
       }
     );
