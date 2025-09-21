@@ -1,4 +1,4 @@
-import { UserResponseDto } from '@/modules/users/dtos/user.response.dto';
+import { UserResponseDto } from '@/modules/users/dtos/user-response.dto';
 import { User } from '@/entities/user.entity';
 export declare class AccountUsersResponsePaginationDto {
     total: number;

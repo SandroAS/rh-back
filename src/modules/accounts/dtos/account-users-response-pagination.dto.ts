@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import { UserResponseDto } from '@/modules/users/dtos/user.response.dto';
+import { UserResponseDto } from '@/modules/users/dtos/user-response.dto';
 import { User } from '@/entities/user.entity';
 
 export class AccountUsersResponsePaginationDto {

@@ -1,6 +1,6 @@
 import { Expose, Type } from 'class-transformer';
 import { Account } from '@/entities/account.entity';
-import { UserResponseDto } from '@/modules/users/dtos/user.response.dto';
+import { UserResponseDto } from '@/modules/users/dtos/user-response.dto';
 
 export class AccountUsersResponseDto {
   @Expose({ name: 'users' })

@@ -8,6 +8,7 @@ import { BaseService } from '@/common/services/base.service';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import AppDataSource from '@/data-source';
 import { JobPositionsLevelsService } from '../job-positions-levels/job-positions-levels.service';
+import { User } from '@/entities/user.entity';
 
 @Injectable()
 export class JobPositionsLevelsGroupsService extends BaseService<JobPositionsLevelsGroup> {
@@ -19,30 +20,32 @@ export class JobPositionsLevelsGroupsService extends BaseService<JobPositionsLev
     super(repository);
   }
 
-  async createWithAccountId(dto: CreateJobPositionsLevelsGroupDto, accountId: number): Promise<JobPositionsLevelsGroup> {
+  async createWithAccountId(dto: CreateJobPositionsLevelsGroupDto, accountId: number, user: User): Promise<JobPositionsLevelsGroup> {
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
       const jobPositionsLevelsGroupsRepository = queryRunner.manager.getRepository(JobPositionsLevelsGroup);
-      const newGroupEntity = jobPositionsLevelsGroupsRepository.create({ name: dto.name, account_id: accountId });
+      const newGroupEntity = jobPositionsLevelsGroupsRepository.create({ name: dto.name, account_id: accountId, created_by_user_id: user.id });
       const levelsGroup = await jobPositionsLevelsGroupsRepository.save(newGroupEntity);
 
       if (dto.jobPositionsLevels && dto.jobPositionsLevels.length > 0) {
-        levelsGroup.jobPositionsLevels = [];
-        for (const levelDto of dto.jobPositionsLevels) {
-          const level = await this.jobPositionsLevelsService.createWithAccountId({
-            name: levelDto.name,
-            salary: levelDto.salary,
-            job_positions_levels_group_id: levelsGroup.id,
-          }, accountId, queryRunner.manager);
-
-          levelsGroup.jobPositionsLevels.push(level);
-        }
+        levelsGroup.jobPositionsLevels = await Promise.all(
+          dto.jobPositionsLevels.map(async levelDto => {
+            const level = await this.jobPositionsLevelsService.createWithAccountId({
+              name: levelDto.name,
+              salary: levelDto.salary,
+              job_positions_levels_group_id: levelsGroup.id,
+            }, accountId, queryRunner.manager);
+            return level;
+          })
+        );
       }
 
       await queryRunner.commitTransaction();
+
+      levelsGroup.createdBy = user;
 
       return levelsGroup;
     } catch (err) {
@@ -56,7 +59,7 @@ export class JobPositionsLevelsGroupsService extends BaseService<JobPositionsLev
   async findAllWithAccountId(accountId: number): Promise<JobPositionsLevelsGroup[]> {
     return await super.findAll({
       where: { account_id: accountId },
-      relations: ['jobPositionsLevels'],
+      relations: ['jobPositionsLevels', 'createdBy'],
     });
   }
 
@@ -66,8 +69,11 @@ export class JobPositionsLevelsGroupsService extends BaseService<JobPositionsLev
       pagination,
       searchColumns,
       (qb) => {
-        qb.andWhere('entity.account_id = :accountId', { accountId });
+        qb.select('entity');
+        qb.leftJoin('entity.createdBy', 'createdBy');
+        qb.addSelect([ 'createdBy.uuid', 'createdBy.name', 'createdBy.profile_img_url' ]);
         qb.leftJoinAndSelect('entity.jobPositionsLevels', 'jobPositionsLevels');
+        qb.andWhere('entity.account_id = :accountId', { accountId });
       }
     );
   }

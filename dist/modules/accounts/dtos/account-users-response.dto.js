@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccountUsersResponseDto = void 0;
 const class_transformer_1 = require("class-transformer");
-const user_response_dto_1 = require("../../users/dtos/user.response.dto");
+const user_response_dto_1 = require("../../users/dtos/user-response.dto");
 class AccountUsersResponseDto {
     constructor(account) {
         this.users = [];

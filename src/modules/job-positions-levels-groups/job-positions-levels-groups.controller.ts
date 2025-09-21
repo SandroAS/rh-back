@@ -8,6 +8,8 @@ import { UpdateJobPositionsLevelsGroupDto } from './dtos/update-job-positions-le
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { JobPositionsLevelsGroupsPaginationResponseDto } from './dtos/job-positions-levels-groups-pagination-response.dto';
 import JobPositionLevelsGroupResponseDto from './dtos/job-positions-levels-group-response.dto';
+import { AuthUser } from '@/common/decorators/auth-user.decorator';
+import { User } from '@/entities/user.entity';
 
 @Controller('job-positions-levels-groups')
 @UseGuards(JwtAuthGuard)
@@ -16,8 +18,8 @@ export class JobPositionsLevelsGroupsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() dto: CreateJobPositionsLevelsGroupDto, @AccountId() account_id: number): Promise<JobPositionLevelsGroupResponseDto> {
-    return new JobPositionLevelsGroupResponseDto(await this.service.createWithAccountId(dto, account_id));
+  async create(@Body() dto: CreateJobPositionsLevelsGroupDto, @AccountId() account_id: number, @AuthUser() user: User): Promise<JobPositionLevelsGroupResponseDto> {
+    return new JobPositionLevelsGroupResponseDto(await this.service.createWithAccountId(dto, account_id, user));
   }
 
   @Get()
