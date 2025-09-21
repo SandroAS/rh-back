@@ -89,7 +89,62 @@ export class JobPositionsLevelsGroupsService extends BaseService<JobPositionsLev
   }
 
   async updateWithAccountId(uuid: string, dto: UpdateJobPositionsLevelsGroupDto, accountId: number): Promise<JobPositionsLevelsGroup> {
-    return await super.updateByUuid(uuid, dto, accountId);
+    const queryRunner = AppDataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const existingGroup = await queryRunner.manager.findOne(JobPositionsLevelsGroup, {
+        where: { uuid, account_id: accountId },
+        relations: ['jobPositionsLevels'],
+      });
+
+      if (!existingGroup) {
+        throw new NotFoundException(`Grupo de níveis de cargo com UUID "${uuid}" não encontrado.`);
+      }
+
+      existingGroup.name = dto.name;
+      await queryRunner.manager.save(existingGroup);
+
+      const existingLevelUuids = existingGroup.jobPositionsLevels.map(level => level.uuid);
+      const incomingLevelUuids = dto.jobPositionsLevels.filter(level => level.uuid).map(level => level.uuid);
+
+      const levelsToDeleteUuids = existingLevelUuids.filter(id => !incomingLevelUuids.includes(id));
+      
+      if (levelsToDeleteUuids.length > 0) {
+        await Promise.all(levelsToDeleteUuids.map(
+          levelUuid => this.jobPositionsLevelsService.removeWithAccountId(levelUuid, accountId, queryRunner.manager)
+        ));
+      }
+      
+      await Promise.all(
+        dto.jobPositionsLevels.map((levelDto, index) => {
+          if (levelDto.uuid) {
+            return this.jobPositionsLevelsService.updateWithAccountId(levelDto.uuid, {
+              ...levelDto,
+              order: index
+            }, accountId, queryRunner.manager);
+          } else {
+            return this.jobPositionsLevelsService.createWithAccountId({
+              name: levelDto.name,
+              salary: levelDto.salary,
+              job_positions_levels_group_id: existingGroup.id,
+              order: index
+            }, accountId, queryRunner.manager);
+          }
+        })
+      );
+      
+      await queryRunner.commitTransaction();
+
+      return await this.findOneWithAccountId(uuid, accountId);
+
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException('Erro ao atualizar o grupo de níveis de cargo: ' + err.message);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async removeWithAccountId(uuid: string, accountId: number): Promise<void> {

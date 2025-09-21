@@ -4,6 +4,10 @@ import { Type } from 'class-transformer';
 export class UpdateJobPositionsLevelDto {
   @IsString()
   @IsOptional()
+  uuid?: string;
+
+  @IsString()
+  @IsOptional()
   name?: string;
 
   @IsOptional()
@@ -15,4 +19,8 @@ export class UpdateJobPositionsLevelDto {
   @IsNumber()
   @IsOptional()
   job_positions_levels_group_id?: number;
+
+  @IsOptional()
+  @IsNumber()
+  order?: number;
 }

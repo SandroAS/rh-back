@@ -1,11 +1,11 @@
-import { IsString, IsOptional, IsNumber } from 'class-validator';
+import { UpdateJobPositionsLevelDto } from '@/modules/job-positions-levels/dtos/update-job-positions-level.dto';
+import { IsString, IsOptional } from 'class-validator';
 
 export class UpdateJobPositionsLevelsGroupDto {
   @IsString()
   @IsOptional()
   name?: string;
 
-  @IsNumber()
   @IsOptional()
-  job_position_id?: number;
+  jobPositionsLevels?: UpdateJobPositionsLevelDto[];
 }

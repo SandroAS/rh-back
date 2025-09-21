@@ -49,11 +49,42 @@ export class JobPositionsLevelsService extends BaseService<JobPositionsLevel> {
     return level;
   }
 
-  async updateWithAccountId(uuid: string, dto: UpdateJobPositionsLevelDto, accountId: number): Promise<JobPositionsLevel> {
+  async updateWithAccountId(uuid: string, dto: UpdateJobPositionsLevelDto, accountId: number, manager?: EntityManager): Promise<JobPositionsLevel> {
+    if(manager) {
+      const jobPositionLevelsRepository = manager.getRepository(JobPositionsLevel);
+
+      const whereClause: any = { uuid: uuid };
+      if (accountId) {
+        whereClause.account_id = accountId;
+      }
+
+      const entity = await jobPositionLevelsRepository.findOne({ where: whereClause });
+      if (!entity) {
+        throw new NotFoundException(`Nível de cargo com UUID "${uuid}" não encontrada ao tentar atualizar.`);
+      }
+
+      Object.assign(entity, dto);
+      return await jobPositionLevelsRepository.save(entity);
+    }
+
     return await super.updateByUuid(uuid, dto, accountId);
   }
 
-  async removeWithAccountId(uuid: string, accountId: number): Promise<void> {
-    await super.removeByUuid(uuid, accountId);
+  async removeWithAccountId(uuid: string, accountId: number, manager?: EntityManager): Promise<void> {
+    if(manager) {
+      const jobPositionLevelsRepository = manager.getRepository(JobPositionsLevel);
+
+      const whereClause: any = { uuid: uuid };
+      if (accountId) {
+        whereClause.account_id = accountId;
+      }
+
+      const result = await jobPositionLevelsRepository.delete(whereClause);
+      if (result.affected === 0) {
+        throw new NotFoundException(`Nível de cargo com UUID "${uuid}" não encontrado ao tentar deletar.`);
+      }
+    } else {
+      await super.removeByUuid(uuid, accountId);
+    }
   }
 }
