@@ -32,11 +32,12 @@ export class JobPositionsLevelsGroupsService extends BaseService<JobPositionsLev
 
       if (dto.jobPositionsLevels && dto.jobPositionsLevels.length > 0) {
         levelsGroup.jobPositionsLevels = await Promise.all(
-          dto.jobPositionsLevels.map(async levelDto => {
+          dto.jobPositionsLevels.map(async (levelDto, index) => {
             const level = await this.jobPositionsLevelsService.createWithAccountId({
               name: levelDto.name,
               salary: levelDto.salary,
               job_positions_levels_group_id: levelsGroup.id,
+              order: index
             }, accountId, queryRunner.manager);
             return level;
           })
@@ -73,7 +74,7 @@ export class JobPositionsLevelsGroupsService extends BaseService<JobPositionsLev
         qb.leftJoin('entity.createdBy', 'createdBy');
         qb.addSelect([ 'createdBy.uuid', 'createdBy.name', 'createdBy.profile_img_url' ]);
         qb.leftJoinAndSelect('entity.jobPositionsLevels', 'jobPositionsLevels');
-        // qb.addOrderBy('jobPositionsLevels.created_at', 'ASC');
+        qb.addOrderBy('jobPositionsLevels.order', 'ASC');
         qb.andWhere('entity.account_id = :accountId', { accountId });
       }
     );

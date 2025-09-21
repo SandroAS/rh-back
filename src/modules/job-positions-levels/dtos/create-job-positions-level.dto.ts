@@ -15,4 +15,8 @@ export class CreateJobPositionsLevelDto {
   @IsNumber()
   @IsOptional()
   job_positions_levels_group_id?: number;
+
+  @IsOptional()
+  @IsNumber()
+  order?: number;
 }
