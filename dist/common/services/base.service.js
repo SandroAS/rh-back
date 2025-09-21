@@ -41,10 +41,10 @@ let BaseService = class BaseService {
         else {
             queryBuilder.orderBy('entity.created_at', 'DESC');
         }
-        const [data, total] = await Promise.all([
-            queryBuilder.offset(skip).limit(limit).getMany(),
-            queryBuilder.getCount(),
-        ]);
+        const [data, total] = await queryBuilder
+            .skip(skip)
+            .take(limit)
+            .getManyAndCount();
         const last_page = Math.ceil(total / limit);
         return {
             data,

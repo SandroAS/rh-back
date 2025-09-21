@@ -24,12 +24,8 @@ export class JobPositionsLevelsGroup extends BaseEntity {
   @Column()
   name: string;
 
-  @OneToOne(() => JobPosition, (jobPosition) => jobPosition.levelsGroup)
-  @JoinColumn({ name: 'job_position_id' })
-  job_position: JobPosition;
-
-  @Column({ name: 'job_position_id', nullable: true })
-  job_position_id: number;
+  @OneToMany(() => JobPosition, (jobPosition) => jobPosition.levelsGroup)
+  jobPositions: JobPosition[];
 
   @OneToMany(
     () => JobPositionsLevel,

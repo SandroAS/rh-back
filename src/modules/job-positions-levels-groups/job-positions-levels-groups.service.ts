@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, QueryRunner } from 'typeorm';
+import { Repository } from 'typeorm';
 import { JobPositionsLevelsGroup } from '@/entities/job-positions-levels-group.entity';
 import { CreateJobPositionsLevelsGroupDto } from './dtos/create-job-positions-levels-group.dto';
 import { UpdateJobPositionsLevelsGroupDto } from './dtos/update-job-positions-levels-group.dto';

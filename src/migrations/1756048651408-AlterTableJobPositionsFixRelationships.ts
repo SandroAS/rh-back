@@ -5,7 +5,7 @@ export class AlterTableJobPositionsFixRelationships1756048651408 implements Migr
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE \`job_positions_levels_groups\` DROP FOREIGN KEY \`FK_a458f90cd4acaab8b3748c38c92\``);
-        await queryRunner.query(`ALTER TABLE \`job_positions\` ADD \`job_positions_levels_group_id\` int NULL`);
+        await queryRunner.query(`ALTER TABLE \`job_positions\` ADD \`job_positions_levels_group_id\` int NULL AFTER \`account_id\``);
         await queryRunner.query(`ALTER TABLE \`job_positions\` ADD UNIQUE INDEX \`IDX_538cc737d5ebf06e36021514ac\` (\`job_positions_levels_group_id\`)`);
         await queryRunner.query(`ALTER TABLE \`job_positions_levels_groups\` ADD UNIQUE INDEX \`IDX_a458f90cd4acaab8b3748c38c9\` (\`job_position_id\`)`);
         await queryRunner.query(`CREATE UNIQUE INDEX \`REL_a458f90cd4acaab8b3748c38c9\` ON \`job_positions_levels_groups\` (\`job_position_id\`)`);
