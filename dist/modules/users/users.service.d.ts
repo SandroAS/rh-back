@@ -20,6 +20,7 @@ export declare class UsersService {
     findOne(id: number, relations?: string[], manager?: EntityManager): Promise<User | undefined>;
     findByEmail(email: string, relations?: string[]): Promise<User | undefined>;
     findByUuid(uuid: string, select?: string[]): Promise<User>;
+    findByUuidsAndAccountId(uuids: string[]): Promise<void>;
     findAndPaginateByAccountId(accountId: number, page: number, limit: number, sortColumn?: string, sortOrder?: 'asc' | 'desc', searchTerm?: string): Promise<[User[], number]>;
     update(id: number, body: UpdateUserDto, manager?: EntityManager): Promise<User>;
     updateUserPersonalInformations(uuid: string, body: UpdateUserPersonalInformationDto, file?: Express.Multer.File): Promise<UpdateUserPersonalInformationResponseDto>;

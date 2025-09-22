@@ -8,6 +8,8 @@ import { SystemModule } from './system-module.entity';
 import { JobPosition } from './job-position.entity';
 import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 import { JobPositionsLevel } from './job-position-level.entity';
+import { Team } from './team.entity';
+import { TeamMember } from './team-member.entity';
 export declare class Account {
     id: number;
     uuid: string;
@@ -30,6 +32,8 @@ export declare class Account {
     jobPositions: JobPosition[];
     jobPositionsLevelsGroups: JobPositionsLevelsGroup[];
     jobPositionsLevels: JobPositionsLevel[];
+    teams: Team[];
+    teamMembers: TeamMember[];
     created_at: Date;
     updated_at: Date;
 }

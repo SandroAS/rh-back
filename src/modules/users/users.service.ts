@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../entities/user.entity';
 import { randomBytes, timingSafeEqual, scrypt as _scrypt } from 'crypto';
@@ -137,6 +137,21 @@ export class UsersService {
     }
     
     return await user.getOne();
+  }
+
+  async findByUuidsAndAccountId(uuids: string[], account_id: number): Promise<User[]> {
+    const users = await this.userRepository.find({
+      where: { uuid: In(uuids), account_id: account_id },
+      select: ['id', 'uuid', 'account_id'],
+    });
+
+    if (users.length !== uuids.length) {
+      const foundUuids = users.map(user => user.uuid);
+      const notFoundUuids = uuids.filter(uuid => !foundUuids.includes(uuid));
+      throw new NotFoundException(`Usuário(s) com UUID(s) "${notFoundUuids.join(', ')}" não encontrado(s) para a sua conta.`);
+    }
+
+    return users;
   }
 
   async findAndPaginateByAccountId(accountId: number, page: number, limit: number, sortColumn?: string, sortOrder?: 'asc' | 'desc', searchTerm?: string): Promise<[User[], number]> {

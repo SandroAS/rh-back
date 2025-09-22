@@ -122,6 +122,8 @@ let UsersService = class UsersService {
         }
         return await user.getOne();
     }
+    async findByUuidsAndAccountId(uuids) {
+    }
     async findAndPaginateByAccountId(accountId, page, limit, sortColumn, sortOrder, searchTerm) {
         const queryBuilder = this.userRepository
             .createQueryBuilder('user')

@@ -23,6 +23,8 @@ import { AddressesModule } from './modules/addresses/addresses.module';
 import { JobPositionsModule } from './modules/job-positions/job-positions.module';
 import { JobPositionsLevelsGroupsModule } from './modules/job-positions-levels-groups/job-positions-levels-groups.module';
 import { JobPositionsLevelsModule } from './modules/job-positions-levels/job-positions-levels.module';
+import { TeamsModule } from './modules/teams/teams.module';
+import { TeamMembersModule } from './modules/team-members/team-members.module';
 
 const cookieSession = require('cookie-session');
 
@@ -67,7 +69,9 @@ const cookieSession = require('cookie-session');
     AddressesModule,
     JobPositionsModule,
     JobPositionsLevelsGroupsModule,
-    JobPositionsLevelsModule
+    JobPositionsLevelsModule,
+    TeamsModule,
+    TeamMembersModule
   ],
   controllers: [AppController],
   providers: [

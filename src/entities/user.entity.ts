@@ -10,6 +10,8 @@ import { Company } from './company.entity';
 import { Address } from './address.entity';
 import { JobPosition } from './job-position.entity';
 import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
+import { Team } from './team.entity';
+import { TeamMember } from './team-member.entity';
 
 export enum Gender {
   MALE = 'MALE',
@@ -99,6 +101,12 @@ export class User {
 
   @OneToMany(() => JobPositionsLevelsGroup, (jobPositionsLevelsGroup) => jobPositionsLevelsGroup.createdBy)
   jobPositionsLevelsGroups: JobPositionsLevelsGroup[];
+
+  @OneToMany(() => Team, (team) => team.createdBy)
+  teams: Team[];
+
+  @OneToMany(() => TeamMember, (teamMember) => teamMember.user)
+  teamMembers: TeamMember[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

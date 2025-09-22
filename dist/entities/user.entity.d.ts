@@ -7,6 +7,8 @@ import { Company } from './company.entity';
 import { Address } from './address.entity';
 import { JobPosition } from './job-position.entity';
 import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
+import { Team } from './team.entity';
+import { TeamMember } from './team-member.entity';
 export declare enum Gender {
     MALE = "MALE",
     FEMALE = "FEMALE"
@@ -37,6 +39,8 @@ export declare class User {
     job_position_id: number;
     jobPosition: JobPosition;
     jobPositionsLevelsGroups: JobPositionsLevelsGroup[];
+    teams: Team[];
+    teamMembers: TeamMember[];
     created_at: Date;
     updated_at: Date;
 }
