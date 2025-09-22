@@ -6,6 +6,10 @@ export class UpdateTeamDto {
   name?: string;
 
   @IsOptional()
+  @IsUUID('4')
+  lead?: string;
+
+  @IsOptional()
   @IsArray()
   @IsUUID('4', { each: true })
   member_uuids: string[];

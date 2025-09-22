@@ -14,11 +14,18 @@ export class TeamResponseDto {
   createdBy: UserAvatarResponseDto;
 
   @Expose()
+  lead: UserAvatarResponseDto;
+
+  @Expose()
   @Type(() => TeamMemberResponseDto)
   teamMembers: TeamMemberResponseDto[];
 
   constructor(partial: Partial<Team>) {
     Object.assign(this, partial);
+    if (partial.lead) {
+      this.lead = new UserAvatarResponseDto(partial.lead);
+    }
+
     if (partial.createdBy) {
       this.createdBy = new UserAvatarResponseDto(partial.createdBy);
     }

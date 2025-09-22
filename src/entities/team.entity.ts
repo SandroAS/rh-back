@@ -20,10 +20,16 @@ export class Team extends BaseEntity {
   @JoinColumn({ name: 'created_by_user_id' })
   createdBy: User;
 
+  @Column({ name: 'lead_user_id' })
+  lead_user_id: number;
+
+  @ManyToOne(() => User, (user) => user.teams)
+  @JoinColumn({ name: 'lead_user_id' })
+  lead: User;
+
   @Column({ unique: true })
   name: string;
 
-  // Relacionamento com os membros do time
   @OneToMany(() => TeamMember, (teamMember) => teamMember.team)
   teamMembers: TeamMember[];
 }
