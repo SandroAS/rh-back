@@ -122,7 +122,17 @@ let UsersService = class UsersService {
         }
         return await user.getOne();
     }
-    async findByUuidsAndAccountId(uuids) {
+    async findByUuidsAndAccountId(uuids, account_id) {
+        const users = await this.userRepository.find({
+            where: { uuid: (0, typeorm_1.In)(uuids), account_id: account_id },
+            select: ['id', 'uuid', 'account_id'],
+        });
+        if (users.length !== uuids.length) {
+            const foundUuids = users.map(user => user.uuid);
+            const notFoundUuids = uuids.filter(uuid => !foundUuids.includes(uuid));
+            throw new common_1.NotFoundException(`Usuário(s) com UUID(s) "${notFoundUuids.join(', ')}" não encontrado(s) para a sua conta.`);
+        }
+        return users;
     }
     async findAndPaginateByAccountId(accountId, page, limit, sortColumn, sortOrder, searchTerm) {
         const queryBuilder = this.userRepository

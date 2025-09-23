@@ -1,5 +1,3 @@
-// src/teams/teams.controller.ts
-
 import { Controller, Post, Body, UseGuards, Get, Query, Param, Patch, HttpCode, HttpStatus, Delete } from '@nestjs/common';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { TeamsService } from './teams.service';
