@@ -1,16 +1,12 @@
 import { IsString, IsArray, IsUUID, IsOptional } from 'class-validator';
 
-export class UpdateTeamDto {
-  @IsOptional()
+export class UpdateSectorDto {
   @IsString()
+  @IsOptional()
   name?: string;
 
-  @IsOptional()
-  @IsUUID('4')
-  lead?: string;
-
-  @IsOptional()
   @IsArray()
+  @IsOptional()
   @IsUUID('4', { each: true })
-  member_uuids: string[];
+  user_uuids?: string[];
 }

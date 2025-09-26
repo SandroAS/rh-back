@@ -3,6 +3,7 @@ import { BaseEntity } from '../common/entities/base.entity';
 import { Account } from './account.entity';
 import { User } from './user.entity';
 import { TeamMember } from './team-member.entity';
+import { Sector } from './sector.entity';
 
 @Entity('teams')
 export class Team extends BaseEntity {
@@ -26,6 +27,13 @@ export class Team extends BaseEntity {
   @ManyToOne(() => User, (user) => user.teams)
   @JoinColumn({ name: 'lead_user_id' })
   lead: User;
+
+  @Column({ name: 'sector_id', nullable: true })
+  sector_id: number;
+
+  @ManyToOne(() => Sector, (sector) => sector.teams, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'sector_id' })
+  sector: Sector;
 
   @Column({ unique: true })
   name: string;

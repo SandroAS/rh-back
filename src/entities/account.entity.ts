@@ -12,6 +12,7 @@ import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 import { JobPositionsLevel } from './job-position-level.entity';
 import { Team } from './team.entity';
 import { TeamMember } from './team-member.entity';
+import { Sector } from './sector.entity';
 
 @Entity('accounts')
 export class Account {
@@ -100,6 +101,9 @@ export class Account {
 
   @OneToMany(() => TeamMember, (teamMember) => teamMember.account)
   teamMembers: TeamMember[];
+
+  @OneToMany(() => Sector, (sector) => sector.account)
+  sectors: Sector[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

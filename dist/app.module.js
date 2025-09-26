@@ -37,6 +37,7 @@ const job_positions_levels_groups_module_1 = require("./modules/job-positions-le
 const job_positions_levels_module_1 = require("./modules/job-positions-levels/job-positions-levels.module");
 const teams_module_1 = require("./modules/teams/teams.module");
 const team_members_module_1 = require("./modules/team-members/team-members.module");
+const sectors_module_1 = require("./modules/sectors/sectors.module");
 const cookieSession = require('cookie-session');
 let AppModule = class AppModule {
     constructor(configService) {
@@ -95,7 +96,8 @@ exports.AppModule = AppModule = __decorate([
             job_positions_levels_groups_module_1.JobPositionsLevelsGroupsModule,
             job_positions_levels_module_1.JobPositionsLevelsModule,
             teams_module_1.TeamsModule,
-            team_members_module_1.TeamMembersModule
+            team_members_module_1.TeamMembersModule,
+            sectors_module_1.SectorsModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [

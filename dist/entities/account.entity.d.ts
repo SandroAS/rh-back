@@ -10,6 +10,7 @@ import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 import { JobPositionsLevel } from './job-position-level.entity';
 import { Team } from './team.entity';
 import { TeamMember } from './team-member.entity';
+import { Sector } from './sector.entity';
 export declare class Account {
     id: number;
     uuid: string;
@@ -34,6 +35,7 @@ export declare class Account {
     jobPositionsLevels: JobPositionsLevel[];
     teams: Team[];
     teamMembers: TeamMember[];
+    sectors: Sector[];
     created_at: Date;
     updated_at: Date;
 }

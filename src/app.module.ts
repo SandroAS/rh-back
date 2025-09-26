@@ -25,6 +25,7 @@ import { JobPositionsLevelsGroupsModule } from './modules/job-positions-levels-g
 import { JobPositionsLevelsModule } from './modules/job-positions-levels/job-positions-levels.module';
 import { TeamsModule } from './modules/teams/teams.module';
 import { TeamMembersModule } from './modules/team-members/team-members.module';
+import { SectorsModule } from './modules/sectors/sectors.module';
 
 const cookieSession = require('cookie-session');
 
@@ -71,7 +72,8 @@ const cookieSession = require('cookie-session');
     JobPositionsLevelsGroupsModule,
     JobPositionsLevelsModule,
     TeamsModule,
-    TeamMembersModule
+    TeamMembersModule,
+    SectorsModule
   ],
   controllers: [AppController],
   providers: [

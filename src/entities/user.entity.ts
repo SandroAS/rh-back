@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, BeforeInsert, OneToMany, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, BeforeInsert, OneToMany, OneToOne, JoinTable, ManyToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { v4 as uuidv4 } from 'uuid';
 import { Account } from './account.entity';
@@ -12,6 +12,7 @@ import { JobPosition } from './job-position.entity';
 import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 import { Team } from './team.entity';
 import { TeamMember } from './team-member.entity';
+import { Sector } from './sector.entity';
 
 export enum Gender {
   MALE = 'MALE',
@@ -107,6 +108,12 @@ export class User {
 
   @OneToMany(() => TeamMember, (teamMember) => teamMember.user)
   teamMembers: TeamMember[];
+
+  @OneToMany(() => Sector, (sector) => sector.createdBy)
+  sectors_created: Sector[];
+
+  @ManyToMany(() => Sector, (sector) => sector.users)
+  sectors: Sector[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
