@@ -19,7 +19,7 @@ export class AccountsController {
     return this.accountsService.createAccountUser(data, user);
   }
 
-  @Get('users')
+  @Get('pagination')
   @UseGuards(JwtAuthGuard)
   findAllAccountUsers(@Request() req, @Query() pagination: PaginationDto) {
     const user: User = req.user as User;

@@ -7,7 +7,7 @@ export declare class UsersController {
     private usersService;
     constructor(usersService: UsersService);
     findUser(id: string): Promise<User>;
-    findAllUsers(email: string): Promise<User>;
+    findAllAccountUsers(account_id: number): Promise<import("./dtos/user-avatar-response.dto").UserAvatarResponseDto[]>;
     updateUserPersonalInformations(uuid: string, body: UpdateUserPersonalInformationDto, file?: Express.Multer.File): Promise<UpdateUserPersonalInformationResponseDto>;
     updateUserPassword(uuid: string, body: UpdateUserPasswordDto, req: any): Promise<boolean>;
     removeUser(id: string): Promise<User>;

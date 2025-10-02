@@ -19,6 +19,7 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const update_user_personal_information_dto_1 = require("./dtos/update-user-personal-information.dto");
 const platform_express_1 = require("@nestjs/platform-express");
 const update_user_password_dto_1 = require("./dtos/update-user-password.dto");
+const account_id_decorator_1 = require("../../common/decorators/account-id.decorator");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -30,8 +31,8 @@ let UsersController = class UsersController {
         }
         return user;
     }
-    findAllUsers(email) {
-        return this.usersService.findByEmail(email);
+    findAllAccountUsers(account_id) {
+        return this.usersService.findAllAccountUsers(account_id);
     }
     async updateUserPersonalInformations(uuid, body, file) {
         if (body.gender !== null && body.gender !== undefined && body.gender !== 'MALE' && body.gender !== 'FEMALE') {
@@ -59,11 +60,11 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    __param(0, (0, common_1.Query)('email')),
+    __param(0, (0, account_id_decorator_1.AccountId)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
-], UsersController.prototype, "findAllUsers", null);
+], UsersController.prototype, "findAllAccountUsers", null);
 __decorate([
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('profile_image', {
         limits: { fileSize: 5 * 1024 * 1024 },
@@ -102,7 +103,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "removeUser", null);
 exports.UsersController = UsersController = __decorate([
-    (0, common_1.Controller)('user'),
+    (0, common_1.Controller)('users'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersController);
 //# sourceMappingURL=users.controller.js.map

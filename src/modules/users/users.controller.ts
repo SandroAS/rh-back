@@ -6,8 +6,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateUserPersonalInformationResponseDto } from './dtos/update-user-personal-information-response.dto';
 import { UpdateUserPasswordDto } from './dtos/update-user-password.dto';
 import { User } from '@/entities/user.entity';
+import { AccountId } from '@/common/decorators/account-id.decorator';
 
-@Controller('user')
+@Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
@@ -23,8 +25,8 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAllUsers(@Query('email') email: string) {
-    return this.usersService.findByEmail(email);
+  findAllAccountUsers(@AccountId() account_id: number) {
+    return this.usersService.findAllAccountUsers(account_id);
   }
 
   @UseInterceptors(FileInterceptor('profile_image', {

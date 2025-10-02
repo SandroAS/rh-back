@@ -21,6 +21,7 @@ const crypto_1 = require("crypto");
 const util_1 = require("util");
 const roles_service_1 = require("../roles/roles.service");
 const minio_service_1 = require("../../minio/minio.service");
+const user_avatar_response_dto_1 = require("./dtos/user-avatar-response.dto");
 const scrypt = (0, util_1.promisify)(crypto_1.scrypt);
 let UsersService = class UsersService {
     constructor(userRepository, rolesService, minioService) {
@@ -175,6 +176,22 @@ let UsersService = class UsersService {
         const skip = (page - 1) * limit;
         queryBuilder.skip(skip).take(limit);
         return await queryBuilder.getManyAndCount();
+    }
+    async findAllAccountUsers(account_id) {
+        const users = await this.userRepository.find({ where: { account_id }, select: ['uuid', 'name', 'profile_img_url'], loadEagerRelations: false });
+        const usersMapped = await Promise.all(users.map(async (user) => {
+            if (user?.profile_img_url && !user.profile_img_url.includes('googleusercontent')) {
+                try {
+                    user.profile_img_url = await this.minioService.getPresignedUrl(user.profile_img_url);
+                }
+                catch (err) {
+                    this.minioService['logger'].error(`Falha ao tentar gerar url assinada para usuário, image '${user.profile_img_url}': ${err.message}`);
+                    user.profile_img_url = null;
+                }
+            }
+            return new user_avatar_response_dto_1.UserAvatarResponseDto(user);
+        }));
+        return usersMapped;
     }
     async update(id, body, manager) {
         const userRepository = manager ? manager.getRepository(user_entity_1.User) : this.userRepository;

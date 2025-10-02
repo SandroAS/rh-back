@@ -50,7 +50,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "createAccountUser", null);
 __decorate([
-    (0, common_1.Get)('users'),
+    (0, common_1.Get)('pagination'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Query)()),

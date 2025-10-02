@@ -10,6 +10,7 @@ import { MinioService } from '@/minio/minio.service';
 import { UpdateUserPersonalInformationResponseDto } from './dtos/update-user-personal-information-response.dto';
 import { UpdateUserPasswordDto } from './dtos/update-user-password.dto';
 import { CreateAccountUserDto } from '../accounts/dtos/create-account-user.dto';
+import { UserAvatarResponseDto } from './dtos/user-avatar-response.dto';
 export declare class UsersService {
     private userRepository;
     private readonly rolesService;
@@ -22,6 +23,7 @@ export declare class UsersService {
     findByUuid(uuid: string, select?: string[]): Promise<User>;
     findByUuidsAndAccountId(uuids: string[], account_id: number): Promise<User[]>;
     findAndPaginateByAccountId(accountId: number, page: number, limit: number, sortColumn?: string, sortOrder?: 'asc' | 'desc', searchTerm?: string): Promise<[User[], number]>;
+    findAllAccountUsers(account_id: number): Promise<UserAvatarResponseDto[]>;
     update(id: number, body: UpdateUserDto, manager?: EntityManager): Promise<User>;
     updateUserPersonalInformations(uuid: string, body: UpdateUserPersonalInformationDto, file?: Express.Multer.File): Promise<UpdateUserPersonalInformationResponseDto>;
     updateUserPassword(uuid: string, body: UpdateUserPasswordDto, user: User): Promise<boolean>;

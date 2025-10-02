@@ -14,6 +14,7 @@ import { MinioService } from '@/minio/minio.service';
 import { UpdateUserPersonalInformationResponseDto } from './dtos/update-user-personal-information-response.dto';
 import { UpdateUserPasswordDto } from './dtos/update-user-password.dto';
 import { CreateAccountUserDto } from '../accounts/dtos/create-account-user.dto';
+import { UserAvatarResponseDto } from './dtos/user-avatar-response.dto';
 
 const scrypt = promisify(_scrypt);
 
@@ -201,6 +202,24 @@ export class UsersService {
     queryBuilder.skip(skip).take(limit);
 
     return await queryBuilder.getManyAndCount();
+  }
+
+  async findAllAccountUsers(account_id: number): Promise<UserAvatarResponseDto[]> {
+    const users = await this.userRepository.find({ where: { account_id }, select: ['uuid', 'name', 'profile_img_url'], loadEagerRelations: false });
+    const usersMapped = await Promise.all(users.map(async (user) => {
+      if (user?.profile_img_url && !user.profile_img_url.includes('googleusercontent')) {
+        try {
+          user.profile_img_url = await this.minioService.getPresignedUrl(user.profile_img_url);
+        } catch (err) {
+          this.minioService['logger'].error(`Falha ao tentar gerar url assinada para usuário, image '${user.profile_img_url}': ${err.message}`);
+          user.profile_img_url = null;
+        }
+      }
+
+      return new UserAvatarResponseDto(user);
+    }));
+
+    return usersMapped;
   }
 
   async update(id: number, body: UpdateUserDto, manager?: EntityManager): Promise<User> {
