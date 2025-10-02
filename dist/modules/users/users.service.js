@@ -125,7 +125,7 @@ let UsersService = class UsersService {
     }
     async findByUuidsAndAccountId(uuids, account_id) {
         const users = await this.userRepository.find({
-            where: { uuid: (0, typeorm_1.In)(uuids), account_id: account_id },
+            where: { uuid: (0, typeorm_1.In)(uuids), account_id },
             select: ['id', 'uuid', 'account_id'],
         });
         if (users.length !== uuids.length) {
@@ -134,6 +134,13 @@ let UsersService = class UsersService {
             throw new common_1.NotFoundException(`Usuário(s) com UUID(s) "${notFoundUuids.join(', ')}" não encontrado(s) para a sua conta.`);
         }
         return users;
+    }
+    async findOneByUuidAndAccountId(uuid, account_id) {
+        const user = await this.userRepository.findOne({
+            where: { uuid, account_id },
+            select: ['id', 'uuid', 'name', 'profile_img_url'],
+        });
+        return user;
     }
     async findAndPaginateByAccountId(accountId, page, limit, sortColumn, sortOrder, searchTerm) {
         const queryBuilder = this.userRepository

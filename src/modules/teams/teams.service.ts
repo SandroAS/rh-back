@@ -11,6 +11,7 @@ import { UsersService } from '@/modules/users/users.service';
 import { TeamMembersService } from '@/modules/team-members/team-members.service';
 import { User } from '@/entities/user.entity';
 import { PaginationResult } from '@/common/services/base.service';
+import { SectorsService } from '../sectors/sectors.service';
 
 @Injectable()
 export class TeamsService extends BaseService<Team> {
@@ -19,38 +20,64 @@ export class TeamsService extends BaseService<Team> {
     protected readonly repository: Repository<Team>,
     private readonly usersService: UsersService,
     private readonly teamMembersService: TeamMembersService,
+    private readonly sectorsService: SectorsService,
   ) {
     super(repository);
   }
 
-  async createWithAccountId(dto: CreateTeamDto, accountId: number, user: User): Promise<Team> {
+  async createWithAccountId(dto: CreateTeamDto, user: User): Promise<Team> {
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
+      const leadUser = await this.usersService.findOneByUuidAndAccountId(dto.lead, user.account_id);
+      if (!leadUser) {
+        throw new NotFoundException(`Usuário com UUID "${dto.lead}" não encontrado ao tentar criar time.`);
+      }
+
+      let sectorId: number | undefined;
+
+      if (dto.sector_uuid) {
+        const sector = await this.sectorsService.findOneWithAccountId(dto.sector_uuid, user.account_id);
+        if (!sector) {
+          throw new NotFoundException(`Setor com UUID "${dto.sector_uuid}" não encontrado ao tentar criar time.`);
+        }
+        sectorId = sector.id;
+      }
+
       const newTeamEntity = queryRunner.manager.create(Team, {
         name: dto.name,
-        account_id: accountId,
+        account_id: user.account_id,
         created_by_user_id: user.id,
+        lead_user_id: leadUser.id,
+        sector_id: sectorId,
       });
       const team = await queryRunner.manager.save(newTeamEntity);
 
-      const memberUuids = [...new Set([...dto.member_uuids, user.uuid])];
-      const members = await this.usersService.findByUuidsAndAccountId(memberUuids, accountId);
+      const membersToInclude = new Set([ dto.lead, ...dto.member_uuids ]);
+      const memberUuids = Array.from(membersToInclude);
+
+      const members = await this.usersService.findByUuidsAndAccountId(memberUuids, user.account_id);
       const memberIds = members.map(member => member.id);
       
-      await this.teamMembersService.createMany(team.id, accountId, memberIds, queryRunner.manager);
+      await this.teamMembersService.createMany(team.id, user.account_id, memberIds, queryRunner.manager);
 
       await queryRunner.commitTransaction();
 
+      console.log('TEAM', team)
+
       const createdTeam = await this.repository.findOne({
-        where: { uuid: team.uuid, account_id: accountId },
-        relations: ['createdBy', 'teamMembers', 'teamMembers.user'],
+        where: { uuid: team.uuid, account_id: user.account_id },
+        relations: ['createdBy', 'teamMembers', 'teamMembers.user', 'sector', 'leadUser'],
       });
       return createdTeam;
+
     } catch (err) {
       await queryRunner.rollbackTransaction();
+      if (err instanceof NotFoundException) {
+          throw err;
+      }
       throw new InternalServerErrorException('Erro ao criar o time: ' + err.message);
     } finally {
       await queryRunner.release();

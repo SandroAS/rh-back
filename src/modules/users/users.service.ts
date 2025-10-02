@@ -139,10 +139,10 @@ export class UsersService {
     
     return await user.getOne();
   }
-
+ 
   async findByUuidsAndAccountId(uuids: string[], account_id: number): Promise<User[]> {
     const users = await this.userRepository.find({
-      where: { uuid: In(uuids), account_id: account_id },
+      where: { uuid: In(uuids), account_id },
       select: ['id', 'uuid', 'account_id'],
     });
 
@@ -153,6 +153,15 @@ export class UsersService {
     }
 
     return users;
+  }
+
+  async findOneByUuidAndAccountId(uuid: string, account_id: number): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { uuid, account_id },
+      select: ['id', 'uuid', 'name', 'profile_img_url'],
+    });
+
+    return user;
   }
 
   async findAndPaginateByAccountId(accountId: number, page: number, limit: number, sortColumn?: string, sortOrder?: 'asc' | 'desc', searchTerm?: string): Promise<[User[], number]> {
@@ -206,6 +215,7 @@ export class UsersService {
 
   async findAllAccountUsers(account_id: number): Promise<UserAvatarResponseDto[]> {
     const users = await this.userRepository.find({ where: { account_id }, select: ['uuid', 'name', 'profile_img_url'], loadEagerRelations: false });
+
     const usersMapped = await Promise.all(users.map(async (user) => {
       if (user?.profile_img_url && !user.profile_img_url.includes('googleusercontent')) {
         try {

@@ -37,7 +37,7 @@ export class SectorsService extends BaseService<Sector> {
       const sector = await queryRunner.manager.save(newSectorEntity);
       await queryRunner.commitTransaction();
 
-      return await this.findOneWithAccountId(sector.uuid, accountId);
+      return await this.findOneWithAccountId(sector.uuid, accountId, ['users']);
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException('Erro ao criar o setor: ' + err.message);
@@ -66,11 +66,8 @@ export class SectorsService extends BaseService<Sector> {
     );
   }
 
-  async findOneWithAccountId(uuid: string, accountId: number): Promise<Sector> {
-    const sector = await this.repository.findOne({
-      where: { uuid, account_id: accountId },
-      relations: ['users'],
-    });
+  async findOneWithAccountId(uuid: string, accountId: number, relations?: string[]): Promise<Sector> {
+    const sector = await this.repository.findOne({ where: { uuid, account_id: accountId }, relations });
 
     if (!sector) {
       throw new NotFoundException(`Setor com UUID "${uuid}" não encontrado.`);
@@ -102,7 +99,7 @@ export class SectorsService extends BaseService<Sector> {
       await queryRunner.manager.save(existingSector);
       await queryRunner.commitTransaction();
 
-      return await this.findOneWithAccountId(uuid, accountId);
+      return await this.findOneWithAccountId(uuid, accountId, ['users']);
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException('Erro ao atualizar o setor: ' + err.message);

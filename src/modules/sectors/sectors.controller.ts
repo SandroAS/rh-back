@@ -42,7 +42,7 @@ export class SectorsController {
     @Param('uuid') uuid: string,
     @AccountId() account_id: number
   ): Promise<SectorResponseDto> {
-    const sector = await this.service.findOneWithAccountId(uuid, account_id);
+    const sector = await this.service.findOneWithAccountId(uuid, account_id, ['users']);
     return new SectorResponseDto(sector);
   }
 

@@ -19,10 +19,9 @@ export class TeamsController {
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() dto: CreateTeamDto,
-    @AccountId() account_id: number,
     @AuthUser() user: User
   ): Promise<TeamResponseDto> {
-    const team = await this.service.createWithAccountId(dto, account_id, user);
+    const team = await this.service.createWithAccountId(dto, user);
     return new TeamResponseDto(team);
   }
 

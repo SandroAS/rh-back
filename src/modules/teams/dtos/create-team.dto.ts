@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsArray, IsUUID, ArrayNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString, IsArray, IsUUID, ArrayNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateTeamDto {
   @IsNotEmpty()
@@ -8,6 +8,10 @@ export class CreateTeamDto {
   @IsNotEmpty()
   @IsUUID('4')
   lead: string;
+
+  @IsOptional()
+  @IsUUID('4')
+  sector_uuid?: string;
 
   @IsArray()
   @ArrayNotEmpty()

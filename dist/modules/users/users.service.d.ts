@@ -22,6 +22,7 @@ export declare class UsersService {
     findByEmail(email: string, relations?: string[]): Promise<User | undefined>;
     findByUuid(uuid: string, select?: string[]): Promise<User>;
     findByUuidsAndAccountId(uuids: string[], account_id: number): Promise<User[]>;
+    findOneByUuidAndAccountId(uuid: string, account_id: number): Promise<User>;
     findAndPaginateByAccountId(accountId: number, page: number, limit: number, sortColumn?: string, sortOrder?: 'asc' | 'desc', searchTerm?: string): Promise<[User[], number]>;
     findAllAccountUsers(account_id: number): Promise<UserAvatarResponseDto[]>;
     update(id: number, body: UpdateUserDto, manager?: EntityManager): Promise<User>;
