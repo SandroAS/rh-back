@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Team } from '@/entities/team.entity';
@@ -26,9 +26,15 @@ export class TeamsService extends BaseService<Team> {
   }
 
   async createWithAccountId(dto: CreateTeamDto, user: User): Promise<Team> {
+    const existingTeam = await this.repository.findOne({ where: { name: dto.name, account_id: user.account_id } });
+    if (existingTeam) {
+        throw new ConflictException(`Um time com o nome "${dto.name}" já existe na sua conta.`);
+    }
+
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    let committed = false;
 
     try {
       const leadUser = await this.usersService.findOneByUuidAndAccountId(dto.lead, user.account_id);
@@ -64,23 +70,26 @@ export class TeamsService extends BaseService<Team> {
       await this.teamMembersService.createMany(team.id, user.account_id, memberIds, queryRunner.manager);
 
       await queryRunner.commitTransaction();
-
-      console.log('TEAM', team)
+      committed = true;
 
       const createdTeam = await this.repository.findOne({
-        where: { uuid: team.uuid, account_id: user.account_id },
-        relations: ['createdBy', 'teamMembers', 'teamMembers.user', 'sector', 'leadUser'],
+          where: { uuid: team.uuid, account_id: user.account_id },
+          relations: ['createdBy', 'teamMembers', 'teamMembers.user', 'sector', 'lead'],
       });
       return createdTeam;
 
     } catch (err) {
-      await queryRunner.rollbackTransaction();
-      if (err instanceof NotFoundException) {
-          throw err;
-      }
-      throw new InternalServerErrorException('Erro ao criar o time: ' + err.message);
+        if (!committed) {
+             await queryRunner.rollbackTransaction();
+        }
+        
+        if (err instanceof NotFoundException) {
+            throw err;
+        }
+
+        throw new InternalServerErrorException('Erro ao criar o time: ' + err.message);
     } finally {
-      await queryRunner.release();
+        await queryRunner.release();
     }
   }
 
