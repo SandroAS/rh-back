@@ -37,9 +37,9 @@ export class TeamsService extends BaseService<Team> {
     let committed = false;
 
     try {
-      const leadUser = await this.usersService.findOneByUuidAndAccountId(dto.lead, user.account_id);
-      if (!leadUser) {
-        throw new NotFoundException(`Usuário com UUID "${dto.lead}" não encontrado ao tentar criar time.`);
+      const leaderUser = await this.usersService.findOneByUuidAndAccountId(dto.leader, user.account_id);
+      if (!leaderUser) {
+        throw new NotFoundException(`Usuário com UUID "${dto.leader}" não encontrado ao tentar criar time.`);
       }
 
       let sectorId: number | undefined;
@@ -56,12 +56,12 @@ export class TeamsService extends BaseService<Team> {
         name: dto.name,
         account_id: user.account_id,
         created_by_user_id: user.id,
-        lead_user_id: leadUser.id,
+        leader_user_id: leaderUser.id,
         sector_id: sectorId,
       });
       const team = await queryRunner.manager.save(newTeamEntity);
 
-      const membersToInclude = new Set([ dto.lead, ...dto.member_uuids ]);
+      const membersToInclude = new Set([ dto.leader, ...dto.member_uuids ]);
       const memberUuids = Array.from(membersToInclude);
 
       const members = await this.usersService.findByUuidsAndAccountId(memberUuids, user.account_id);
@@ -72,9 +72,10 @@ export class TeamsService extends BaseService<Team> {
       await queryRunner.commitTransaction();
       committed = true;
 
+      // ARRUMAR PARA NAO BUSCAR TUDO DE NOVO
       const createdTeam = await this.repository.findOne({
           where: { uuid: team.uuid, account_id: user.account_id },
-          relations: ['createdBy', 'teamMembers', 'teamMembers.user', 'sector', 'lead'],
+          relations: ['createdBy', 'teamMembers', 'teamMembers.user', 'sector', 'leader'],
       });
       return createdTeam;
 
@@ -107,10 +108,11 @@ export class TeamsService extends BaseService<Team> {
       searchColumns,
       (qb) => {
         qb.select('entity');
-        qb.leftJoin('entity.createdBy', 'createdBy');
-        qb.addSelect(['createdBy.uuid', 'createdBy.name', 'createdBy.profile_img_url']);
+        qb.leftJoinAndSelect('entity.createdBy', 'createdBy');
         qb.leftJoinAndSelect('entity.teamMembers', 'teamMembers');
-        qb.leftJoinAndSelect('teamMembers.user', 'user');
+        qb.leftJoinAndSelect('teamMembers.user', 'teamMemberUser');
+        qb.leftJoinAndSelect('entity.leader', 'leader');
+        qb.leftJoinAndSelect('entity.sector', 'sector');
         qb.andWhere('entity.account_id = :accountId', { accountId });
       }
     );

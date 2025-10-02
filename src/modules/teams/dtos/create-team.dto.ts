@@ -7,7 +7,7 @@ export class CreateTeamDto {
 
   @IsNotEmpty()
   @IsUUID('4')
-  lead: string;
+  leader: string;
 
   @IsOptional()
   @IsUUID('4')

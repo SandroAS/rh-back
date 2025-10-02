@@ -7,7 +7,7 @@ export class UpdateTeamDto {
 
   @IsOptional()
   @IsUUID('4')
-  lead?: string;
+  leader?: string;
 
   @IsOptional()
   @IsArray()

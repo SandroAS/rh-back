@@ -28,6 +28,7 @@ export class TeamsController {
   @Get('pagination')
   async findAndPaginate(@Query() pagination: PaginationDto, @AccountId() account_id: number): Promise<TeamPaginationResponseDto> {
     const result = await this.service.findAndPaginateWithAccountId(pagination, account_id);
+    console.log(result)
     return new TeamPaginationResponseDto(result);
   }
 

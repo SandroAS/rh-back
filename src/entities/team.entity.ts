@@ -22,12 +22,12 @@ export class Team extends BaseEntity {
   @JoinColumn({ name: 'created_by_user_id' })
   createdBy: User;
 
-  @Column({ name: 'lead_user_id' })
-  lead_user_id: number;
+  @Column({ name: 'leader_user_id' })
+  leader_user_id: number;
 
   @ManyToOne(() => User, (user) => user.teams)
-  @JoinColumn({ name: 'lead_user_id' })
-  lead: User;
+  @JoinColumn({ name: 'leader_user_id' })
+  leader: User;
 
   @Column({ name: 'sector_id', nullable: true })
   sector_id: number;
