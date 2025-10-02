@@ -22,15 +22,15 @@ export class TeamPaginationResponseDto {
   @Type(() => TeamResponseDto)
   data: TeamResponseDto[];
 
-  constructor(paginationResult: PaginationResult<Team>) {
-    this.total = paginationResult.total;
-    this.page = paginationResult.page;
-    this.last_page = paginationResult.last_page;
-    this.limit = paginationResult.limit;
+  constructor(teamPagination: { data: TeamResponseDto[], total: number, page: number, last_page: number, limit: number }) {
+    this.total = teamPagination.total;
+    this.page = teamPagination.page;
+    this.last_page = teamPagination.last_page;
+    this.limit = teamPagination.limit;
     this.data = [];
 
-    if (paginationResult.data && paginationResult.data.length > 0) {
-      this.data = paginationResult.data.map(
+    if (teamPagination.data && teamPagination.data.length > 0) {
+      this.data = teamPagination.data.map(
         (team: Team) => new TeamResponseDto(team)
       );
     }

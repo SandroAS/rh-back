@@ -9,10 +9,11 @@ export class TeamMemberResponseDto {
   @Expose()
   user: UserAvatarResponseDto;
 
-  constructor(partial: Partial<TeamMember>) {
-    Object.assign(this, partial);
-    if (partial.user) {
-      this.user = new UserAvatarResponseDto(partial.user);
+  constructor(teamMember: TeamMember) {
+    this.uuid = teamMember.uuid;
+
+    if (teamMember.user) {
+      this.user = new UserAvatarResponseDto(teamMember.user);
     }
   }
 }

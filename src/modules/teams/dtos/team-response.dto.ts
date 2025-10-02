@@ -24,22 +24,26 @@ export class TeamResponseDto {
   @Type(() => TeamMemberResponseDto)
   teamMembers: TeamMemberResponseDto[];
 
-  constructor(partial: Partial<Team>) {
-    Object.assign(this, partial);
-    if (partial.leader) {
-      this.leader = new UserAvatarResponseDto(partial.leader);
+  constructor(team: Team) {
+    this.uuid = team.uuid;
+    this.name = team.name
+    
+    if (team.leader) {
+      this.leader = new UserAvatarResponseDto(team.leader);
     }
 
-    if (partial.createdBy) {
-      this.createdBy = new UserAvatarResponseDto(partial.createdBy);
+    if (team.createdBy) {
+      this.createdBy = new UserAvatarResponseDto(team.createdBy);
     }
 
-    if (partial.sector) {
-      this.sector = new SectorResponseDto(partial.sector);
+    if (team.sector) {
+      this.sector = new SectorResponseDto(team.sector);
     }
 
-    if (partial.teamMembers) {
-      this.teamMembers = partial.teamMembers.map(member => new TeamMemberResponseDto(member));
+    if (team.teamMembers && team.teamMembers.length > 0) {
+      this.teamMembers = team.teamMembers.map(
+        (teamMember) => new TeamMemberResponseDto(teamMember)
+      );
     }
   }
 }
