@@ -44,19 +44,19 @@ export class TeamMembersService extends BaseService<TeamMember> {
   /**
    * Remove múltiplos membros de time de uma única vez.
    * @param teamId ID numérica do time.
-   * @param userUuids Array de UUIDs dos usuários a serem removidos.
+   * @param uuids Array de UUIDs dos membros a serem removidos.
    * @param manager Opcional: EntityManager para transações.
    */
   async removeByTeamIdAndUserUuids(
     teamId: number,
-    userUuids: string[],
+    uuids: string[],
     manager?: EntityManager,
   ): Promise<void> {
     const teamMemberRepo = manager ? manager.getRepository(TeamMember) : this.repository;
-    
+
     const result = await teamMemberRepo.delete({
       team_id: teamId,
-      user: { uuid: In(userUuids) },
+      uuid: In(uuids),
     });
 
     if (result.affected === 0) {

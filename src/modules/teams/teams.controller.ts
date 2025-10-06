@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Get, Query, Param, Patch, HttpCode, HttpStatus, Delete } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Query, Param, Put, HttpCode, HttpStatus, Delete } from '@nestjs/common';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { TeamsService } from './teams.service';
 import { AccountId } from '@/common/decorators/account-id.decorator';
@@ -28,7 +28,6 @@ export class TeamsController {
   @Get('pagination')
   async findAndPaginate(@Query() pagination: PaginationDto, @AccountId() account_id: number): Promise<TeamPaginationResponseDto> {
     const result = await this.service.findAndPaginateWithAccountId(pagination, account_id);
-    console.log(result)
     return new TeamPaginationResponseDto(result);
   }
 
@@ -38,7 +37,7 @@ export class TeamsController {
     return new TeamResponseDto(team);
   }
 
-  @Patch(':uuid')
+  @Put(':uuid')
   async update(
     @Param('uuid') uuid: string,
     @Body() dto: UpdateTeamDto,

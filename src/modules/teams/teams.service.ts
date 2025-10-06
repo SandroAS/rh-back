@@ -148,13 +148,15 @@ export class TeamsService extends BaseService<Team> {
       existingTeam.name = dto.name;
       await queryRunner.manager.save(existingTeam);
 
-      const existingMemberUuids = existingTeam.teamMembers.map(member => member.user.uuid);
+      const existingMemberUuids = existingTeam.teamMembers.map(member => ({ uuid: member.uuid, user_uuid: member.user.uuid }));
       const incomingMemberUuids = [...new Set([...dto.member_uuids])];
       
-      const membersToDeleteUuids = existingMemberUuids.filter(id => !incomingMemberUuids.includes(id));
-      const membersToAddUuids = incomingMemberUuids.filter(id => !existingMemberUuids.includes(id));
+      const membersToDeleteUserUuids = existingMemberUuids.filter(member => !incomingMemberUuids.includes(member.user_uuid));
+      const membersToAddUuids = incomingMemberUuids.filter(uuid => !existingMemberUuids.some(member => uuid === member.user_uuid));
 
-      if (membersToDeleteUuids.length > 0) {
+      if (membersToDeleteUserUuids.length > 0) {
+        console.log('TESTE', membersToDeleteUserUuids)
+        const membersToDeleteUuids = membersToDeleteUserUuids.map(member => member.uuid)
         await this.teamMembersService.removeByTeamIdAndUserUuids(existingTeam.id, membersToDeleteUuids, queryRunner.manager);
       }
 
