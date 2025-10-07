@@ -3,6 +3,7 @@ import { User } from './user.entity';
 import { Account } from './account.entity';
 import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 import { BaseEntity } from '../common/entities/base.entity';
+import { DRD } from './drd.entity';
 
 @Entity('job_positions')
 export class JobPosition extends BaseEntity {
@@ -34,4 +35,7 @@ export class JobPosition extends BaseEntity {
 
   @Column({ name: 'job_positions_levels_group_id', nullable: true })
   job_positions_levels_group_id: number;
+
+  @OneToOne(() => DRD, (drd) => drd.jobPosition)
+  drd: DRD;
 }

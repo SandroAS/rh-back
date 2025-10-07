@@ -13,6 +13,7 @@ import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 import { Team } from './team.entity';
 import { TeamMember } from './team-member.entity';
 import { Sector } from './sector.entity';
+import { DRD } from './drd.entity';
 
 export enum Gender {
   MALE = 'MALE',
@@ -114,6 +115,9 @@ export class User {
 
   @ManyToMany(() => Sector, (sector) => sector.users)
   sectors: Sector[];
+
+  @OneToMany(() => DRD, (drd) => drd.createdBy)
+  created_drds: DRD[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

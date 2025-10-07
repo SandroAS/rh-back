@@ -10,6 +10,7 @@ import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 import { Team } from './team.entity';
 import { TeamMember } from './team-member.entity';
 import { Sector } from './sector.entity';
+import { DRD } from './drd.entity';
 export declare enum Gender {
     MALE = "MALE",
     FEMALE = "FEMALE"
@@ -44,6 +45,7 @@ export declare class User {
     teamMembers: TeamMember[];
     sectors_created: Sector[];
     sectors: Sector[];
+    created_drds: DRD[];
     created_at: Date;
     updated_at: Date;
 }

@@ -13,6 +13,7 @@ import { JobPositionsLevel } from './job-position-level.entity';
 import { Team } from './team.entity';
 import { TeamMember } from './team-member.entity';
 import { Sector } from './sector.entity';
+import { DRD } from './drd.entity';
 
 @Entity('accounts')
 export class Account {
@@ -104,6 +105,9 @@ export class Account {
 
   @OneToMany(() => Sector, (sector) => sector.account)
   sectors: Sector[];
+
+  @OneToMany(() => DRD, (drd) => drd.account)
+  drds: DRD[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

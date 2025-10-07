@@ -25,6 +25,7 @@ const job_positions_levels_group_entity_1 = require("./job-positions-levels-grou
 const team_entity_1 = require("./team.entity");
 const team_member_entity_1 = require("./team-member.entity");
 const sector_entity_1 = require("./sector.entity");
+const drd_entity_1 = require("./drd.entity");
 var Gender;
 (function (Gender) {
     Gender["MALE"] = "MALE";
@@ -159,6 +160,10 @@ __decorate([
     (0, typeorm_1.ManyToMany)(() => sector_entity_1.Sector, (sector) => sector.users),
     __metadata("design:type", Array)
 ], User.prototype, "sectors", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => drd_entity_1.DRD, (drd) => drd.createdBy),
+    __metadata("design:type", Array)
+], User.prototype, "created_drds", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)
