@@ -1,6 +1,7 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { BaseEntity } from '../common/entities/base.entity';
 import { DRD } from './drd.entity'
+import { DRDLevelMinScore } from './drd-level-min-score.entity';
 
 @Entity('drd_metrics')
 export class DRDMetrics extends BaseEntity {
@@ -19,4 +20,7 @@ export class DRDMetrics extends BaseEntity {
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   type: string;
+
+  @OneToMany(() => DRDLevelMinScore, (score) => score.drdMetric)
+  minScores: DRDLevelMinScore[];
 }
