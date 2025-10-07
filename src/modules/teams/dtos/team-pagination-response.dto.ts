@@ -1,9 +1,6 @@
-// src/teams/dtos/team-pagination-response.dto.ts
-
 import { Expose, Type } from 'class-transformer';
 import { TeamResponseDto } from './team-response.dto';
 import { Team } from '@/entities/team.entity';
-import { PaginationResult } from '@/common/services/base.service';
 
 export class TeamPaginationResponseDto {
   @Expose()

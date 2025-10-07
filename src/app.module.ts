@@ -26,6 +26,13 @@ import { JobPositionsLevelsModule } from './modules/job-positions-levels/job-pos
 import { TeamsModule } from './modules/teams/teams.module';
 import { TeamMembersModule } from './modules/team-members/team-members.module';
 import { SectorsModule } from './modules/sectors/sectors.module';
+import { DrdModule } from './modules/drd/drd.module';
+import { DrdsModule } from './modules/drds/drds.module';
+import { DrdLevelMinScoresModule } from './modules/drd-level-min-scores/drd-level-min-scores.module';
+import { DrdMetricsModule } from './modules/drd-metrics/drd-metrics.module';
+import { DrdLevelsModule } from './modules/drd-levels/drd-levels.module';
+import { DrdTopicItemsModule } from './modules/drd-topic-items/drd-topic-items.module';
+import { DrdTopicsModule } from './modules/drd-topics/drd-topics.module';
 
 const cookieSession = require('cookie-session');
 
@@ -73,7 +80,14 @@ const cookieSession = require('cookie-session');
     JobPositionsLevelsModule,
     TeamsModule,
     TeamMembersModule,
-    SectorsModule
+    SectorsModule,
+    DrdModule,
+    DrdsModule,
+    DrdLevelMinScoresModule,
+    DrdMetricsModule,
+    DrdLevelsModule,
+    DrdTopicItemsModule,
+    DrdTopicsModule
   ],
   controllers: [AppController],
   providers: [

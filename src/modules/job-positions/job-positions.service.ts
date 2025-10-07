@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { JobPosition } from '@/entities/job-position.entity';
 import { CreateJobPositionDto } from './dtos/create-job-position.dto';
 import { UpdateJobPositionDto } from './dtos/update-job-position.dto';
@@ -35,10 +35,15 @@ export class JobPositionService extends BaseService<JobPosition> {
     );
   }
 
-  async findOneWithAccountId(uuid: string, accountId: number): Promise<JobPosition> {
+  async findOneWithAccountId(uuid: string, accountId: number, manager?: EntityManager): Promise<JobPosition> {
+    if(manager) {
+      const jobPositionRepo = manager.getRepository(JobPosition);
+      return await jobPositionRepo.findOne({ where: { uuid } });
+    }
+
     const jobPosition = await super.findOne({ where: { uuid, account_id: accountId } });
     if (!jobPosition) {
-      throw new NotFoundException(`Job position with UUID "${uuid}" not found for this account.`);
+      throw new NotFoundException(`Cargo com UUID "${uuid}" não encontrado para esta conta.`);
     }
     return jobPosition;
   }
