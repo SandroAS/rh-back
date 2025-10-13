@@ -102,9 +102,9 @@ export class DrdsService extends BaseService<DRD> {
 
     return drd;
   }
-  
 
   async findAndPaginateByAccountId(pagination: PaginationDto, accountId: number, searchColumns: string[] = []): Promise<PaginationResult<DRD>> {
+    console.log('WE GOT HEEEERE')
     return super.findAndPaginate(pagination, searchColumns, (qb) => {
         qb.andWhere('entity.account_id = :accountId', { accountId });
     });

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UsePipes, ValidationPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards } from '@nestjs/common';
 import { DrdsService } from './drds.service';
 import { AccountId } from '@/common/decorators/account-id.decorator';
 import { AuthUser } from '@/common/decorators/auth-user.decorator';
@@ -9,10 +9,11 @@ import { UpdateDRDDto } from './dtos/update-drd.dto';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { DRDPaginationResponseDto } from './dtos/drd-pagination-response.dto';
 import { DRDResponseDto } from './dtos/drd-response.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 
 @Controller('drds')
-@UsePipes(new ValidationPipe({ transform: true }))
+@UseGuards(JwtAuthGuard)
 export class DrdsController {
   constructor(private readonly drdsService: DrdsService) {}
 

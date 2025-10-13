@@ -15,13 +15,14 @@ export class JobPositionController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createJobPositionDto: CreateJobPositionDto, @AccountId() account_id: number): Promise<JobPositionResponseDto> {
-    return new JobPositionResponseDto(await this.jobPositionService.createWithAccountId(createJobPositionDto, account_id));
+  async create(@Body() createJobPositionDto: CreateJobPositionDto, @AccountId() account_id: number): Promise<{ uuid: string }> {
+    return await this.jobPositionService.createWithAccountId(createJobPositionDto, account_id);
   }
 
   @Get()
-  findAll(@AccountId() account_id: number): Promise<JobPositionResponseDto[]> {
-    return this.jobPositionService.findAllWithAccountId(account_id);
+  async findAll(@AccountId() account_id: number): Promise<JobPositionResponseDto[]> {
+    const jobPositions = await this.jobPositionService.findAllWithAccountId(account_id);
+    return jobPositions.map(jobPosition => new JobPositionResponseDto(jobPosition));
   }
 
   @Get('pagination')
