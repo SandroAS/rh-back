@@ -38,7 +38,6 @@ const job_positions_levels_module_1 = require("./modules/job-positions-levels/jo
 const teams_module_1 = require("./modules/teams/teams.module");
 const team_members_module_1 = require("./modules/team-members/team-members.module");
 const sectors_module_1 = require("./modules/sectors/sectors.module");
-const drd_module_1 = require("./modules/drd/drd.module");
 const drds_module_1 = require("./modules/drds/drds.module");
 const drd_level_min_scores_module_1 = require("./modules/drd-level-min-scores/drd-level-min-scores.module");
 const drd_metrics_module_1 = require("./modules/drd-metrics/drd-metrics.module");
@@ -105,7 +104,6 @@ exports.AppModule = AppModule = __decorate([
             teams_module_1.TeamsModule,
             team_members_module_1.TeamMembersModule,
             sectors_module_1.SectorsModule,
-            drd_module_1.DrdModule,
             drds_module_1.DrdsModule,
             drd_level_min_scores_module_1.DrdLevelMinScoresModule,
             drd_metrics_module_1.DrdMetricsModule,

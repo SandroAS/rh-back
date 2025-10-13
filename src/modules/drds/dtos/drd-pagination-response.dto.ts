@@ -1,4 +1,6 @@
 import { Expose, Type } from 'class-transformer';
+import { DRD } from '@/entities/drd.entity';
+import { DRDResponseDto } from './drd-response.dto';
 
 export class DRDPaginationResponseDto {
   @Expose()

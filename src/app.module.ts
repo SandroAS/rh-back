@@ -26,7 +26,6 @@ import { JobPositionsLevelsModule } from './modules/job-positions-levels/job-pos
 import { TeamsModule } from './modules/teams/teams.module';
 import { TeamMembersModule } from './modules/team-members/team-members.module';
 import { SectorsModule } from './modules/sectors/sectors.module';
-import { DrdModule } from './modules/drd/drd.module';
 import { DrdsModule } from './modules/drds/drds.module';
 import { DrdLevelMinScoresModule } from './modules/drd-level-min-scores/drd-level-min-scores.module';
 import { DrdMetricsModule } from './modules/drd-metrics/drd-metrics.module';
@@ -81,7 +80,6 @@ const cookieSession = require('cookie-session');
     TeamsModule,
     TeamMembersModule,
     SectorsModule,
-    DrdModule,
     DrdsModule,
     DrdLevelMinScoresModule,
     DrdMetricsModule,
