@@ -54,6 +54,8 @@ export class JobPositionService extends BaseService<JobPosition> {
       searchColumns,
       (qb) => {
         qb.andWhere('entity.account_id = :accountId', { accountId });
+        qb.leftJoinAndSelect('entity.levelsGroup', 'levelsGroup');
+        qb.leftJoinAndSelect('levelsGroup.jobPositionsLevels', 'jobPositionsLevels');
       }
     );
   }
