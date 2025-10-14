@@ -29,10 +29,10 @@ export class JobPosition extends BaseEntity {
   @OneToMany(() => User, (user) => user.jobPosition)
   users: User[];
 
-  @OneToOne(() => JobPositionsLevelsGroup, (levelsGroup) => levelsGroup.jobPositions, { onDelete: 'CASCADE', nullable: true })
+  @ManyToOne(() => JobPositionsLevelsGroup, (levelsGroup) => levelsGroup.jobPositions, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'job_positions_levels_group_id' })
   levelsGroup: JobPositionsLevelsGroup;
-
+  
   @Column({ name: 'job_positions_levels_group_id', nullable: true })
   job_positions_levels_group_id: number;
 
