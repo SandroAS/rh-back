@@ -14,6 +14,9 @@ export class DRDTopic extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   description: string;
 
+  @Column({ type: 'int', default: 0 })
+  order: number;
+
   @ManyToOne(() => DRD, (drd) => drd.topics, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'drd_id' })
   drd: DRD;

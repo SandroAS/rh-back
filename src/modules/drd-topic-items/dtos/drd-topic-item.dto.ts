@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsInt, IsPositive } from 'class-validator';
 
 export class DRDTopicItemDto {
   @IsNotEmpty()
@@ -8,4 +8,9 @@ export class DRDTopicItemDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsNotEmpty()
+  @IsInt()
+  @IsPositive()
+  order: number;
 }
