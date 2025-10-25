@@ -18,19 +18,18 @@ export class DrdsController {
 
   @Post()
   async create(@Body() createDrdDto: CreateDRDDto, @AccountId() accountId: number, @AuthUser() user: User): Promise<DRDResponseDto> {
-    return new DRDResponseDto(await this.drdsService.createByAccountId(createDrdDto, accountId, user.id));
+    return new DRDResponseDto(await this.drdsService.createByAccountId(createDrdDto, accountId, user));
   }
 
   @Get('pagination')
   async findAndPaginate(@Query() pagination: PaginationDto, @AccountId() account_id: number): Promise<DRDPaginationResponseDto> {
     const result = await this.drdsService.findAndPaginateByAccountId(pagination, account_id);
-    console.log(result.data)
     return new DRDPaginationResponseDto(result);
   }
 
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<DRDResponseDto> {
-    return new DRDResponseDto(await this.drdsService.findOne({ where: {uuid, account_id} }));
+    return new DRDResponseDto(await this.drdsService.findOne({ where: {uuid, account_id}, relations: [ 'jobPosition', 'createdBy', 'topics.drdTopicItems.minScores', 'levels', 'metrics.minScores'] }));
   }
 
   @Put(':uuid')

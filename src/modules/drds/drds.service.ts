@@ -10,6 +10,7 @@ import { DrdTopicsService } from '../drd-topics/drd-topics.service';
 import { DrdLevelsService } from '../drd-levels/drd-levels.service';
 import { DRDLevel } from '@/entities/drd-level.entity';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
+import { User } from '@/entities/user.entity';
 
 @Injectable()
 export class DrdsService extends BaseService<DRD> {
@@ -28,7 +29,7 @@ export class DrdsService extends BaseService<DRD> {
   async createByAccountId(
     createDrdDto: CreateDRDDto,
     accountId: number,
-    createdByUserId: number,
+    createdByUser: User,
   ): Promise<DRD> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -47,7 +48,7 @@ export class DrdsService extends BaseService<DRD> {
 
       const newDrdData = this.drdRepository.create({
         account_id: accountId,
-        created_by_user_id: createdByUserId,
+        created_by_user_id: createdByUser.id,
         job_position_id: jobPosition.id,
         rate: createDrdDto.rate,
       });
@@ -78,6 +79,10 @@ export class DrdsService extends BaseService<DRD> {
       );
 
       await queryRunner.commitTransaction();
+
+      savedDrd.jobPosition = jobPosition;
+      savedDrd.createdBy = createdByUser;
+
       return savedDrd;
 
     } catch (err) {

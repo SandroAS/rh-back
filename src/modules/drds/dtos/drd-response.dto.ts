@@ -3,8 +3,8 @@ import { DRD } from '@/entities/drd.entity';
 import DrdLevelResponseDto from '@/modules/drd-levels/dtos/drd-level-response.dto';
 import DrdMetricResponseDto from '@/modules/drd-metrics/dtos/drd-metric.response.dto';
 import DrdTopicResponseDto from '@/modules/drd-topics/dtos/drd-topic-response.dto';
-import JobPositionResponseDto from '@/modules/job-positions/dtos/job-position-response.dto';
 import { UserAvatarResponseDto } from '@/modules/users/dtos/user-avatar-response.dto';
+import JobPositionSimpleResponseDto from '@/modules/job-positions/dtos/job-position-simple-response.dto';
 
 export class DRDResponseDto {
   @Expose()
@@ -14,8 +14,8 @@ export class DRDResponseDto {
   rate: number;
 
   @Expose()
-  @Type(() => JobPositionResponseDto)
-  jobPosition: JobPositionResponseDto;
+  @Type(() => JobPositionSimpleResponseDto)
+  jobPosition: JobPositionSimpleResponseDto;
 
   @Expose()
   @Type(() => UserAvatarResponseDto)
@@ -38,7 +38,7 @@ export class DRDResponseDto {
     this.rate = drd.rate;  
 
     if (drd.jobPosition) {
-      this.jobPosition = new JobPositionResponseDto(drd.jobPosition);
+      this.jobPosition = new JobPositionSimpleResponseDto(drd.jobPosition);
     }
 
     if (drd.createdBy) {
