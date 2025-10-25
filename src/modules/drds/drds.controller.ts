@@ -9,6 +9,8 @@ import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { DRDPaginationResponseDto } from './dtos/drd-pagination-response.dto';
 import { DRDResponseDto } from './dtos/drd-response.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { FindOptionsRelations } from 'typeorm';
+import { DRD } from '@/entities/drd.entity';
 
 
 @Controller('drds')
@@ -29,7 +31,32 @@ export class DrdsController {
 
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<DRDResponseDto> {
-    return new DRDResponseDto(await this.drdsService.findOne({ where: {uuid, account_id}, relations: [ 'jobPosition', 'createdBy', 'topics.drdTopicItems.minScores', 'levels', 'metrics.minScores'] }));
+    const relations: FindOptionsRelations<DRD> = {
+      jobPosition: true,
+      createdBy: true,
+      levels: true,
+      metrics: {
+        minScores: {
+          drdLevel: true,
+          drdTopicItem: true,
+          drdMetric: true,
+        },
+      },
+      topics: {
+        drdTopicItems: {
+          minScores: {
+            drdLevel: true,
+            drdTopicItem: true,
+            drdMetric: true,
+          },
+        },
+      },
+    };
+
+    return new DRDResponseDto(await this.drdsService.findOne({ 
+      where: { uuid, account_id }, 
+      relations 
+    }));
   }
 
   @Put(':uuid')
