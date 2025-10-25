@@ -114,6 +114,23 @@ export class DrdsService extends BaseService<DRD> {
   async findAndPaginateByAccountId(pagination: PaginationDto, accountId: number, searchColumns: string[] = []): Promise<PaginationResult<DRD>> {
     return super.findAndPaginate(pagination, searchColumns, (qb) => {
         qb.andWhere('entity.account_id = :accountId', { accountId });
+        qb.leftJoinAndSelect('entity.createdBy', 'createdBy');
+        qb.leftJoin('entity.jobPosition', 'jobPosition');
+        qb.select([
+            'entity.uuid',
+            'entity.id',
+            'entity.rate',
+            'entity.job_position_id',
+            'entity.account_id',
+            'entity.created_at',
+            'entity.updated_at',
+            'createdBy.uuid',
+            'createdBy.name',
+            'createdBy.email',
+            'createdBy.profile_img_url',
+            'jobPosition.uuid',
+            'jobPosition.title',
+        ]);
     });
   }
 }

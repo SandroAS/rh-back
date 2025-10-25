@@ -24,6 +24,7 @@ export class DrdsController {
   @Get('pagination')
   async findAndPaginate(@Query() pagination: PaginationDto, @AccountId() account_id: number): Promise<DRDPaginationResponseDto> {
     const result = await this.drdsService.findAndPaginateByAccountId(pagination, account_id);
+    console.log(result.data)
     return new DRDPaginationResponseDto(result);
   }
 

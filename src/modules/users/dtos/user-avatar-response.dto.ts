@@ -9,11 +9,15 @@ export class UserAvatarResponseDto {
   name: string;
 
   @Expose()
+  email: string;
+
+  @Expose()
   profile_img_url: string;
 
-  constructor(partial: User) {
-    this.uuid = partial.uuid;
-    this.name = partial.name;
-    this.profile_img_url = partial.profile_img_url;
+  constructor(user: User) {
+    this.uuid = user.uuid;
+    this.name = user.name;
+    this.email = user.email;
+    this.profile_img_url = user.profile_img_url;
   }
 }
