@@ -9,7 +9,6 @@ import { DrdMetricsModule } from '../drd-metrics/drd-metrics.module';
 import { DrdTopicsModule } from '../drd-topics/drd-topics.module';
 import { DrdTopicItemsModule } from '../drd-topic-items/drd-topic-items.module';
 import { DrdLevelsModule } from '../drd-levels/drd-levels.module';
-import { DrdLevelMinScoresModule } from '../drd-level-min-scores/drd-level-min-scores.module';
 
 @Module({
   imports: [
@@ -19,8 +18,7 @@ import { DrdLevelMinScoresModule } from '../drd-level-min-scores/drd-level-min-s
     DrdMetricsModule,
     DrdTopicsModule,
     DrdTopicItemsModule,
-    DrdLevelsModule,
-    DrdLevelMinScoresModule
+    DrdLevelsModule
   ],
   controllers: [DrdsController],
   providers: [DrdsService],

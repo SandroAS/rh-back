@@ -1,16 +1,26 @@
 import { DRDTopic } from '@/entities/drd-topic.entity';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+import DrdTopicItemResponseDto from '@/modules/drd-topic-items/dtos/drd-topic-item-response.dto'; // Importar novo DTO
 
 export default class DrdTopicResponseDto {
-  @Expose() id: number;
-  @Expose() uuid: string;
-  @Expose() name: string;
-  @Expose() order: number;
+  @Expose() 
+  uuid: string; // Manter apenas o UUID
+  
+  @Expose()
+  name: string;
+
+  @Expose()
+  order: number;
+
+  @Expose()
+  @Type(() => DrdTopicItemResponseDto)
+  drdTopicItems: DrdTopicItemResponseDto[];
 
   constructor(topic: DRDTopic) {
-    this.id = topic.id;
     this.uuid = topic.uuid;
     this.name = topic.name;
     this.order = topic.order;
+
+    this.drdTopicItems = topic.drdTopicItems ? topic.drdTopicItems.map(item => new DrdTopicItemResponseDto(item)) : [];
   }
 }

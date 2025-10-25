@@ -1,16 +1,26 @@
 import { DRDMetrics } from '@/entities/drd-metric.entity';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+import DrdLevelMinScoreResponseDto from '@/modules/drd-level-min-scores/dtos/drd-level-min-score-response.dto';
 
 export default class DrdMetricResponseDto {
-  @Expose() id: number;
-  @Expose() uuid: string;
-  @Expose() name: string;
-  @Expose() classification: string;
+  @Expose() 
+  uuid: string;
+
+  @Expose()
+  name: string;
+
+  @Expose()
+  classification: string;
   
+  @Expose()
+  @Type(() => DrdLevelMinScoreResponseDto)
+  scoresByLevel: DrdLevelMinScoreResponseDto[];
+
   constructor(metric: DRDMetrics) {
-    this.id = metric.id;
     this.uuid = metric.uuid;
     this.name = metric.name;
     this.classification = metric.classification;
+
+    this.scoresByLevel = metric.minScores ? metric.minScores.map(score => new DrdLevelMinScoreResponseDto(score)) : [];
   }
 }

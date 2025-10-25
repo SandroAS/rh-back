@@ -1,6 +1,6 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, QueryFailedError, Repository } from 'typeorm';
 import { DRD } from '@/entities/drd.entity'; 
 import { BaseService, PaginationResult } from '@/common/services/base.service';
 import { CreateDRDDto } from './dtos/create-drd.dto';
@@ -8,7 +8,6 @@ import { JobPositionService } from '../job-positions/job-positions.service';
 import { DrdMetricsService } from '../drd-metrics/drd-metrics.service';
 import { DrdTopicsService } from '../drd-topics/drd-topics.service';
 import { DrdLevelsService } from '../drd-levels/drd-levels.service';
-import { DrdLevelMinScoresService } from '../drd-level-min-scores/drd-level-min-scores.service';
 import { DRDLevel } from '@/entities/drd-level.entity';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 
@@ -22,7 +21,6 @@ export class DrdsService extends BaseService<DRD> {
     private drdMetricsService: DrdMetricsService,
     private drdTopicsService: DrdTopicsService,
     private drdLevelsService: DrdLevelsService,
-    private drdLevelMinScoresService: DrdLevelMinScoresService,
   ) {
     super(drdRepository);
   }
@@ -33,7 +31,6 @@ export class DrdsService extends BaseService<DRD> {
     createdByUserId: number,
   ): Promise<DRD> {
     const queryRunner = this.dataSource.createQueryRunner();
-
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
@@ -63,18 +60,20 @@ export class DrdsService extends BaseService<DRD> {
         queryRunner.manager,
       ) as DRDLevel[];
       
-      const levelMap = new Map<string, number>();
-      savedLevels.forEach(lvl => levelMap.set(lvl.name, lvl.id)); 
+      const levelMap = new Map<number, number>();
+      savedLevels.forEach(lvl => levelMap.set(lvl.order, lvl.id));
 
       await this.drdTopicsService.createTopicsAndItemsInTransaction(
         drdId, 
         createDrdDto.topics,
+        levelMap,
         queryRunner.manager,
       );
-      
+
       await this.drdMetricsService.createMetricsAndMinScoresInTransaction(
         drdId, 
         createDrdDto.metrics, 
+        levelMap,
         queryRunner.manager,
       );
 
@@ -83,6 +82,15 @@ export class DrdsService extends BaseService<DRD> {
 
     } catch (err) {
       await queryRunner.rollbackTransaction();
+
+      if (err instanceof QueryFailedError) {
+        if ((err as any).code === 'ER_DUP_ENTRY') { 
+          throw new ConflictException(
+            'Já existe um DRD cadastrado para este cargo. Um cargo só pode ter um DRD ativo.'
+          );
+        }
+      }
+
       if (err instanceof NotFoundException) {
         throw err;
       }

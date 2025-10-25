@@ -9,16 +9,10 @@ export class DRDResponseDto {
   uuid: string;
 
   @Expose()
-  job_position_id: number;
+  job_position_uuid: string; 
 
   @Expose()
   rate: number;
-
-  @Expose()
-  created_at: Date;
-
-  @Expose()
-  updated_at: Date;
   
   @Expose()
   @Type(() => DrdLevelResponseDto)
@@ -34,10 +28,9 @@ export class DRDResponseDto {
 
   constructor(drd: DRD) {
     this.uuid = drd.uuid;
-    this.job_position_id = drd.job_position_id;
-    this.rate = drd.rate;
-    this.created_at = drd.created_at;
-    this.updated_at = drd.updated_at;
+    this.rate = drd.rate;  
+
+    this.job_position_uuid = drd.jobPosition ? drd.jobPosition.uuid : drd.job_position_id.toString(); 
 
     this.levels = drd.levels ? drd.levels.map(level => new DrdLevelResponseDto(level)) : [];
     this.metrics = drd.metrics ? drd.metrics.map(metric => new DrdMetricResponseDto(metric)) : [];

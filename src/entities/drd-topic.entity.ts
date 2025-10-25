@@ -22,5 +22,5 @@ export class DRDTopic extends BaseEntity {
   drd: DRD;
   
   @OneToMany(() => DRDTopicItem, (item) => item.drdTopic)
-  items: DRDTopicItem[];
+  drdTopicItems: DRDTopicItem[];
 }

@@ -1,8 +1,8 @@
 import { IsNotEmpty, IsInt, IsPositive, IsUUID, ArrayMinSize, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { DRDLevelDto } from '@/modules/drd-levels/dtos/drd-level.dto';
-import { DRDMetricDto } from '@/modules/drd-metrics/dtos/drd-metric.dto';
-import { DRDTopicDto } from '@/modules/drd-topics/dtos/drd-topic.dto';
+import { CreateDRDLevelDto } from '@/modules/drd-levels/dtos/create-drd-level.dto';
+import { CreateDRDMetricDto } from '@/modules/drd-metrics/dtos/create-drd-metric.dto';
+import { CreateDRDTopicDto } from '@/modules/drd-topics/dtos/create-drd-topic.dto';
 
 export class CreateDRDDto {
   @IsNotEmpty()
@@ -16,16 +16,16 @@ export class CreateDRDDto {
 
   @ArrayMinSize(2)
   @ValidateNested({ each: true })
-  @Type(() => DRDLevelDto)
-  levels: DRDLevelDto[];
+  @Type(() => CreateDRDLevelDto)
+  levels: CreateDRDLevelDto[];
 
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Type(() => DRDMetricDto)
-  metrics: DRDMetricDto[];
+  @Type(() => CreateDRDMetricDto)
+  metrics: CreateDRDMetricDto[];
 
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Type(() => DRDTopicDto)
-  topics: DRDTopicDto[];
+  @Type(() => CreateDRDTopicDto)
+  topics: CreateDRDTopicDto[];
 }

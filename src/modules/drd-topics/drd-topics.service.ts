@@ -4,7 +4,9 @@ import { EntityManager, Repository } from 'typeorm';
 import { BaseService } from '@/common/services/base.service';
 import { DRDTopic } from '@/entities/drd-topic.entity';
 import { DrdTopicItemsService } from '../drd-topic-items/drd-topic-items.service';
-import { DRDTopicDto } from './dtos/drd-topic.dto';
+import { CreateDRDTopicDto } from './dtos/create-drd-topic.dto';
+import { LevelMap } from '@/common/types/level-map.type';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class DrdTopicsService extends BaseService<DRDTopic> {
@@ -18,7 +20,8 @@ export class DrdTopicsService extends BaseService<DRDTopic> {
 
   async createTopicsAndItemsInTransaction(
     drdId: number,
-    topicsDtos: DRDTopicDto[],
+    topicsDtos: CreateDRDTopicDto[],
+    levelMap: LevelMap,
     manager?: EntityManager,
   ): Promise<void> {
     try {
@@ -26,12 +29,14 @@ export class DrdTopicsService extends BaseService<DRDTopic> {
         const newTopic = manager.create(DRDTopic, { 
           ...topicDto, 
           drd_id: drdId,
+          uuid: uuidv4()
         });
         const savedTopic = await manager.save(DRDTopic, newTopic);
 
         await this.drdTopicItemsService.createManyInTransaction(
           savedTopic.id, 
-          topicDto.items,
+          topicDto.drdTopicItems,
+          levelMap,
           manager,
         );
       }

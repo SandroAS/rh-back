@@ -4,7 +4,6 @@ import { AccountId } from '@/common/decorators/account-id.decorator';
 import { AuthUser } from '@/common/decorators/auth-user.decorator';
 import { User } from '@/entities/user.entity';
 import { CreateDRDDto } from './dtos/create-drd.dto';
-import { DRD } from '@/entities/drd.entity';
 import { UpdateDRDDto } from './dtos/update-drd.dto';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { DRDPaginationResponseDto } from './dtos/drd-pagination-response.dto';
@@ -18,8 +17,8 @@ export class DrdsController {
   constructor(private readonly drdsService: DrdsService) {}
 
   @Post()
-  async create(@Body() createDrdDto: CreateDRDDto, @AccountId() accountId: number, @AuthUser() user: User): Promise<DRD> {
-    return this.drdsService.createByAccountId(createDrdDto, accountId, user.id);
+  async create(@Body() createDrdDto: CreateDRDDto, @AccountId() accountId: number, @AuthUser() user: User): Promise<DRDResponseDto> {
+    return new DRDResponseDto(await this.drdsService.createByAccountId(createDrdDto, accountId, user.id));
   }
 
   @Get('pagination')

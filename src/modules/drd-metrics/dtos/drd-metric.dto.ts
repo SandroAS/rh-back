@@ -1,6 +1,7 @@
-import { IsString, IsNotEmpty, IsOptional, ValidateNested, ArrayMinSize } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, ValidateNested, ArrayMinSize, IsInt, IsPositive, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
 import { DRDLevelMinScoreDto } from '@/modules/drd-level-min-scores/dtos/drd-level-min-score.dto';
+import { MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
 
 export class DRDMetricDto {
   @IsNotEmpty()
@@ -11,9 +12,18 @@ export class DRDMetricDto {
   @IsString()
   classification?: string;
 
-  @IsOptional()
-  @IsString()
-  type?: string;
+  @IsNotEmpty()
+  @IsInt()
+  @IsPositive()
+  order: number;
+
+  @IsNotEmpty()
+  @IsEnum(MetricType)
+  type: MetricType;
+
+  @IsNotEmpty()
+  @IsEnum(MetricPrefix)
+  prefix: MetricPrefix;
 
   @ArrayMinSize(1)
   @ValidateNested({ each: true })

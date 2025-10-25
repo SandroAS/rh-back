@@ -7,13 +7,13 @@ import { DRDMetrics } from './drd-metric.entity';
 @Entity('drd_level_min_scores')
 @Unique(['drd_topic_item_id', 'drd_level_id'])
 export class DRDLevelMinScore extends BaseEntity {
-  @Column({ name: 'drd_topic_item_id', type: 'int' })
-  drd_topic_item_id: number;
-
   @Column({ name: 'drd_level_id', type: 'int' })
   drd_level_id: number;
+  
+  @Column({ name: 'drd_topic_item_id', type: 'int', nullable: true })
+  drd_topic_item_id: number;
 
-  @Column({ name: 'drd_metric_id', type: 'int' })
+  @Column({ name: 'drd_metric_id', type: 'int', nullable: true })
   drd_metric_id: number;
 
   @Column({ name: 'min_score', type: 'int', default: 0, unsigned: true })

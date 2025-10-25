@@ -4,7 +4,9 @@ import { EntityManager, Repository } from 'typeorm';
 import { BaseService } from '@/common/services/base.service';
 import { DRDMetrics } from '@/entities/drd-metric.entity';
 import { DrdLevelMinScoresService } from '../drd-level-min-scores/drd-level-min-scores.service';
-import { DRDMetricDto } from './dtos/drd-metric.dto';
+import { LevelMap } from '@/common/types/level-map.type';
+import { CreateDRDMetricDto } from './dtos/create-drd-metric.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class DrdMetricsService extends BaseService<DRDMetrics> {
@@ -20,24 +22,28 @@ export class DrdMetricsService extends BaseService<DRDMetrics> {
    * Cria múltiplas Métricas e seus Scores Mínimos em uma transação ativa.
    * @param drdId ID do DRD pai.
    * @param metricsDtos Array de DTOs das métricas.
+   * @param levelMap Mapa para conversão de Level Order para Level ID.
    * @param manager EntityManager da transação principal.
    */
   async createMetricsAndMinScoresInTransaction(
     drdId: number,
-    metricsDtos: DRDMetricDto[],
+    metricsDtos: CreateDRDMetricDto[],
+    levelMap: LevelMap,
     manager: EntityManager
   ): Promise<void> {
     try {
       for (const metricDto of metricsDtos) {
         const newMetric = manager.create(DRDMetrics, {
-          ...metricDto,
+          ...metricDto, 
           drd_id: drdId,
+          uuid: uuidv4()
         });
         const savedMetric = await manager.save(DRDMetrics, newMetric);
 
-        await this.drdLevelMinScoresService.createManyInTransaction(
+        await this.drdLevelMinScoresService.createManyForMetricInTransaction(
           savedMetric.id,
-          metricDto.min_scores,
+          levelMap,
+          metricDto.scoresByLevel,
           manager
         );
       }

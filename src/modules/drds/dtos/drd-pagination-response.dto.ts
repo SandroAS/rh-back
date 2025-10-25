@@ -19,7 +19,7 @@ export class DRDPaginationResponseDto {
   @Type(() => DRDResponseDto)
   data: DRDResponseDto[];
 
-  constructor(drdPagination: { data: DRDResponseDto[], total: number, page: number, last_page: number, limit: number }) {
+  constructor(drdPagination: { data: DRD[], total: number, page: number, last_page: number, limit: number }) {
     this.total = drdPagination.total;
     this.page = drdPagination.page;
     this.last_page = drdPagination.last_page;
