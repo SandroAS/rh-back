@@ -23,15 +23,15 @@ export class DRDResponseDto {
   
   @Expose()
   @Type(() => DrdLevelResponseDto)
-  levels: DrdLevelResponseDto[];
+  drdLevels: DrdLevelResponseDto[];
 
   @Expose()
   @Type(() => DrdMetricResponseDto)
-  metrics: DrdMetricResponseDto[];
+  drdMetrics: DrdMetricResponseDto[];
 
   @Expose()
   @Type(() => DrdTopicResponseDto)
-  topics: DrdTopicResponseDto[];
+  drdTopics: DrdTopicResponseDto[];
 
   constructor(drd: DRD) {
     this.uuid = drd.uuid;
@@ -45,8 +45,8 @@ export class DRDResponseDto {
       this.createdByUser = new UserAvatarResponseDto(drd.createdBy);
     }
 
-    this.levels = drd.levels ? drd.levels.map(level => new DrdLevelResponseDto(level)) : [];
-    this.metrics = drd.metrics ? drd.metrics.map(metric => new DrdMetricResponseDto(metric)) : [];
-    this.topics = drd.topics ? drd.topics.map(topic => new DrdTopicResponseDto(topic)) : [];
+    this.drdLevels = drd.levels ? drd.levels.map(level => new DrdLevelResponseDto(level)) : [];
+    this.drdMetrics = drd.metrics ? drd.metrics.map(metric => new DrdMetricResponseDto(metric)) : [];
+    this.drdTopics = drd.topics ? drd.topics.map(topic => new DrdTopicResponseDto(topic)) : [];
   }
 }
