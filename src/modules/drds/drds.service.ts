@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, FindOptionsRelations, QueryFailedError, Repository } from 'typeorm';
+import { DataSource, QueryFailedError, Repository } from 'typeorm';
 import { DRD } from '@/entities/drd.entity'; 
 import { BaseService, PaginationResult } from '@/common/services/base.service';
 import { CreateDRDDto } from './dtos/create-drd.dto';
