@@ -36,21 +36,13 @@ export class DrdsController {
       createdBy: true,
       levels: true,
       metrics: {
-        minScores: {
-          drdLevel: true,
-          drdTopicItem: true,
-          drdMetric: true,
-        },
+        minScores: { drdLevel: true, drdTopicItem: true, drdMetric: true }
       },
       topics: {
         drdTopicItems: {
-          minScores: {
-            drdLevel: true,
-            drdTopicItem: true,
-            drdMetric: true,
-          },
-        },
-      },
+          minScores: { drdLevel: true, drdTopicItem: true, drdMetric: true }
+        }
+      }
     };
 
     return new DRDResponseDto(await this.drdsService.findOne({ 
@@ -64,8 +56,9 @@ export class DrdsController {
     @Param('uuid') uuid: string,
     @Body() updateDrdDto: UpdateDRDDto,
     @AccountId() accountId: number,
+    @AuthUser() user: User
   ): Promise<DRDResponseDto> {
-    return new DRDResponseDto(await this.drdsService.updateByUuid(uuid, updateDrdDto, accountId));
+    return new DRDResponseDto(await this.drdsService.updateByAccountId(uuid, updateDrdDto, accountId, user));
   }
   
   @Delete(':uuid')

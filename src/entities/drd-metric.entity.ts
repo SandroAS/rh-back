@@ -19,7 +19,7 @@ export enum MetricPrefix {
 }
 
 @Entity('drd_metrics')
-export class DRDMetrics extends BaseEntity {
+export class DRDMetric extends BaseEntity {
   @Column({ name: 'drd_id' })
   drd_id: number;
 

@@ -35,7 +35,7 @@ export class DRDResponseDto {
 
   constructor(drd: DRD) {
     this.uuid = drd.uuid;
-    this.rate = drd.rate;  
+    this.rate = drd.rate;
 
     if (drd.jobPosition) {
       this.jobPosition = new JobPositionSimpleResponseDto(drd.jobPosition);

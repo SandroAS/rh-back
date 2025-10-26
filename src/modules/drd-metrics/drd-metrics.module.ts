@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DrdMetricsService } from './drd-metrics.service';
 import { DrdMetricsController } from './drd-metrics.controller';
-import { DRDMetrics } from '@/entities/drd-metric.entity';
+import { DRDMetric } from '@/entities/drd-metric.entity';
 import { DrdLevelMinScoresModule } from '../drd-level-min-scores/drd-level-min-scores.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([DRDMetrics]),
+    TypeOrmModule.forFeature([DRDMetric]),
     DrdLevelMinScoresModule, 
   ],
   controllers: [DrdMetricsController],

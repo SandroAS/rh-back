@@ -1,8 +1,8 @@
 import { IsInt, IsPositive, IsUUID, ArrayMinSize, ValidateNested, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
-import { DRDLevelDto } from '@/modules/drd-levels/dtos/drd-level.dto';
-import { DRDMetricDto } from '@/modules/drd-metrics/dtos/drd-metric.dto';
-import { DRDTopicDto } from '@/modules/drd-topics/dtos/drd-topic.dto';
+import { UpdateDRDLevelDto } from '@/modules/drd-levels/dtos/update-drd-level.dto';
+import { UpdateDRDMetricDto } from '@/modules/drd-metrics/dtos/update-drd-metric.dto';
+import { UpdateDRDTopicDto } from '@/modules/drd-topics/dtos/update-drd-topic.dto';
 
 export class UpdateDRDDto {
   @IsOptional()
@@ -17,18 +17,18 @@ export class UpdateDRDDto {
   @IsOptional()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Type(() => DRDLevelDto)
-  levels?: DRDLevelDto[];
+  @Type(() => UpdateDRDLevelDto)
+  levels?: UpdateDRDLevelDto[];
 
   @IsOptional()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Type(() => DRDMetricDto)
-  metrics?: DRDMetricDto[];
+  @Type(() => UpdateDRDMetricDto)
+  metrics?: UpdateDRDMetricDto[];
 
   @IsOptional()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Type(() => DRDTopicDto)
-  topics?: DRDTopicDto[];
+  @Type(() => UpdateDRDTopicDto)
+  topics?: UpdateDRDTopicDto[];
 }

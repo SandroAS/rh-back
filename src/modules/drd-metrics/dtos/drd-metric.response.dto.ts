@@ -1,4 +1,4 @@
-import { DRDMetrics, MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
+import { DRDMetric, MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
 import { Expose, Type } from 'class-transformer';
 import DrdLevelMinScoreResponseDto from '@/modules/drd-level-min-scores/dtos/drd-level-min-score-response.dto';
 
@@ -22,7 +22,7 @@ export default class DrdMetricResponseDto {
   @Type(() => DrdLevelMinScoreResponseDto)
   scoresByLevel: DrdLevelMinScoreResponseDto[];
 
-  constructor(metric: DRDMetrics) {
+  constructor(metric: DRDMetric) {
     this.uuid = metric.uuid;
     this.name = metric.name;
     this.type = metric.type;

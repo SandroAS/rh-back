@@ -1,6 +1,6 @@
-import { IsString, IsNotEmpty, IsInt, IsPositive } from 'class-validator';
+import { IsNotEmpty, IsInt, IsPositive, IsString } from 'class-validator';
 
-export class DRDLevelDto {
+export class UpdateDRDLevelDto {
   @IsNotEmpty()
   @IsString()
   uuid: string;
@@ -8,7 +8,7 @@ export class DRDLevelDto {
   @IsNotEmpty()
   @IsString()
   name: string;
-  
+
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
