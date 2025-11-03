@@ -44,6 +44,17 @@ const drd_metrics_module_1 = require("./modules/drd-metrics/drd-metrics.module")
 const drd_levels_module_1 = require("./modules/drd-levels/drd-levels.module");
 const drd_topic_items_module_1 = require("./modules/drd-topic-items/drd-topic-items.module");
 const drd_topics_module_1 = require("./modules/drd-topics/drd-topics.module");
+const forms_module_1 = require("./modules/forms/forms.module");
+const form_questions_module_1 = require("./modules/form-questions/form-questions.module");
+const form_question_options_module_1 = require("./modules/form-question-options/form-question-options.module");
+const form_applications_module_1 = require("./modules/form-applications/form-applications.module");
+const form_application_questions_module_1 = require("./modules/form-application-questions/form-application-questions.module");
+const form_application_question_options_module_1 = require("./modules/form-application-question-options/form-application-question-options.module");
+const evaluations_module_1 = require("./modules/evaluations/evaluations.module");
+const evaluation_applications_module_1 = require("./modules/evaluation-applications/evaluation-applications.module");
+const form_responses_module_1 = require("./modules/form-responses/form-responses.module");
+const form_answers_module_1 = require("./modules/form-answers/form-answers.module");
+const form_answer_multi_options_module_1 = require("./modules/form-answer-multi-options/form-answer-multi-options.module");
 const cookieSession = require('cookie-session');
 let AppModule = class AppModule {
     constructor(configService) {
@@ -109,7 +120,18 @@ exports.AppModule = AppModule = __decorate([
             drd_metrics_module_1.DrdMetricsModule,
             drd_levels_module_1.DrdLevelsModule,
             drd_topic_items_module_1.DrdTopicItemsModule,
-            drd_topics_module_1.DrdTopicsModule
+            drd_topics_module_1.DrdTopicsModule,
+            forms_module_1.FormsModule,
+            form_questions_module_1.FormQuestionsModule,
+            form_question_options_module_1.FormQuestionOptionsModule,
+            form_applications_module_1.FormApplicationsModule,
+            form_application_questions_module_1.FormApplicationQuestionsModule,
+            form_application_question_options_module_1.FormApplicationQuestionOptionsModule,
+            evaluations_module_1.EvaluationsModule,
+            evaluation_applications_module_1.EvaluationApplicationsModule,
+            form_responses_module_1.FormResponsesModule,
+            form_answers_module_1.FormAnswersModule,
+            form_answer_multi_options_module_1.FormAnswerMultiOptionsModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [

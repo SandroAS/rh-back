@@ -32,6 +32,17 @@ import { DrdMetricsModule } from './modules/drd-metrics/drd-metrics.module';
 import { DrdLevelsModule } from './modules/drd-levels/drd-levels.module';
 import { DrdTopicItemsModule } from './modules/drd-topic-items/drd-topic-items.module';
 import { DrdTopicsModule } from './modules/drd-topics/drd-topics.module';
+import { FormsModule } from './modules/forms/forms.module';
+import { FormQuestionsModule } from './modules/form-questions/form-questions.module';
+import { FormQuestionOptionsModule } from './modules/form-question-options/form-question-options.module';
+import { FormApplicationsModule } from './modules/form-applications/form-applications.module';
+import { FormApplicationQuestionsModule } from './modules/form-application-questions/form-application-questions.module';
+import { FormApplicationQuestionOptionsModule } from './modules/form-application-question-options/form-application-question-options.module';
+import { EvaluationsModule } from './modules/evaluations/evaluations.module';
+import { EvaluationApplicationsModule } from './modules/evaluation-applications/evaluation-applications.module';
+import { FormResponsesModule } from './modules/form-responses/form-responses.module';
+import { FormAnswersModule } from './modules/form-answers/form-answers.module';
+import { FormAnswerMultiOptionsModule } from './modules/form-answer-multi-options/form-answer-multi-options.module';
 
 const cookieSession = require('cookie-session');
 
@@ -85,7 +96,18 @@ const cookieSession = require('cookie-session');
     DrdMetricsModule,
     DrdLevelsModule,
     DrdTopicItemsModule,
-    DrdTopicsModule
+    DrdTopicsModule,
+    FormsModule,
+    FormQuestionsModule,
+    FormQuestionOptionsModule,
+    FormApplicationsModule,
+    FormApplicationQuestionsModule,
+    FormApplicationQuestionOptionsModule,
+    EvaluationsModule,
+    EvaluationApplicationsModule,
+    FormResponsesModule,
+    FormAnswersModule,
+    FormAnswerMultiOptionsModule
   ],
   controllers: [AppController],
   providers: [

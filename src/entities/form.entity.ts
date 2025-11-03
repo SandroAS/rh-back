@@ -1,0 +1,36 @@
+import { Entity, Column, OneToMany } from 'typeorm';
+import { BaseEntity } from '../common/entities/base.entity';
+import { FormQuestion } from './form-question.entity';
+import { FormApplication } from './form-application.entity';
+import { Evaluation } from './evaluation.entity';
+
+export enum FormStatus {
+  DRAFT = 'DRAFT',
+  PUBLISHED = 'PUBLISHED',
+  ARCHIVED = 'ARCHIVED',
+}
+
+@Entity('forms')
+export class Form extends BaseEntity {
+  @Column({ type: 'varchar', length: 255 })
+  name: string;
+
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
+  @Column({ 
+    type: 'enum', 
+    enum: FormStatus, 
+    default: FormStatus.DRAFT 
+  })
+  status: FormStatus;
+
+  @OneToMany(() => FormQuestion, (question) => question.form)
+  questions: FormQuestion[];
+  
+  @OneToMany(() => FormApplication, (application) => application.baseForm)
+  applications: FormApplication[];
+
+  @OneToMany(() => Evaluation, (evaluation) => evaluation.form)
+  evaluations: Evaluation[];
+}
