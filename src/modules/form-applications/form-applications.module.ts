@@ -4,11 +4,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FormsModule } from '../forms/forms.module';
 import { FormApplicationsController } from './form-applications.controller';
 import { FormApplicationsService } from './form-applications.service';
+import { FormQuestionsModule } from '../form-questions/form-questions.module';
+import { FormQuestionOptionsModule } from '../form-question-options/form-question-options.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([FormApplication]),
-    FormsModule, 
+    FormsModule,
+    FormQuestionsModule,
+    FormQuestionOptionsModule
   ],
   controllers: [FormApplicationsController],
   providers: [FormApplicationsService],
