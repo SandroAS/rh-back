@@ -141,7 +141,7 @@ export class DrdsService extends BaseService<DRD> {
   }
 
   async findAllWithAccountId(accountId: number): Promise<DRD[]> {
-    return await super.findAll({ where: { account_id: accountId } });
+    return await super.findAll({ where: { account_id: accountId }, relations: ['jobPosition'] });
   }
 
   async updateByAccountId(
