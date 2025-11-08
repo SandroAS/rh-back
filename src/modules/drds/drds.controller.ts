@@ -29,6 +29,12 @@ export class DrdsController {
     return new DRDPaginationResponseDto(result);
   }
 
+  @Get()
+  async findAll(@AccountId() account_id: number): Promise<DRDResponseDto[]> {
+    const jobPositions = await this.drdsService.findAllWithAccountId(account_id);
+    return jobPositions.map(drd => new DRDResponseDto(drd));
+  }
+
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<DRDResponseDto> {
     const relations: FindOptionsRelations<DRD> = {

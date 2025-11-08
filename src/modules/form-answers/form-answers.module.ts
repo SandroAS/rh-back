@@ -15,4 +15,4 @@ import { FormAnswersService } from './form-answers.service';
   providers: [FormAnswersService],
   exports: [FormAnswersService],
 })
-export class FormAnswerModule {}
+export class FormAnswersModule {}
