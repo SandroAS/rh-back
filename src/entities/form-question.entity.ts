@@ -1,8 +1,9 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany, Index } from 'typeorm';
 import { BaseEntity } from '../common/entities/base.entity';
 import { Form } from './form.entity';
 import { FormQuestionOption } from './form-question-option.entity';
 import { FormApplicationQuestion } from './form-application-question.entity';
+import { FormTopic } from './form-topic.entity';
 
 export enum QuestionType {
   SHORT_TEXT = 'SHORT_TEXT',
@@ -14,8 +15,13 @@ export enum QuestionType {
 
 @Entity('form_questions')
 export class FormQuestion extends BaseEntity {
-  @Column({ name: 'form_id', type: 'int' })
-  form_id: number;
+  @Index()
+  @Column({ name: 'form_id'})
+  form_id: number | null; 
+
+  @Index()
+  @Column({ name: 'topic_id', nullable: true })
+  topic_id: number | null;
 
   @Column({ type: 'text' })
   text: string;
@@ -36,9 +42,12 @@ export class FormQuestion extends BaseEntity {
   @JoinColumn({ name: 'form_id' })
   form: Form;
 
-  @OneToMany(() => FormQuestionOption, (option) => option.question)
+  @OneToMany(() => FormQuestionOption, option => option.question, { cascade: ['insert', 'update'] })
   options: FormQuestionOption[];
 
   @OneToMany(() => FormApplicationQuestion, (appQuestion) => appQuestion.baseQuestion)
   applicationQuestions: FormApplicationQuestion[];
+
+  @ManyToOne(() => FormTopic, topic => topic.questions, { onDelete: 'CASCADE', nullable: true })
+  topic: FormTopic | null; 
 }

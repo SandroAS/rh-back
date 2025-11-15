@@ -3,6 +3,7 @@ import { BaseEntity } from '../common/entities/base.entity';
 import { FormQuestion } from './form-question.entity';
 import { FormApplication } from './form-application.entity';
 import { Evaluation } from './evaluation.entity';
+import { FormTopic } from './form-topic.entity';
 
 export enum FormStatus {
   DRAFT = 'DRAFT',
@@ -25,7 +26,7 @@ export class Form extends BaseEntity {
   })
   status: FormStatus;
 
-  @OneToMany(() => FormQuestion, (question) => question.form)
+  @OneToMany(() => FormQuestion, question => question.form, { cascade: ['insert', 'update'] })
   questions: FormQuestion[];
   
   @OneToMany(() => FormApplication, (application) => application.baseForm)
@@ -33,4 +34,7 @@ export class Form extends BaseEntity {
 
   @OneToMany(() => Evaluation, (evaluation) => evaluation.form)
   evaluations: Evaluation[];
+
+  @OneToMany(() => FormTopic, topic => topic.form, { cascade: ['insert', 'update'] })
+  topics: FormTopic[];
 }
