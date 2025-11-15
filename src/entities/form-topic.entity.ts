@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, OneToMany, Index } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, Index, JoinColumn } from 'typeorm';
 import { Form } from './form.entity';
 import { FormQuestion } from './form-question.entity';
 import { BaseEntity } from '../common/entities/base.entity';
@@ -9,6 +9,10 @@ export class FormTopic extends BaseEntity {
   @Column({ name: 'form_id' })
   form_id: number;
 
+  @ManyToOne(() => Form, form => form.topics, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'form_id' })
+  form: Form;
+
   @Column({ length: 255 })
   title: string;
 
@@ -17,9 +21,6 @@ export class FormTopic extends BaseEntity {
 
   @Column({ type: 'integer' })
   order: number;
-
-  @ManyToOne(() => Form, form => form.topics, { onDelete: 'CASCADE' })
-  form: Form;
 
   @OneToMany(() => FormQuestion, question => question.topic, { cascade: ['insert', 'update'] })
   questions: FormQuestion[];
