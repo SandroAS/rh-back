@@ -1,4 +1,5 @@
-import { FormQuestion, QuestionType } from '@/entities/form-question.entity';
+import { QuestionType } from '@/common/enums/question-type.enum';
+import { FormQuestion } from '@/entities/form-question.entity';
 import { FormQuestionOptionResponseDto } from '@/modules/form-question-options/dtos/form-question-option-response.dto';
 import { Expose, Type } from 'class-transformer';
 

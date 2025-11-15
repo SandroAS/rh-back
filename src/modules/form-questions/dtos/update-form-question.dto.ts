@@ -1,4 +1,4 @@
-import { QuestionType } from '@/entities/form-question.entity';
+import { QuestionType } from '@/common/enums/question-type.enum';
 import { CreateFormQuestionOptionDto } from '@/modules/form-question-options/dtos/create-form-question-option.dto';
 import { Type } from 'class-transformer';
 import { IsArray, IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min, ValidateNested } from 'class-validator';

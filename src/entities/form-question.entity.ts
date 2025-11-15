@@ -4,14 +4,7 @@ import { Form } from './form.entity';
 import { FormQuestionOption } from './form-question-option.entity';
 import { FormApplicationQuestion } from './form-application-question.entity';
 import { FormTopic } from './form-topic.entity';
-
-export enum QuestionType {
-  SHORT_TEXT = 'SHORT_TEXT',
-  LONG_TEXT = 'LONG_TEXT',
-  SINGLE_CHOICE = 'SINGLE_CHOICE',
-  MULTI_CHOICE = 'MULTI_CHOICE',
-  DROPDOWN = 'DROPDOWN',
-}
+import { QuestionType } from '../common/enums/question-type.enum';
 
 @Entity('form_questions')
 export class FormQuestion extends BaseEntity {

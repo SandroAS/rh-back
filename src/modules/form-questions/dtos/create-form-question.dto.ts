@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString, IsInt, Min, IsEnum, IsBoolean, IsOptional, ValidateNested, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
-import { QuestionType } from '@/entities/form-question.entity';
 import { CreateFormQuestionOptionDto } from '@/modules/form-question-options/dtos/create-form-question-option.dto';
+import { QuestionType } from '@/common/enums/question-type.enum';
 
 export class CreateFormQuestionDto {
   @IsNotEmpty()
