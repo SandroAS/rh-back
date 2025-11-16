@@ -1,13 +1,10 @@
+import { CreateFormDto } from '@/modules/forms/dtos/create-form.dto';
 import { IsNotEmpty, IsString, IsInt, IsOptional, Min } from 'class-validator';
 
 export class CreateEvaluationDto {
-  @IsNotEmpty()
-  @IsInt()
-  readonly form_id: number;
-
   @IsOptional()
   @IsInt()
-  readonly drd_id?: number | null;
+  readonly drd_uuid?: string | null;
 
   @IsNotEmpty()
   @IsString()
@@ -25,4 +22,7 @@ export class CreateEvaluationDto {
   @IsNotEmpty()
   @IsInt()
   readonly created_by_user_id: number;
+
+  @IsNotEmpty()
+  readonly form: CreateFormDto;
 }

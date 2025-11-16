@@ -1,0 +1,74 @@
+{
+  "name": "Tr...Ap...Jr...Pl...Sr",
+  "createdBy": null,
+  "jobPositionsLevels": [
+    {
+      "name": "Treinee",
+      "salary": 900
+    },
+    {
+      "name": "Aprendiz",
+      "salary": 1200
+    },
+    {
+      "name": "Júnior I",
+      "salary": 2000
+    },
+    {
+      "name": "Júnior II",
+      "salary": 2200
+    },
+    {
+      "name": "Júnior III",
+      "salary": 2500
+    },
+    {
+      "name": "Júnior IV",
+      "salary": 3000
+    },
+    {
+      "name": "Júnior V",
+      "salary": 3400
+    },
+    {
+      "name": "Pleno I",
+      "salary": 4100
+    },
+    {
+      "name": "Pleno II",
+      "salary": 4700
+    },
+    {
+      "name": "Pleno III",
+      "salary": 5500
+    },
+    {
+      "name": "Pleno IV",
+      "salary": 6500
+    },
+    {
+      "name": "Pleno V",
+      "salary": 7700
+    },
+    {
+      "name": "Sênior I",
+      "salary": 8300
+    },
+    {
+      "name": "Sênior II",
+      "salary": 9500
+    },
+    {
+      "name": "Sênior III",
+      "salary": 10000
+    },
+    {
+      "name": "Sênior IV",
+      "salary": 12000
+    },
+    {
+      "name": "Sênior V",
+      "salary": 15000
+    }
+  ]
+}

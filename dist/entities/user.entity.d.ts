@@ -11,6 +11,7 @@ import { Team } from './team.entity';
 import { TeamMember } from './team-member.entity';
 import { Sector } from './sector.entity';
 import { DRD } from './drd.entity';
+import { Evaluation } from './evaluation.entity';
 export declare enum Gender {
     MALE = "MALE",
     FEMALE = "FEMALE"
@@ -46,6 +47,7 @@ export declare class User {
     sectors_created: Sector[];
     sectors: Sector[];
     created_drds: DRD[];
+    createdEvaluations: Evaluation[];
     created_at: Date;
     updated_at: Date;
 }

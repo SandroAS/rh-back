@@ -5,6 +5,10 @@ import { CreateFormQuestionDto } from '@/modules/form-questions/dtos/create-form
 export class UpdateFormTopicDto {
   @IsOptional()
   @IsString()
+  readonly uuid?: string;
+
+  @IsOptional()
+  @IsString()
   readonly title?: string;
 
   @IsOptional()

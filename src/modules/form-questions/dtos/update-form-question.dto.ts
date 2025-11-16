@@ -6,6 +6,10 @@ import { IsArray, IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Mi
 export class UpdateFormQuestionDto {
   @IsOptional()
   @IsString()
+  readonly uuid?: string;
+
+  @IsOptional()
+  @IsString()
   readonly text?: string;
 
   @IsNotEmpty()

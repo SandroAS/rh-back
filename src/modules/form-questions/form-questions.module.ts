@@ -1,14 +1,14 @@
 import { FormQuestion } from '@/entities/form-question.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FormsModule } from '../forms/forms.module';
 import { FormQuestionsController } from './form-questions.controller';
 import { FormQuestionsService } from './form-questions.service';
+import { FormQuestionOptionsModule } from '../form-question-options/form-question-options.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([FormQuestion]),
-    FormsModule,
+    FormQuestionOptionsModule
   ],
   controllers: [FormQuestionsController],
   providers: [FormQuestionsService],

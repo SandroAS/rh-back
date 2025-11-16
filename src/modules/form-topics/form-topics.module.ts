@@ -3,9 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FormTopicsController } from './form-topics.controller';
 import { FormTopicsService } from './form-topics.service';
 import { FormTopic } from '@/entities/form-topic.entity';
+import { FormQuestionsModule } from '../form-questions/form-questions.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([FormTopic])],
+  imports: [
+    TypeOrmModule.forFeature([FormTopic]),
+    FormQuestionsModule
+  ],
   controllers: [FormTopicsController],
   providers: [FormTopicsService],
   exports: [FormTopicsService],

@@ -147,44 +147,44 @@ export abstract class BaseService<T extends BaseEntity> {
   }
 
   /**
- * Atualiza uma entidade existente por UUID, com filtro opcional por accountId.
- * @param uuid UUID da entidade a ser atualizada.
- * @param data Dados parciais para atualização.
- * @param accountId Opcional: ID da conta para filtro de segurança.
- * @returns A entidade atualizada.
- * @throws NotFoundException se a entidade não for encontrada ou não pertencer à conta.
- */
-async updateByUuid(uuid: string, data: DeepPartial<T>, accountId?: number): Promise<T> {
-  const whereClause: any = { uuid: uuid };
-  if (accountId) {
-    whereClause.account_id = accountId;
+   * Atualiza uma entidade existente por UUID, com filtro opcional por accountId.
+   * @param uuid UUID da entidade a ser atualizada.
+   * @param data Dados parciais para atualização.
+   * @param accountId Opcional: ID da conta para filtro de segurança.
+   * @returns A entidade atualizada.
+   * @throws NotFoundException se a entidade não for encontrada ou não pertencer à conta.
+   */
+  async updateByUuid(uuid: string, data: DeepPartial<T>, accountId?: number): Promise<T> {
+    const whereClause: any = { uuid: uuid };
+    if (accountId) {
+      whereClause.account_id = accountId;
+    }
+
+    const entity = await this.repository.findOne({ where: whereClause });
+    if (!entity) {
+      throw new NotFoundException(`Entidade com UUID "${uuid}" não encontrada ao tentar atualizar.`);
+    }
+    Object.assign(entity, data);
+    return await this.repository.save(entity);
   }
 
-  const entity = await this.repository.findOne({ where: whereClause });
-  if (!entity) {
-    throw new NotFoundException(`Entidade com UUID "${uuid}" não encontrada ao tentar atualizar.`);
-  }
-  Object.assign(entity, data);
-  return await this.repository.save(entity);
-}
+  /**
+   * Remove uma entidade por UUID, com filtro opcional por accountId.
+   * @param uuid UUID da entidade a ser removida.
+   * @param accountId Opcional: ID da conta para filtro de segurança.
+   * @returns true se a remoção foi bem-sucedida.
+   * @throws NotFoundException se a entidade não for encontrada ou não pertencer à conta.
+   */
+  async removeByUuid(uuid: string, accountId?: number): Promise<boolean> {
+    const whereClause: any = { uuid: uuid };
+    if (accountId) {
+      whereClause.account_id = accountId;
+    }
 
-/**
- * Remove uma entidade por UUID, com filtro opcional por accountId.
- * @param uuid UUID da entidade a ser removida.
- * @param accountId Opcional: ID da conta para filtro de segurança.
- * @returns true se a remoção foi bem-sucedida.
- * @throws NotFoundException se a entidade não for encontrada ou não pertencer à conta.
- */
-async removeByUuid(uuid: string, accountId?: number): Promise<boolean> {
-  const whereClause: any = { uuid: uuid };
-  if (accountId) {
-    whereClause.account_id = accountId;
+    const result = await this.repository.delete(whereClause);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Entidade com UUID "${uuid}" não encontrada ao tentar deletar.`);
+    }
+    return true;
   }
-
-  const result = await this.repository.delete(whereClause);
-  if (result.affected === 0) {
-    throw new NotFoundException(`Entidade com UUID "${uuid}" não encontrada ao tentar deletar.`);
-  }
-  return true;
-}
 }

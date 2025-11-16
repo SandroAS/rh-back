@@ -2,10 +2,6 @@ import { FormTopic } from '@/entities/form-topic.entity';
 import { FormQuestionResponseDto } from '@/modules/form-questions/dtos/form-question-response.dto';
 import { Expose, Type } from 'class-transformer';
 
-/**
- * DTO (Data Transfer Object) para representar a resposta de um Tópico do Formulário.
- * Usado para formatar a saída de dados da API.
- */
 export class FormTopicResponseDto {
   
   @Expose()

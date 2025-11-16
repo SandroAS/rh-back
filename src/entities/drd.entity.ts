@@ -6,6 +6,7 @@ import { JobPosition } from './job-position.entity';
 import { DRDTopic } from './drd-topic.entity';
 import { DRDLevel } from './drd-level.entity';
 import { DRDMetric } from './drd-metric.entity';
+import { Evaluation } from './evaluation.entity';
 
 @Entity('drds')
 export class DRD extends BaseEntity {
@@ -41,4 +42,7 @@ export class DRD extends BaseEntity {
 
   @OneToMany(() => DRDMetric, (metric) => metric.drd)
   metrics: DRDMetric[];
+
+  @OneToMany(() => Evaluation, (evaluation) => evaluation.drd)
+  evaluations: Evaluation[];
 }

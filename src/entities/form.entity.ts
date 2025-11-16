@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, OneToOne } from 'typeorm';
 import { BaseEntity } from '../common/entities/base.entity';
 import { FormQuestion } from './form-question.entity';
 import { FormApplication } from './form-application.entity';
@@ -32,8 +32,8 @@ export class Form extends BaseEntity {
   @OneToMany(() => FormApplication, (application) => application.baseForm)
   applications: FormApplication[];
 
-  @OneToMany(() => Evaluation, (evaluation) => evaluation.form)
-  evaluations: Evaluation[];
+  @OneToOne(() => Evaluation, (evaluation) => evaluation.form)
+  evaluation: Evaluation;
 
   @OneToMany(() => FormTopic, topic => topic.form, { cascade: ['insert', 'update'] })
   topics: FormTopic[];
