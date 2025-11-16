@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { Form } from '@/entities/form.entity';
+import { Form, FormStatus } from '@/entities/form.entity';
 import { CreateFormDto } from './dtos/create-form.dto';
 import { UpdateFormDto } from './dtos/update-form.dto';
 import { FormTopicsService } from '../form-topics/form-topics.service';
@@ -29,7 +29,7 @@ export class FormsService extends BaseService<Form> {
   ): Promise<Form> {
     try {
       const formRepository = manager.getRepository(Form);
-      const newFormData = formRepository.create(createFormDto);
+      const newFormData = formRepository.create({...createFormDto, status: FormStatus.DRAFT});
       const savedForm = await formRepository.save(newFormData);
 
       if (createFormDto.topics && createFormDto.topics.length > 0) {

@@ -7,7 +7,7 @@ export class UpdateEvaluationDto {
   readonly form_uuid: string;
 
   @IsOptional()
-  @IsInt()
+  @IsString()
   readonly drd_uuid?: string | null;
 
   @IsOptional()
@@ -19,13 +19,9 @@ export class UpdateEvaluationDto {
   @Min(3)
   readonly rate: number;
 
-  @IsNotEmpty()
-  @IsInt()
-  readonly account_id: number;
-
-  @IsNotEmpty()
-  @IsInt()
-  readonly created_by_user_id: number;
+  @IsOptional()
+  @IsString()
+  readonly created_by_user_uuid?: string;
 
   @IsNotEmpty()
   readonly form: UpdateFormDto;

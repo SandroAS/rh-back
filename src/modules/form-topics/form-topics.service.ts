@@ -40,7 +40,7 @@ export class FormTopicsService {
 
         if (topicDto.questions && topicDto.questions.length > 0) {
           await this.formQuestionsService.createQuestionsInTransaction(
-            null,
+            formId,
             topicDto.questions,
             manager,
             topicId,

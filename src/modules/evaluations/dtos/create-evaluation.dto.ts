@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString, IsInt, IsOptional, Min } from 'class-validator';
 
 export class CreateEvaluationDto {
   @IsOptional()
-  @IsInt()
+  @IsString()
   readonly drd_uuid?: string | null;
 
   @IsNotEmpty()
@@ -16,12 +16,8 @@ export class CreateEvaluationDto {
   readonly rate: number;
 
   @IsNotEmpty()
-  @IsInt()
-  readonly account_id: number;
-
-  @IsNotEmpty()
-  @IsInt()
-  readonly created_by_user_id: number;
+  @IsString()
+  readonly created_by_user_uuid: string;
 
   @IsNotEmpty()
   readonly form: CreateFormDto;

@@ -52,7 +52,7 @@ export class EvaluationsService extends BaseService<Evaluation> {
       const newEvaluationData = this.evaluationRepository.create({
         ...createEvaluationDto,
         account_id: accountId,
-        created_by_user_id: 1,
+        created_by_user_id: createdByUser.id,
         form_id: createdForm.id,
         drd_id: drd ? drd.id : null,
       });

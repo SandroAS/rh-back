@@ -12,12 +12,8 @@ export class CreateFormDto {
   readonly description?: string;
 
   @IsNotEmpty()
-  @IsInt()
-  readonly account_id: number;
-
-  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateFormTopicDto)
-  readonly topics?: CreateFormTopicDto[];
+  readonly topics: CreateFormTopicDto[];
 }
