@@ -100,6 +100,7 @@ export class EvaluationsService extends BaseService<Evaluation> {
       qb.leftJoinAndSelect('entity.createdBy', 'createdBy');
       qb.leftJoinAndSelect('entity.drd', 'drd');
       qb.select([
+        'entity.id',
         'entity.uuid',
         'entity.name',
         'entity.rate',
@@ -107,7 +108,7 @@ export class EvaluationsService extends BaseService<Evaluation> {
         'createdBy.uuid',
         'createdBy.name',
         'drd.uuid',
-        'drd.name',
+        'drd.jobPosition'
       ]);
     });
   }
