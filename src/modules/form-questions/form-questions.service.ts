@@ -55,7 +55,7 @@ export class FormQuestionsService {
 
     } catch (err) {
       console.error('Erro ao criar Questões e Opções aninhadas:', err);
-      throw new InternalServerErrorException('Falha ao salvar a estrutura de questões do formulário.');
+      throw new InternalServerErrorException('Falha ao salvar a estrutura de questões do formulário. Erro: '+err);
     }
   }
 

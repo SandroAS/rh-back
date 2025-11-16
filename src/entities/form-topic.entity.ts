@@ -22,6 +22,6 @@ export class FormTopic extends BaseEntity {
   @Column({ type: 'integer' })
   order: number;
 
-  @OneToMany(() => FormQuestion, question => question.topic, { cascade: ['insert', 'update'] })
+  @OneToMany(() => FormQuestion, question => question.topic)
   questions: FormQuestion[];
 }

@@ -36,7 +36,7 @@ export class FormQuestionOptionsService {
 
     } catch (err) {
       console.error('Erro ao criar Opções de Resposta:', err);
-      throw new InternalServerErrorException('Falha ao salvar as opções de resposta da questão.');
+      throw new InternalServerErrorException('Falha ao salvar as opções de resposta da questão. Erro: '+err);
     }
   }
 

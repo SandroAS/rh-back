@@ -53,7 +53,7 @@ export class FormTopicsService {
 
     } catch (err) {
       console.error('Erro ao criar Tópicos e Questões aninhadas:', err);
-      throw new InternalServerErrorException('Falha ao salvar a estrutura de tópicos do formulário.');
+      throw new InternalServerErrorException('Falha ao salvar a estrutura de tópicos do formulário. Erro: '+err);
     }
   }
 

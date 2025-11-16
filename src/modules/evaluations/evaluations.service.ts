@@ -53,7 +53,7 @@ export class EvaluationsService extends BaseService<Evaluation> {
         ...createEvaluationDto,
         account_id: accountId,
         created_by_user_id: createdByUser.id,
-        form_id: createdForm.id,
+        form: createdForm,
         drd_id: drd ? drd.id : null,
       });
 
@@ -74,7 +74,7 @@ export class EvaluationsService extends BaseService<Evaluation> {
       }
       
       console.error('Erro ao criar Evaluation:', err);
-      throw new InternalServerErrorException('Falha ao salvar o modelo de avaliação.');
+      throw new InternalServerErrorException('Falha ao salvar o modelo de avaliação. Erro: '+err);
     } finally {
       await queryRunner.release();
     }

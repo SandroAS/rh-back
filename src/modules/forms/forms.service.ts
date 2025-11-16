@@ -43,7 +43,7 @@ export class FormsService extends BaseService<Form> {
       return savedForm;
 
     } catch (err) {
-      throw new InternalServerErrorException('Falha ao criar o Formulário e sua estrutura.');
+      throw new InternalServerErrorException('Falha ao criar o Formulário e sua estrutura. Erro: '+err);
     }
   }
 

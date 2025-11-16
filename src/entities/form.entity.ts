@@ -26,7 +26,7 @@ export class Form extends BaseEntity {
   })
   status: FormStatus;
 
-  @OneToMany(() => FormQuestion, question => question.form, { cascade: ['insert', 'update'] })
+  @OneToMany(() => FormQuestion, question => question.form)
   questions: FormQuestion[];
   
   @OneToMany(() => FormApplication, (application) => application.baseForm)
@@ -35,6 +35,6 @@ export class Form extends BaseEntity {
   @OneToOne(() => Evaluation, (evaluation) => evaluation.form)
   evaluation: Evaluation;
 
-  @OneToMany(() => FormTopic, topic => topic.form, { cascade: ['insert', 'update'] })
+  @OneToMany(() => FormTopic, topic => topic.form)
   topics: FormTopic[];
 }

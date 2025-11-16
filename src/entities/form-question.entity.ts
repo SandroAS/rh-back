@@ -16,8 +16,11 @@ export class FormQuestion extends BaseEntity {
   @Column({ name: 'topic_id', nullable: true })
   topic_id: number | null;
 
-  @Column({ type: 'text' })
-  text: string;
+  @Column({ length: 255 })
+  title: string;
+
+  @Column({ type: 'text', nullable: true })
+  description: string | null;
 
   @Column({ 
     type: 'enum', 
@@ -35,7 +38,7 @@ export class FormQuestion extends BaseEntity {
   @JoinColumn({ name: 'form_id' })
   form: Form;
 
-  @OneToMany(() => FormQuestionOption, option => option.question, { cascade: ['insert', 'update'] })
+  @OneToMany(() => FormQuestionOption, option => option.question)
   options: FormQuestionOption[];
 
   @OneToMany(() => FormApplicationQuestion, (appQuestion) => appQuestion.baseQuestion)
