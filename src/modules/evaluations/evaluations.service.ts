@@ -107,6 +107,8 @@ export class EvaluationsService extends BaseService<Evaluation> {
         'entity.created_at',
         'createdBy.uuid',
         'createdBy.name',
+        'createdBy.email',
+        'createdBy.profile_img_url',
         'drd.uuid',
         'drd.jobPosition'
       ]);
