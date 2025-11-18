@@ -99,6 +99,7 @@ export class EvaluationsService extends BaseService<Evaluation> {
       qb.andWhere('entity.account_id = :accountId', { accountId });
       qb.leftJoinAndSelect('entity.createdBy', 'createdBy');
       qb.leftJoinAndSelect('entity.drd', 'drd');
+      qb.leftJoinAndSelect('drd.jobPosition', 'jobPosition');
       qb.select([
         'entity.id',
         'entity.uuid',
@@ -110,7 +111,9 @@ export class EvaluationsService extends BaseService<Evaluation> {
         'createdBy.email',
         'createdBy.profile_img_url',
         'drd.uuid',
-        'drd.jobPosition'
+        'drd.jobPosition',
+        'jobPosition.uuid',
+        'jobPosition.title'
       ]);
     });
   }
