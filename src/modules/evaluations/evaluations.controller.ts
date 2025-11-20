@@ -47,25 +47,7 @@ export class EvaluationsController {
     @Param('uuid') uuid: string, 
     @AccountId() account_id: number
   ): Promise<EvaluationResponseDto> {
-    const relations: FindOptionsRelations<Evaluation> = {
-      form: { 
-        topics: { 
-          questions: {
-            options: true
-          }
-        },
-        questions: {
-          options: true
-        }
-      },
-      drd: true, 
-      createdBy: true,
-    };
-
-    return new EvaluationResponseDto(await this.evaluationsService.findOne({ 
-      where: { uuid, account_id }, 
-      relations 
-    }));
+    return new EvaluationResponseDto(await this.evaluationsService.findOneWithRelations(uuid, account_id));
   }
 
   @Put(':uuid')

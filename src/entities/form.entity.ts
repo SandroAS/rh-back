@@ -27,8 +27,8 @@ export class Form extends BaseEntity {
   status: FormStatus;
 
   @OneToMany(() => FormQuestion, question => question.form)
-  questions: FormQuestion[];
-  
+  formQuestions: FormQuestion[];
+
   @OneToMany(() => FormApplication, (application) => application.baseForm)
   applications: FormApplication[];
 

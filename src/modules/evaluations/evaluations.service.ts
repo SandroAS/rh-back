@@ -80,16 +80,6 @@ export class EvaluationsService extends BaseService<Evaluation> {
     }
   }
 
-  async findOne(options: FindOneOptions<Evaluation>): Promise<Evaluation> {
-    const evaluation = await this.evaluationRepository.findOne(options);
-
-    if (!evaluation) {
-      throw new NotFoundException(`Modelo de avaliação não encontrado.`);
-    }
-
-    return evaluation;
-  }
-
   async findAndPaginateByAccountId(
     pagination: PaginationDto, 
     accountId: number, 
@@ -120,6 +110,48 @@ export class EvaluationsService extends BaseService<Evaluation> {
 
   async findAllWithAccountId(accountId: number): Promise<Evaluation[]> {
     return await super.findAll({ where: { account_id: accountId }, relations: ['drd'] });
+  }
+
+  async findOneWithRelations(uuid: string, account_id: number): Promise<Evaluation> {
+    const qb = this.evaluationRepository.createQueryBuilder('evaluation')
+      .where('evaluation.uuid = :uuid', { uuid })
+      .andWhere('evaluation.account_id = :accountId', { accountId: account_id })
+      .leftJoinAndSelect('evaluation.createdBy', 'createdBy')
+      .leftJoinAndSelect('evaluation.drd', 'drd')
+      .leftJoinAndSelect('drd.jobPosition', 'jobPosition')
+      .leftJoinAndSelect('evaluation.form', 'form')
+      .leftJoinAndSelect('form.topics', 'topics') 
+      .leftJoinAndSelect('topics.questions', 'questions') 
+      .leftJoinAndSelect('questions.options', 'options') 
+      .select([
+        'evaluation',
+        'createdBy',
+        'drd',
+        'jobPosition.uuid',
+        'jobPosition.title',
+        'form',
+        'topics.uuid',
+        'topics.title',
+        'topics.description',
+        'topics.order',
+        'topics.form_id',
+        'questions.uuid',
+        'questions.title',
+        'questions.description',
+        'questions.type',
+        'questions.order',
+        'questions.is_required',
+        'options.uuid',
+        'options.text'
+      ])
+
+    const evaluation = await qb.getOne();
+
+    if (!evaluation) {
+      throw new NotFoundException(`Evaluation with UUID ${uuid} not found, or related form data (questions/options) is missing.`);
+    }
+
+    return evaluation;
   }
 
   async updateWithAccountId(

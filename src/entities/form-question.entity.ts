@@ -34,7 +34,7 @@ export class FormQuestion extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   is_required: boolean;
 
-  @ManyToOne(() => Form, (form) => form.questions, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Form, (form) => form.formQuestions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'form_id' })
   form: Form;
 
@@ -45,5 +45,6 @@ export class FormQuestion extends BaseEntity {
   applicationQuestions: FormApplicationQuestion[];
 
   @ManyToOne(() => FormTopic, topic => topic.questions, { onDelete: 'CASCADE', nullable: true })
+  @JoinColumn({ name: 'topic_id' })
   topic: FormTopic | null; 
 }
