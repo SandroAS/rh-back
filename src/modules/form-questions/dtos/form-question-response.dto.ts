@@ -21,6 +21,9 @@ export class FormQuestionResponseDto {
   readonly order: number;
 
   @Expose()
+  readonly is_required: boolean;
+
+  @Expose()
   @Type(() => FormQuestionOptionResponseDto)
   readonly options: FormQuestionOptionResponseDto[];
   
@@ -30,6 +33,7 @@ export class FormQuestionResponseDto {
     this.title = formQuestion.title;
     this.description = formQuestion.description;
     this.order = formQuestion.order;
+    this.is_required = formQuestion.is_required;
     this.options = [];
 
     if (formQuestion.options) {

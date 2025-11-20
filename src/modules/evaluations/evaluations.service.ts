@@ -63,6 +63,7 @@ export class EvaluationsService extends BaseService<Evaluation> {
 
       savedEvaluation.form = createdForm;
       savedEvaluation.drd = drd;
+      savedEvaluation.createdBy = createdByUser;
       
       return savedEvaluation;
 
@@ -166,7 +167,7 @@ export class EvaluationsService extends BaseService<Evaluation> {
       try {
         const existingEvaluation = await this.evaluationRepository.findOne({
           where: { uuid, account_id: accountId },
-          relations: ['form', 'drd', 'form.topics', 'form.topics.questions', 'form.questions'], 
+          relations: ['createdBy', 'form', 'drd', 'form.topics', 'form.topics.questions', 'form.formQuestions'], 
         });
 
         if (!existingEvaluation) {
@@ -188,6 +189,7 @@ export class EvaluationsService extends BaseService<Evaluation> {
 
         const evaluationUpdateData = {
           name: updateEvaluationDto.name,
+          description: updateEvaluationDto.description,
           rate: updateEvaluationDto.rate,
           drd_id: drd ? drd.id : null,
           updated_by_user_id: 1,

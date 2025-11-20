@@ -62,40 +62,46 @@ export class FormsService extends BaseService<Form> {
     manager: EntityManager,
   ): Promise<Form> {
 
-    const existingForm = await manager.findOne(Form, {
-      where: { uuid: formUuid },
-      relations: [
-        'topics', 
-        'topics.questions', 
-        'topics.questions.options',
-        'questions',
-        'questions.options',
-      ],
-    });
+    try {
+      const existingForm = await manager.findOne(Form, {
+        where: { uuid: formUuid },
+        relations: [
+          'topics', 
+          'topics.questions', 
+          'topics.questions.options',
+          'formQuestions',
+          'formQuestions.options',
+        ],
+      });
+  
+      if (!existingForm) {
+        throw new NotFoundException(`Formulário com UUID ${formUuid} não encontrado para sincronização.`);
+      }
+  
+      const formUpdateData = {
+        name: updateFormDto.name,
+        description: updateFormDto.description,
+      };
+  
+      manager.merge(Form, existingForm, formUpdateData);
+      const updatedForm = await manager.save(Form, existingForm);
+      const formId = updatedForm.id;
+  
+      if (updateFormDto.topics !== undefined) {
+        const updatedTopics = await this.formTopicsService.syncTopicsAndQuestionsInTransaction(
+          formId,
+          updateFormDto.topics,
+          existingForm.topics,
+          manager
+        );
+        updatedForm.topics = updatedTopics;
+      }
+  
+      return updatedForm;
 
-    if (!existingForm) {
-      throw new NotFoundException(`Formulário com UUID ${formUuid} não encontrado para sincronização.`);
+    } catch (err) {
+      console.error('Erro ao atualizar Form:', err);
+      throw new InternalServerErrorException('Falha ao concluir a atualização do formulário.');
     }
-
-    const formUpdateData = {
-      name: updateFormDto.name,
-      description: updateFormDto.description,
-    };
-
-    manager.merge(Form, existingForm, formUpdateData);
-    const updatedForm = await manager.save(Form, existingForm);
-    const formId = updatedForm.id;
-
-    if (updateFormDto.topics !== undefined) {
-      const updatedTopics = await this.formTopicsService.syncTopicsAndQuestionsInTransaction(
-        formId,
-        updateFormDto.topics,
-        existingForm.topics,
-        manager
-      );
-      updatedForm.topics = updatedTopics;
-    }
-
-    return updatedForm;
   }
 }

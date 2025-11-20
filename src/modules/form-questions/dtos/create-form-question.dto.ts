@@ -17,9 +17,9 @@ export class CreateFormQuestionDto {
   @Min(1)
   readonly order: number;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsBoolean()
-  readonly is_required?: boolean;
+  readonly is_required: boolean;
 
   @IsOptional()
   @IsArray()
