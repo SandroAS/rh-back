@@ -2,6 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { BaseEntity } from '../common/entities/base.entity';
 import { DRD } from './drd.entity';
 import { DRDTopicItem } from './drd-topic-item.entity';
+import { FormTopic } from './form-topic.entity';
 
 @Entity('drd_topics')
 export class DRDTopic extends BaseEntity {
@@ -23,4 +24,7 @@ export class DRDTopic extends BaseEntity {
   
   @OneToMany(() => DRDTopicItem, (item) => item.drdTopic)
   drdTopicItems: DRDTopicItem[];
+
+  @OneToMany(() => FormTopic, formTopic => formTopic.drdTopic)
+  formTopics: FormTopic[];
 }

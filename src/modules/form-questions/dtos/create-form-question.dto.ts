@@ -30,4 +30,8 @@ export class CreateFormQuestionDto {
   @IsNotEmpty()
   @IsInt()
   readonly form_id: number;
+
+  @IsOptional()
+  @IsString()
+  readonly drd_topic_item_uuid?: string | null;
 }

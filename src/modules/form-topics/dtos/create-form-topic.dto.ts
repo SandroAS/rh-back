@@ -17,6 +17,10 @@ export class CreateFormTopicDto {
   readonly order: number;
 
   @IsOptional()
+  @IsString()
+  readonly drd_topic_uuid?: string | null;
+
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateFormQuestionDto)
