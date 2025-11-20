@@ -1,7 +1,5 @@
 import { Form } from '@/entities/form.entity';
-import { DRDResponseDto } from '@/modules/drds/dtos/drd-response.dto';
 import { FormTopicResponseDto } from '@/modules/form-topics/dtos/form-topic-response.dto';
-import { UserAvatarResponseDto } from '@/modules/users/dtos/user-avatar-response.dto';
 import { Expose, Type } from 'class-transformer';
 
 export class FormResponseDto {
@@ -20,7 +18,9 @@ export class FormResponseDto {
   readonly topics: FormTopicResponseDto[];
 
   constructor(form: Form) {
-    Object.assign(this, form);
+    this.uuid = form.uuid;
+    this.name = form.name;
+    this.description = form.description;
 
     this.topics = form.topics ? form.topics.map(topic => new FormTopicResponseDto(topic)) : [];
   }

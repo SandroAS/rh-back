@@ -3,20 +3,10 @@ import { FormQuestion } from '@/entities/form-question.entity';
 import { FormQuestionOptionResponseDto } from '@/modules/form-question-options/dtos/form-question-option-response.dto';
 import { Expose, Type } from 'class-transformer';
 
-/**
- * DTO (Data Transfer Object) para representar a resposta de uma Questão do Formulário.
- * Pode ser aninhado sob FormResponseDto ou FormTopicResponseDto.
- */
 export class FormQuestionResponseDto {
   
   @Expose()
-  readonly id: number;
-
-  @Expose()
-  readonly form_id: number | null;
-  
-  @Expose()
-  readonly topic_id: number | null;
+  readonly uuid: string;
 
   @Expose()
   readonly type: QuestionType; 
@@ -31,24 +21,21 @@ export class FormQuestionResponseDto {
   readonly order: number;
 
   @Expose()
-  readonly created_at: Date;
-
-  @Expose()
-  readonly updated_at: Date;
-
-  @Expose()
   @Type(() => FormQuestionOptionResponseDto)
   readonly options: FormQuestionOptionResponseDto[];
   
-  constructor(entity: FormQuestion) {
-    Object.assign(this, entity);
+  constructor(formQuestion: FormQuestion) {
+    this.uuid = formQuestion.uuid;
+    this.type = formQuestion.type;
+    this.title = formQuestion.title;
+    this.description = formQuestion.description;
+    this.order = formQuestion.order;
+    this.options = [];
 
-    if (entity.options) {
-      this.options = entity.options.map(
+    if (formQuestion.options) {
+      this.options = formQuestion.options.map(
         (option) => new FormQuestionOptionResponseDto(option),
       );
-    } else {
-      this.options = [];
     }
   }
 }

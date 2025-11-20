@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsInt, Min, IsOptional, ValidateNested, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CreateFormQuestionDto } from '@/modules/form-questions/dtos/create-form-question.dto';
+import { UpdateFormQuestionDto } from '@/modules/form-questions/dtos/update-form-question.dto';
 
 export class UpdateFormTopicDto {
   @IsOptional()
@@ -23,6 +23,6 @@ export class UpdateFormTopicDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateFormQuestionDto)
-  readonly questions?: CreateFormQuestionDto[];
+  @Type(() => UpdateFormQuestionDto)
+  readonly questions?: UpdateFormQuestionDto[];
 }

@@ -10,6 +10,10 @@ export class CreateEvaluationDto {
   @IsString()
   readonly name: string;
 
+  @IsOptional()
+  @IsString()
+  readonly description: string | null;
+
   @IsNotEmpty()
   @IsInt()
   @Min(3)

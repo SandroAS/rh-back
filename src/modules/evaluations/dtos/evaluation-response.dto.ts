@@ -31,8 +31,13 @@ export class EvaluationResponseDto {
   readonly form: FormResponseDto;
 
   constructor(evaluation: Evaluation) {
-    Object.assign(this, evaluation);
+    this.uuid = evaluation.uuid;
+    this.name = evaluation.name;
+    this.description = evaluation.description;
+    this.rate = evaluation.rate;
     this.drd = null;
+    this.createdBy = null;
+    this.form = null;
 
     if (evaluation.drd) {
       this.drd = new DRDResponseDto(evaluation.drd);

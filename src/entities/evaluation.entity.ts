@@ -16,6 +16,9 @@ export class Evaluation extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
+  @Column({ type: 'text', nullable: true })
+  description: string | null;
+
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
   rate: number;
 

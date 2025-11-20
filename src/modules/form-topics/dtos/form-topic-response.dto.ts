@@ -5,10 +5,7 @@ import { Expose, Type } from 'class-transformer';
 export class FormTopicResponseDto {
   
   @Expose()
-  readonly id: number;
-
-  @Expose()
-  readonly form_id: number;
+  readonly uuid: string;
 
   @Expose()
   readonly title: string;
@@ -18,26 +15,22 @@ export class FormTopicResponseDto {
 
   @Expose()
   readonly order: number;
-
-  @Expose()
-  readonly created_at: Date;
-
-  @Expose()
-  readonly updated_at: Date;
   
   @Expose()
   @Type(() => FormQuestionResponseDto)
   readonly questions: FormQuestionResponseDto[];
   
-  constructor(entity: FormTopic) {
-    Object.assign(this, entity);
+  constructor(formTopic: FormTopic) {
+    this.uuid = formTopic.uuid;
+    this.title = formTopic.title;
+    this.description = formTopic.description;
+    this.order = formTopic.order;
+    this.questions = [];
 
-    if (entity.questions) {
-      this.questions = entity.questions.map(
+    if (formTopic.questions) {
+      this.questions = formTopic.questions.map(
         (question) => new FormQuestionResponseDto(question),
       );
-    } else {
-      this.questions = [];
     }
   }
 }
