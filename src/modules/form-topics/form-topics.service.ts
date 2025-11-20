@@ -56,6 +56,7 @@ export class FormTopicsService {
           );
         }
 
+        savedTopic.drdTopic.uuid = topicDto?.drd_topic_uuid || null;
         savedTopics.push(savedTopic);
       }
       return savedTopics;
@@ -143,6 +144,7 @@ export class FormTopicsService {
           savedTopic.questions = updatedQuestions;
         }
 
+        savedTopic.drdTopic.uuid = topicDto?.drd_topic_uuid || null;
         topicsToSave.push(savedTopic);
       }
 
