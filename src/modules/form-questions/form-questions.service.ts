@@ -59,7 +59,7 @@ export class FormQuestionsService {
           );
         }
 
-        savedQuestion.drdTopicItem.uuid = questionDto?.drd_topic_item_uuid || null;
+        savedQuestion.drdTopicItem = drdTopicItem;
         savedQuestions.push(savedQuestion);
       }
       return savedQuestions;
@@ -160,7 +160,7 @@ export class FormQuestionsService {
           savedQuestion.options = updatedOptions;
         }
 
-        savedQuestion.drdTopicItem.uuid = questionDto?.drd_topic_item_uuid || null;
+        savedQuestion.drdTopicItem = drdTopicItem;
         questionsToSave.push(savedQuestion);
       }
       
