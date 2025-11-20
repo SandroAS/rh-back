@@ -121,9 +121,11 @@ export class EvaluationsService extends BaseService<Evaluation> {
       .leftJoinAndSelect('evaluation.drd', 'drd')
       .leftJoinAndSelect('drd.jobPosition', 'jobPosition')
       .leftJoinAndSelect('evaluation.form', 'form')
-      .leftJoinAndSelect('form.topics', 'topics') 
-      .leftJoinAndSelect('topics.questions', 'questions') 
-      .leftJoinAndSelect('questions.options', 'options') 
+      .leftJoinAndSelect('form.topics', 'topics')
+      .leftJoinAndSelect('topics.questions', 'questions')
+      .leftJoinAndSelect('topics.drdTopic', 'drdTopic')
+      .leftJoinAndSelect('questions.options', 'options')
+      .leftJoinAndSelect('questions.drdTopicItem', 'drdTopicItem')
       .select([
         'evaluation',
         'createdBy',
@@ -136,6 +138,7 @@ export class EvaluationsService extends BaseService<Evaluation> {
         'topics.description',
         'topics.order',
         'topics.form_id',
+        'drdTopic.uuid',
         'questions.uuid',
         'questions.title',
         'questions.description',
@@ -143,7 +146,8 @@ export class EvaluationsService extends BaseService<Evaluation> {
         'questions.order',
         'questions.is_required',
         'options.uuid',
-        'options.text'
+        'options.text',
+        'drdTopicItem.uuid'
       ])
 
     const evaluation = await qb.getOne();
