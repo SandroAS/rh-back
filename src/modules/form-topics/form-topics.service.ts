@@ -135,7 +135,7 @@ export class FormTopicsService {
           const existingQuestions = topicToSync.questions || [];
 
           const updatedQuestions = await this.formQuestionsService.syncQuestionsInTransaction(
-            null,
+            formId,
             questionsToSync,
             existingQuestions,
             manager,

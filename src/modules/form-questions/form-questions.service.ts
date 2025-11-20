@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { FormQuestion } from '@/entities/form-question.entity';
 import { CreateFormQuestionDto } from './dtos/create-form-question.dto';
 import { UpdateFormQuestionDto } from './dtos/update-form-question.dto';
@@ -92,12 +92,7 @@ export class FormQuestionsService {
     try {
       const uuidsToRemove = existingUuids.filter(uuid => !newUuids.includes(uuid));
       if (uuidsToRemove.length > 0) {
-        const whereClause = { 
-            uuid: { $in: uuidsToRemove }, 
-            ...(formId && { form_id: formId }),
-            ...(topicId && { topic_id: topicId })
-        };
-        await manager.delete(FormQuestion, whereClause);
+        await manager.delete(FormQuestion, { uuid: In(uuidsToRemove) });
       }
 
       for (const questionDto of newQuestionDtos) {

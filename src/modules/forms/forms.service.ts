@@ -86,7 +86,7 @@ export class FormsService extends BaseService<Form> {
       manager.merge(Form, existingForm, formUpdateData);
       const updatedForm = await manager.save(Form, existingForm);
       const formId = updatedForm.id;
-  
+
       if (updateFormDto.topics !== undefined) {
         const updatedTopics = await this.formTopicsService.syncTopicsAndQuestionsInTransaction(
           formId,
