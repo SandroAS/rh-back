@@ -17,6 +17,9 @@ export class FormTopicResponseDto {
   readonly order: number;
   
   @Expose()
+  readonly drd_topic_uuid: string | null;
+
+  @Expose()
   @Type(() => FormQuestionResponseDto)
   readonly questions: FormQuestionResponseDto[];
   
@@ -25,6 +28,7 @@ export class FormTopicResponseDto {
     this.title = formTopic.title;
     this.description = formTopic.description;
     this.order = formTopic.order;
+    this.drd_topic_uuid = formTopic?.drdTopic?.uuid || null;
     this.questions = [];
 
     if (formTopic.questions) {

@@ -5,6 +5,8 @@ import { FormQuestion } from '@/entities/form-question.entity';
 import { CreateFormQuestionDto } from './dtos/create-form-question.dto';
 import { UpdateFormQuestionDto } from './dtos/update-form-question.dto';
 import { FormQuestionOptionsService } from '../form-question-options/form-question-options.service';
+import { DrdTopicItemsService } from '../drd-topic-items/drd-topic-items.service';
+import { DRDTopicItem } from '@/entities/drd-topic-item.entity';
 
 @Injectable()
 export class FormQuestionsService {
@@ -12,6 +14,7 @@ export class FormQuestionsService {
     @InjectRepository(FormQuestion)
     private formQuestionRepository: Repository<FormQuestion>,
     private formQuestionOptionsService: FormQuestionOptionsService,
+    private drdTopicItemService: DrdTopicItemsService,
   ) {}
 
   /**
@@ -32,10 +35,17 @@ export class FormQuestionsService {
 
     try {
       for (const questionDto of createQuestionDtos) {
+        let drdTopicItem: DRDTopicItem | null = null;
+        
+        if (questionDto.drd_topic_item_uuid) {
+          drdTopicItem = await this.drdTopicItemService.findByUuid(questionDto.drd_topic_item_uuid, { select: ['id', 'uuid'] });
+        }
+
         const newQuestion = this.formQuestionRepository.create({
           ...questionDto,
           form_id: formId,
           topic_id: topicId,
+          drd_topic_item_id: drdTopicItem ? drdTopicItem.id : null
         });
 
         const savedQuestion = await manager.save(FormQuestion, newQuestion);
@@ -93,17 +103,43 @@ export class FormQuestionsService {
         let questionToSync: FormQuestion;
         const optionsToSync = questionDto.options;
 
+        let drdTopicItem: DRDTopicItem | null = undefined; 
+        
+        if (questionDto.drd_topic_item_uuid !== undefined) {
+          if (questionDto.drd_topic_item_uuid) {
+            drdTopicItem = await this.drdTopicItemService.findByUuid(questionDto.drd_topic_item_uuid, { select: ['id', 'uuid'] });
+          } else {
+            drdTopicItem = null;
+          }
+        }
+
+        const {
+          options,
+          drd_topic_item_uuid,
+          ...restQuestionFields
+        } = questionDto;
+
+        const questionDataToMerge: Partial<FormQuestion> & { drd_topic_item_uuid?: string } = { 
+          ...restQuestionFields
+        };
+
+        if (drdTopicItem && drdTopicItem.id !== undefined) {
+          questionDataToMerge.drd_topic_item_id = drdTopicItem.id;
+        }
+
+        delete questionDataToMerge.drd_topic_item_uuid;
+
         if (questionDto.uuid) {
           // ATUALIZAR
           questionToSync = existingQuestions.find(q => q.uuid === questionDto.uuid);
           if (!questionToSync) {
             throw new NotFoundException(`Questão com UUID ${questionDto.uuid} não encontrada para atualização.`);
           }
-          manager.merge(FormQuestion, questionToSync, questionDto);
+          manager.merge(FormQuestion, questionToSync, questionDataToMerge);
         } else {
           // CRIAR NOVO
           questionToSync = this.formQuestionRepository.create({
-            ...questionDto, 
+            ...questionDataToMerge, 
             form_id: formId, 
             topic_id: topicId 
           });
@@ -115,10 +151,10 @@ export class FormQuestionsService {
           const existingOptions = questionToSync.options || [];
           
           const updatedOptions = await this.formQuestionOptionsService.syncOptionsInTransaction(
-              savedQuestion.id,
-              optionsToSync,
-              existingOptions,
-              manager
+            savedQuestion.id,
+            optionsToSync,
+            existingOptions,
+            manager
           );
           savedQuestion.options = updatedOptions;
         }

@@ -5,6 +5,7 @@ import { FormQuestionOption } from './form-question-option.entity';
 import { FormApplicationQuestion } from './form-application-question.entity';
 import { FormTopic } from './form-topic.entity';
 import { QuestionType } from '../common/enums/question-type.enum';
+import { DRDTopicItem } from './drd-topic-item.entity';
 
 @Entity('form_questions')
 export class FormQuestion extends BaseEntity {
@@ -15,6 +16,10 @@ export class FormQuestion extends BaseEntity {
   @Index()
   @Column({ name: 'topic_id', nullable: true })
   topic_id: number | null;
+
+  @Index()
+  @Column({ name: 'drd_topic_item_id', type: 'int', nullable: true })
+  drd_topic_item_id: number | null;
 
   @Column({ length: 255 })
   title: string;
@@ -46,5 +51,9 @@ export class FormQuestion extends BaseEntity {
 
   @ManyToOne(() => FormTopic, topic => topic.questions, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'topic_id' })
-  topic: FormTopic | null; 
+  topic: FormTopic | null;
+
+  @ManyToOne(() => DRDTopicItem, drdTopicItem => drdTopicItem.formQuestions, { onDelete: 'RESTRICT', nullable: true })
+  @JoinColumn({ name: 'drd_topic_item_id' })
+  drdTopicItem: DRDTopicItem | null;
 }

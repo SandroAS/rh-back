@@ -2,6 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { BaseEntity } from '../common/entities/base.entity';
 import { DRDTopic } from './drd-topic.entity';
 import { DRDLevelMinScore } from './drd-level-min-score.entity';
+import { FormQuestion } from './form-question.entity';
 
 @Entity('drd_topic_items')
 export class DRDTopicItem extends BaseEntity {
@@ -23,4 +24,7 @@ export class DRDTopicItem extends BaseEntity {
 
   @OneToMany(() => DRDLevelMinScore, (score) => score.drdTopicItem)
   minScores: DRDLevelMinScore[];
+
+  @OneToMany(() => FormQuestion, (question) => question.drdTopicItem)
+  formQuestions: FormQuestion[];
 }
