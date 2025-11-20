@@ -110,7 +110,19 @@ export class EvaluationsService extends BaseService<Evaluation> {
   }
 
   async findAllWithAccountId(accountId: number): Promise<Evaluation[]> {
-    return await super.findAll({ where: { account_id: accountId }, relations: ['drd'] });
+    return await this.evaluationRepository.createQueryBuilder('evaluation')
+      .leftJoinAndSelect('evaluation.drd', 'drd')
+      .leftJoinAndSelect('drd.jobPosition', 'jobPosition')
+      .select([
+        'evaluation.uuid',
+        'evaluation.name',
+        'evaluation.rate',
+        'drd.uuid',
+        'jobPosition.uuid',
+        'jobPosition.title',
+      ])
+      .where('evaluation.account_id = :accountId', { accountId })
+      .getMany();
   }
 
   async findOneWithRelations(uuid: string, account_id: number): Promise<Evaluation> {
