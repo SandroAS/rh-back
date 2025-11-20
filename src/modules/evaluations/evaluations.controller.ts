@@ -1,5 +1,4 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards } from '@nestjs/common';
-import { FindOptionsRelations } from 'typeorm';
 import { EvaluationsService } from './evaluations.service';
 import { AccountId } from '@/common/decorators/account-id.decorator';
 import { AuthUser } from '@/common/decorators/auth-user.decorator';
@@ -8,7 +7,6 @@ import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { EvaluationResponseDto } from './dtos/evaluation-response.dto';
 import { EvaluationPaginationResponseDto } from './dtos/evaluation-pagination-response.dto';
-import { Evaluation } from '@/entities/evaluation.entity';
 import { CreateEvaluationDto } from './dtos/create-evaluation.dto';
 import { UpdateEvaluationDto } from './dtos/update-evaluation.dto';
 
