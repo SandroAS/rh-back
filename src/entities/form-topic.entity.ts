@@ -3,6 +3,7 @@ import { Form } from './form.entity';
 import { FormQuestion } from './form-question.entity';
 import { BaseEntity } from '../common/entities/base.entity';
 import { DRDTopic } from './drd-topic.entity';
+import { FormApplicationTopic } from './form-application-topic.entity';
 
 @Entity('form_topics')
 export class FormTopic extends BaseEntity {
@@ -33,4 +34,7 @@ export class FormTopic extends BaseEntity {
 
   @OneToMany(() => FormQuestion, question => question.topic)
   questions: FormQuestion[];
+
+  @OneToMany(() => FormApplicationTopic, (applicationTopic) => applicationTopic.baseFormTopic)
+  applicationTopics: FormApplicationTopic[];
 }

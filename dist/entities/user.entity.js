@@ -27,6 +27,7 @@ const team_member_entity_1 = require("./team-member.entity");
 const sector_entity_1 = require("./sector.entity");
 const drd_entity_1 = require("./drd.entity");
 const evaluation_entity_1 = require("./evaluation.entity");
+const evaluation_application_entity_1 = require("./evaluation-application.entity");
 var Gender;
 (function (Gender) {
     Gender["MALE"] = "MALE";
@@ -169,6 +170,14 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => evaluation_entity_1.Evaluation, (evaluation) => evaluation.createdBy),
     __metadata("design:type", Array)
 ], User.prototype, "createdEvaluations", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => evaluation_application_entity_1.EvaluationApplication, (application) => application.evaluatedUser),
+    __metadata("design:type", Array)
+], User.prototype, "evaluationsReceived", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => evaluation_application_entity_1.EvaluationApplication, (application) => application.submittingUser),
+    __metadata("design:type", Array)
+], User.prototype, "evaluationsSubmitted", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)

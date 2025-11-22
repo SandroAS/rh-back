@@ -27,10 +27,7 @@ export class FormQuestion extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   description: string | null;
 
-  @Column({ 
-    type: 'enum', 
-    enum: QuestionType 
-  })
+  @Column({ type: 'enum', enum: QuestionType })
   type: QuestionType;
 
   @Column({ type: 'int' })

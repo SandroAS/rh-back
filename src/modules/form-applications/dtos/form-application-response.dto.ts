@@ -1,0 +1,50 @@
+import { FormApplication, FormApplicationAccessedFrom } from '@/entities/form-application.entity';
+import FormApplicationQuestionDto from '@/modules/form-application-questions/dtos/form-application-question.dto';
+import { FormResponseDto } from '@/modules/forms/dtos/form-response.dto';
+import { Expose, Type } from 'class-transformer';
+
+export class FormApplicationResponseDto {
+    
+  @Expose()
+  readonly uuid: string;
+
+  @Expose()
+  readonly name: string;
+
+  @Expose()
+  readonly description: string;
+
+  @Expose()
+  readonly created_at: Date;
+
+  @Expose()
+  readonly base_form_id: number;
+
+  @Expose()
+  readonly accessed_from: FormApplicationAccessedFrom | null;
+
+  @Expose()
+  @Type(() => FormApplicationQuestionDto)
+  readonly questions: FormApplicationQuestionDto[];
+
+  @Expose()
+  @Type(() => FormResponseDto)
+  readonly responses: FormResponseDto[];
+
+  constructor(formApplication: FormApplication) {
+      this.uuid = formApplication.uuid;
+      this.name = formApplication.name;
+      this.description = formApplication.description;
+      this.created_at = formApplication.created_at;
+      this.base_form_id = formApplication.base_form_id;
+      this.accessed_from = formApplication.accessed_from;
+
+      if (formApplication.questions) {
+        this.questions = formApplication.questions.map(question => new FormApplicationQuestionDto(question));
+      }
+
+      if (formApplication.responses) {
+        this.responses = formApplication.responses.map(response => new FormResponseDto(response));
+      }
+  }
+}

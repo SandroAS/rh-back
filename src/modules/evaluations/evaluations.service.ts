@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, FindOneOptions, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Evaluation } from '@/entities/evaluation.entity'; 
 import { BaseService, PaginationResult } from '@/common/services/base.service';
 import { CreateEvaluationDto } from './dtos/create-evaluation.dto';

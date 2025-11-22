@@ -15,6 +15,7 @@ import { TeamMember } from './team-member.entity';
 import { Sector } from './sector.entity';
 import { DRD } from './drd.entity';
 import { Evaluation } from './evaluation.entity';
+import { EvaluationApplication } from './evaluation-application.entity';
 
 export enum Gender {
   MALE = 'MALE',
@@ -122,6 +123,12 @@ export class User {
 
   @OneToMany(() => Evaluation, (evaluation) => evaluation.createdBy)
   createdEvaluations: Evaluation[];
+
+  @OneToMany(() => EvaluationApplication, (application) => application.evaluatedUser)
+  evaluationsReceived: EvaluationApplication[];
+
+  @OneToMany(() => EvaluationApplication, (application) => application.submittingUser)
+  evaluationsSubmitted: EvaluationApplication[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
