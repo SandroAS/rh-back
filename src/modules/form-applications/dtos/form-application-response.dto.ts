@@ -1,6 +1,6 @@
 import { FormApplication, FormApplicationAccessedFrom } from '@/entities/form-application.entity';
-import FormApplicationQuestionDto from '@/modules/form-application-questions/dtos/form-application-question.dto';
-import { FormResponseDto } from '@/modules/forms/dtos/form-response.dto';
+import FormApplicationQuestionResponseDto from '@/modules/form-application-questions/dtos/form-application-question-response.dto';
+import { FormResponseResponseDto } from '@/modules/form-responses/dtos/form-response-response.dto';
 import { Expose, Type } from 'class-transformer';
 
 export class FormApplicationResponseDto {
@@ -24,12 +24,12 @@ export class FormApplicationResponseDto {
   readonly accessed_from: FormApplicationAccessedFrom | null;
 
   @Expose()
-  @Type(() => FormApplicationQuestionDto)
-  readonly questions: FormApplicationQuestionDto[];
+  @Type(() => FormApplicationQuestionResponseDto)
+  readonly questions: FormApplicationQuestionResponseDto[];
 
   @Expose()
-  @Type(() => FormResponseDto)
-  readonly responses: FormResponseDto[];
+  @Type(() => FormResponseResponseDto)
+  readonly responses: FormResponseResponseDto[];
 
   constructor(formApplication: FormApplication) {
       this.uuid = formApplication.uuid;
@@ -40,11 +40,11 @@ export class FormApplicationResponseDto {
       this.accessed_from = formApplication.accessed_from;
 
       if (formApplication.questions) {
-        this.questions = formApplication.questions.map(question => new FormApplicationQuestionDto(question));
+        this.questions = formApplication.questions.map(question => new FormApplicationQuestionResponseDto(question));
       }
 
       if (formApplication.responses) {
-        this.responses = formApplication.responses.map(response => new FormResponseDto(response));
+        this.responses = formApplication.responses.map(response => new FormResponseResponseDto(response));
       }
   }
 }

@@ -44,6 +44,7 @@ import { FormResponsesModule } from './modules/form-responses/form-responses.mod
 import { FormAnswersModule } from './modules/form-answers/form-answers.module';
 import { FormAnswerMultiOptionsModule } from './modules/form-answer-multi-options/form-answer-multi-options.module';
 import { FormTopicsModule } from './modules/form-topics/form-topics.module';
+import { FormApplicationTopicsModule } from './modules/form-application-topics/form-application-topics.module';
 
 const cookieSession = require('cookie-session');
 
@@ -109,7 +110,8 @@ const cookieSession = require('cookie-session');
     FormResponsesModule,
     FormAnswersModule,
     FormAnswerMultiOptionsModule,
-    FormTopicsModule
+    FormTopicsModule,
+    FormApplicationTopicsModule
   ],
   controllers: [AppController],
   providers: [

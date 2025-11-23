@@ -1,10 +1,10 @@
-import { EvaluationType } from '@/entities/evaluation-application.entity';
+import { EvaluationApplication, EvaluationType } from '@/entities/evaluation-application.entity';
 import { EvaluationResponseDto } from '@/modules/evaluations/dtos/evaluation-response.dto';
+import { FormApplicationResponseDto } from '@/modules/form-applications/dtos/form-application-response.dto';
 import { UserAvatarResponseDto } from '@/modules/users/dtos/user-avatar-response.dto';
 import { Expose, Type } from 'class-transformer';
 
 export class EvaluationApplicationResponseDto {
-    
   @Expose()
   readonly uuid: string;
 
@@ -70,17 +70,19 @@ export class EvaluationApplicationResponseDto {
     this.evaluated_user_uuid = evaluationApplication.evaluatedUser?.uuid;
     this.submitting_user_uuid = evaluationApplication.submittingUser?.uuid;
     this.form_application_uuid = evaluationApplication.formApplication?.uuid;
-    
+
     if (evaluationApplication.evaluatedUser) {
       this.evaluatedUser = new UserAvatarResponseDto(evaluationApplication.evaluatedUser);
     }
+
     if (evaluationApplication.submittingUser) {
       this.submittingUser = new UserAvatarResponseDto(evaluationApplication.submittingUser);
     }
+
     if (evaluationApplication.evaluation) {
-      this.evaluation = evaluationApplication.evaluation as EvaluationResponseDto;
+      this.evaluation = new EvaluationResponseDto(evaluationApplication.evaluation);
     }
-    
+
     if (evaluationApplication.formApplication) {
       this.formApplication = new FormApplicationResponseDto(evaluationApplication.formApplication);
     }

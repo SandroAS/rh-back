@@ -52,15 +52,15 @@ export class EvaluationApplicationsController {
     return new EvaluationApplicationResponseDto(application);
   }
 
-  @Put(':uuid')
-  async update(
-    @Param('uuid') uuid: string,
-    @Body() payloadDto: UpdateEvaluationApplicationDto,
-    @AccountId() accountId: number,
-  ): Promise<EvaluationApplicationResponseDto> {
-    const updated = await this.evaluationApplicationsService.updateWithAccountId(uuid, payloadDto, accountId);
-    return new EvaluationApplicationResponseDto(updated);
-  }
+  // @Put(':uuid')
+  // async update(
+  //   @Param('uuid') uuid: string,
+  //   @Body() payloadDto: UpdateEvaluationApplicationDto,
+  //   @AccountId() accountId: number,
+  // ): Promise<EvaluationApplicationResponseDto> {
+  //   const updated = await this.evaluationApplicationsService.updateWithAccountId(uuid, payloadDto, accountId);
+  //   return new EvaluationApplicationResponseDto(updated);
+  // }
 
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string, @AccountId() accountId: number) {

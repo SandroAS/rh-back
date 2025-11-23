@@ -1,7 +1,7 @@
 import { FormApplicationQuestion } from '@/entities/form-application-question.entity';
 import { Expose } from 'class-transformer';
 
-export default class FormApplicationQuestionDto {
+export default class FormApplicationQuestionResponseDto {
   @Expose()
   uuid: string;
 

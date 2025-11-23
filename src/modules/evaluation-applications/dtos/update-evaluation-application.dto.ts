@@ -1,14 +1,14 @@
-import { IsDateString, IsEnum, IsInt, IsNotEmpty } from 'class-validator';
+import { IsDateString, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { EvaluationType } from '@/entities/evaluation-application.entity';
 
 export class UpdateEvaluationApplicationDto {
   @IsNotEmpty()
-  @IsInt()
-  readonly evaluation_id: number;
+  @IsString()
+  readonly evaluation_uuid: string;
 
   @IsNotEmpty()
-  @IsInt()
-  readonly form_id: number;
+  @IsString()
+  readonly form_uuid: string;
 
   @IsNotEmpty()
   @IsEnum(EvaluationType)
@@ -23,10 +23,10 @@ export class UpdateEvaluationApplicationDto {
   readonly expiration_date: string;
 
   @IsNotEmpty()
-  @IsInt()
-  readonly evaluated_user_id: number;
+  @IsString()
+  readonly evaluated_user_id: string;
 
   @IsNotEmpty()
-  @IsInt()
-  readonly submitting_user_id: number;
+  @IsString()
+  readonly submitting_user_id: string;
 }

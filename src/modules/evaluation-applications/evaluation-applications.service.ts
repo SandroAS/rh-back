@@ -14,11 +14,11 @@ import { FormApplication } from '@/entities/form-application.entity';
 export class EvaluationApplicationsService extends BaseService<EvaluationApplication> {
   constructor(
     @InjectRepository(EvaluationApplication)
-    private readonly applicationRepository: Repository<EvaluationApplication>,
+    private readonly evaluationApplicationRepository: Repository<EvaluationApplication>,
     private readonly dataSource: DataSource,
     private readonly formApplicationsService: FormApplicationsService,
   ) {
-    super(applicationRepository);
+    super(evaluationApplicationRepository);
   }
 
   /**
@@ -34,35 +34,27 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     await queryRunner.startTransaction();
 
     try {
-        const { form_application, ...applicationData } = payload;
-        
-        // 1. Cria e salva a entidade principal EvaluationApplication
-        const newApplication = this.applicationRepository.create({
-            ...applicationData,
-            account_id: accountId,
-            created_by_user_uuid: user.uuid,
-        });
+      const newApplication = this.evaluationApplicationRepository.create({
+        ...payload,
+        account_id: accountId
+      });
 
-        const createdApplication = await queryRunner.manager.save(EvaluationApplication, newApplication);
+      const createdApplication = await queryRunner.manager.save(EvaluationApplication, newApplication);
 
-        // 2. Cria e anexa o FormApplication
-        let createdFormApplication: FormApplication | null = null;
-        if (form_application) {
-            createdFormApplication = await this.formApplicationsService.createInTransaction(
-                form_application, 
-                accountId, 
-                createdApplication.id, 
-                queryRunner.manager // Passando o manager da transação
-            );
-            createdApplication.formApplication = createdFormApplication;
-        }
+      let createdFormApplication: FormApplication | null = null;
+      if (payload.form_uuid) {
+        createdFormApplication = await this.formApplicationsService.createInTransaction(
+          payload.form_uuid, 
+          accountId, 
+          createdApplication.id,
+          queryRunner.manager
+        );
+        createdApplication.formApplication = createdFormApplication;
+      }
 
-        await queryRunner.commitTransaction();
-
-        // Anexar relações básicas para retorno
-        createdApplication.createdBy = user;
-        
-        return createdApplication;
+      await queryRunner.commitTransaction();
+      
+      return createdApplication;
 
     } catch (err) {
       await queryRunner.rollbackTransaction();
@@ -85,37 +77,36 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
   async findAndPaginateByAccountId(
     pagination: PaginationDto,
     accountId: number,
-    searchColumns: string[] = ['candidate_name', 'status'], // Exemplo de colunas de busca
+    searchColumns: string[] = ['candidate_name', 'status']
   ): Promise<PaginationResult<EvaluationApplication>> {
     return super.findAndPaginate(pagination, searchColumns, (qb) => {
-        qb.andWhere('entity.account_id = :accountId', { accountId });
-        
-        // Relações essenciais para a listagem (evaluation e jobPosition)
-        qb.leftJoin('entity.evaluation', 'evaluation')
-          .leftJoin('evaluation.drd', 'drd')
-          .leftJoin('drd.jobPosition', 'jobPosition');
-        
-        // Seleção de campos para otimização da consulta
-        qb.select([
-            'entity.uuid',
-            'entity.status',
-            'entity.candidate_name', // Exemplo de campo de Application
-            'entity.created_at',
-            'evaluation.uuid',
-            'evaluation.name',
-            'jobPosition.uuid',
-            'jobPosition.title',
-        ]);
-        
-        qb.orderBy('entity.created_at', 'DESC');
+      qb.andWhere('entity.account_id = :accountId', { accountId });
+
+
+      qb.leftJoin('entity.evaluation', 'evaluation')
+        .leftJoin('evaluation.drd', 'drd')
+        .leftJoin('drd.jobPosition', 'jobPosition');
+      
+      qb.select([
+        'entity.uuid',
+        'entity.status',
+        'entity.candidate_name',
+        'entity.created_at',
+        'evaluation.uuid',
+        'evaluation.name',
+        'jobPosition.uuid',
+        'jobPosition.title',
+      ]);
+      
+      qb.orderBy('entity.created_at', 'DESC');
     });
   }
 
   /**
    * Retorna todas as aplicações de avaliação por conta (FIND ALL).
    */
-  async findAllWithAccountId(accountId: number): Promise<Partial<EvaluationApplication>[]> {
-    return await this.applicationRepository.createQueryBuilder('application')
+  async findAllWithAccountId(accountId: number): Promise<EvaluationApplication[]> {
+    return await this.evaluationApplicationRepository.createQueryBuilder('application')
       .leftJoin('application.evaluation', 'evaluation')
       .leftJoin('evaluation.drd', 'drd')
       .leftJoin('drd.jobPosition', 'jobPosition')
@@ -137,22 +128,20 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
    * Busca uma aplicação de avaliação pelo UUID com todas as relações necessárias (FIND ONE).
    */
   async findOneWithRelations(uuid: string, accountId: number): Promise<EvaluationApplication> {
-    const application = await this.applicationRepository.createQueryBuilder('application')
+    const application = await this.evaluationApplicationRepository.createQueryBuilder('application')
       .where('application.uuid = :uuid', { uuid })
       .andWhere('application.account_id = :accountId', { accountId })
-      
-      // Carregar todas as relações
+
       .leftJoinAndSelect('application.createdBy', 'createdBy')
       .leftJoinAndSelect('application.evaluation', 'evaluation')
       .leftJoinAndSelect('evaluation.drd', 'drd')
       .leftJoinAndSelect('drd.jobPosition', 'jobPosition')
       .leftJoinAndSelect('application.formApplication', 'formApplication')
       
-      // Relações do FormApplication para ver as respostas
       .leftJoinAndSelect('formApplication.topics', 'topics')
       .leftJoinAndSelect('topics.questionResponses', 'questionResponses')
       .leftJoinAndSelect('questionResponses.optionsResponses', 'optionsResponses')
-      
+
       .getOne();
 
     if (!application) {
@@ -169,100 +158,63 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     uuid: string, 
     payload: UpdateEvaluationApplicationDto, 
     accountId: number
-  ): Promise<EvaluationApplication> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+  ) {
+  // ): Promise<EvaluationApplication> {
+  //   const queryRunner = this.dataSource.createQueryRunner();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
 
-    try {
-        const application = await this.applicationRepository.findOne({
-            where: { uuid, account_id: accountId },
-            relations: ['formApplication'], // Necessário para buscar o FormApplication para update
-        });
+  //   try {
+  //     const application = await this.evaluationApplicationRepository.findOne({
+  //       where: { uuid, account_id: accountId },
+  //       relations: ['formApplication'],
+  //     });
 
-        if (!application) {
-            throw new NotFoundException(`Application with UUID ${uuid} não encontrada para atualização.`);
-        }
+  //     if (!application) {
+  //       throw new NotFoundException(`Application with UUID ${uuid} não encontrada para atualização.`);
+  //     }
 
-        const { form_application, ...applicationData } = payload;
+  //     const { formApplication: formApplicationPayload, ...restPayload } = payload as any;
 
-        // 1. Atualiza a entidade principal
-        this.applicationRepository.merge(application, applicationData);
-        const updatedApplication = await queryRunner.manager.save(EvaluationApplication, application);
-        
-        // 2. Atualiza o FormApplication, se fornecido
-        if (form_application && updatedApplication.formApplicationId) {
-            // Busca o UUID do FormApplication para a função updateInTransaction
-            const formApp = await queryRunner.manager.findOne(FormApplication, { 
-                where: { id: updatedApplication.formApplicationId },
-                select: ['uuid']
-            });
+  //     if (restPayload.evaluated_user_id && typeof restPayload.evaluated_user_id === 'string') {
+  //       restPayload.evaluated_user_id = parseInt(restPayload.evaluated_user_id, 10);
+  //     }
 
-            if(formApp) {
-                const updatedForm = await this.formApplicationsService.updateInTransaction(
-                    formApp.uuid, 
-                    form_application, 
-                    accountId,
-                    queryRunner.manager
-                );
-                updatedApplication.formApplication = updatedForm;
-            }
-        }
-
-        await queryRunner.commitTransaction();
-
-        // Busca a aplicação completa para retorno
-        return await this.findOneWithRelations(updatedApplication.uuid, accountId); 
-
-    } catch (err) {
-      await queryRunner.rollbackTransaction();
-
-      if (err instanceof NotFoundException || err instanceof ConflictException) {
-        throw err;
-      }
+  //     this.evaluationApplicationRepository.merge(application, restPayload);
+  //     const updatedApplication = await queryRunner.manager.save(EvaluationApplication, application);
       
-      console.error('Erro ao atualizar Evaluation Application:', err);
-      throw new InternalServerErrorException('Falha ao concluir a atualização da aplicação de avaliação.');
-    } finally {
-      await queryRunner.release();
-    }
-  }
+  //     if (formApplicationPayload && updatedApplication.formApplication && updatedApplication.formApplication.id) {
+  //       const formApp = await queryRunner.manager.findOne(FormApplication, { 
+  //         where: { id: updatedApplication.formApplicationId },
+  //         select: ['uuid']
+  //       });
 
-  /**
-   * Remove uma aplicação de avaliação em transação (DELETE).
-   */
-  async removeByUuid(uuid: string, accountId: number): Promise<void> {
-    const application = await this.applicationRepository.findOne({ 
-      where: { uuid, account_id: accountId } 
-    });
+  //       if(formApp) {
+  //         const updatedForm = await this.formApplicationsService.updateInTransaction(
+  //           formApp.uuid, 
+  //           form_application, 
+  //           accountId,
+  //           queryRunner.manager
+  //         );
+  //         updatedApplication.formApplication = updatedForm;
+  //       }
+  //     }
 
-    if (!application) {
-      throw new NotFoundException(`Evaluation Application with UUID ${uuid} not found.`);
-    }
+  //     await queryRunner.commitTransaction();
 
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+  //     return await this.findOneWithRelations(updatedApplication.uuid, accountId); 
 
-    try {
-        // Remover FormApplication primeiro (se existir)
-        if (application.formApplicationId) {
-            await this.formApplicationsService.removeByIdInTransaction(
-                application.formApplicationId, 
-                queryRunner.manager
-            );
-        }
-        
-        // Remover EvaluationApplication
-        await queryRunner.manager.delete(EvaluationApplication, application.id);
+  //   } catch (err) {
+  //     await queryRunner.rollbackTransaction();
 
-        await queryRunner.commitTransaction();
-    } catch (error) {
-        await queryRunner.rollbackTransaction();
-        console.error('Erro ao remover Evaluation Application em transação:', error);
-        throw new InternalServerErrorException('Falha ao remover a aplicação de avaliação.');
-    } finally {
-        await queryRunner.release();
-    }
+  //     if (err instanceof NotFoundException || err instanceof ConflictException) {
+  //       throw err;
+  //     }
+      
+  //     console.error('Erro ao atualizar Evaluation Application:', err);
+  //     throw new InternalServerErrorException('Falha ao concluir a atualização da aplicação de avaliação.');
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
   }
 }

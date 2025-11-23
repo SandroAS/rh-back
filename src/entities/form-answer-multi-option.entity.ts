@@ -1,9 +1,10 @@
 import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { FormAnswer } from './form-answer.entity';
 import { FormApplicationQuestionOption } from './form-application-question-option.entity';
+import { BaseEntity } from '@/common/entities/base.entity';
 
 @Entity('form_answer_multi_options')
-export class FormAnswerMultiOption {
+export class FormAnswerMultiOption extends BaseEntity {
   @PrimaryColumn({ name: 'answer_id', type: 'int' })
   answer_id: number;
 
