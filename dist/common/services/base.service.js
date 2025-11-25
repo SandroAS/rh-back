@@ -41,10 +41,15 @@ let BaseService = class BaseService {
         else {
             queryBuilder.orderBy('entity.created_at', 'DESC');
         }
-        const [data, total] = await queryBuilder
+        const countQueryBuilder = queryBuilder.clone();
+        const totalResult = await countQueryBuilder
+            .select('COUNT(DISTINCT entity.uuid)', 'total')
+            .getRawOne();
+        const total = parseInt(totalResult.total, 10);
+        const data = await queryBuilder
             .skip(skip)
             .take(limit)
-            .getManyAndCount();
+            .getMany();
         const last_page = Math.ceil(total / limit);
         return {
             data,

@@ -77,27 +77,32 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
   async findAndPaginateByAccountId(
     pagination: PaginationDto,
     accountId: number,
-    searchColumns: string[] = ['candidate_name', 'status']
+    searchColumns: string[] = ['name', 'status'] 
   ): Promise<PaginationResult<EvaluationApplication>> {
     return super.findAndPaginate(pagination, searchColumns, (qb) => {
       qb.andWhere('entity.account_id = :accountId', { accountId });
-
-
       qb.leftJoin('entity.evaluation', 'evaluation')
-        .leftJoin('evaluation.drd', 'drd')
-        .leftJoin('drd.jobPosition', 'jobPosition');
-      
+        .leftJoin('entity.drd', 'drd')
+        .leftJoin('drd.jobPosition', 'jobPosition')
+        .leftJoin('entity.submittingUser', 'submittingUser')
+        .leftJoin('entity.evaluatedUser', 'evaluatedUser');
       qb.select([
-        'entity.uuid',
-        'entity.status',
-        'entity.candidate_name',
-        'entity.created_at',
+        'entity',
         'evaluation.uuid',
         'evaluation.name',
+        'drd.uuid',
         'jobPosition.uuid',
         'jobPosition.title',
+        'submittingUser.uuid',
+        'submittingUser.name',
+        'submittingUser.email',
+        'submittingUser.profile_img_url',
+        'evaluatedUser.uuid',
+        'evaluatedUser.name',
+        'evaluatedUser.email',
+        'evaluatedUser.profile_img_url',
       ]);
-      
+
       qb.orderBy('entity.created_at', 'DESC');
     });
   }

@@ -55,10 +55,25 @@ export abstract class BaseService<T extends BaseEntity> {
       queryBuilder.orderBy('entity.created_at', 'DESC');
     }
 
-    const [data, total] = await queryBuilder
+    const countQueryBuilder = queryBuilder.clone();
+    
+    // A contagem deve ser feita usando DISTINCT na chave primária (uuid) da entidade principal
+    // para evitar duplicação de linhas causadas pelos JOINs.
+    // Usamos 'getRawOne' para obter o resultado da contagem diretamente.
+    const totalResult = await countQueryBuilder
+      .select('COUNT(DISTINCT entity.uuid)', 'total')
+      .getRawOne();
+      
+    const total = parseInt(totalResult.total, 10);
+    
+    // 2. Obter os dados paginados
+    // Usamos o queryBuilder original que já tem os SELECTs de todos os JOINs aplicados.
+    const data = await queryBuilder
       .skip(skip)
       .take(limit)
-      .getManyAndCount();
+      // Remove o DISTINCT que o TypeORM adiciona automaticamente,
+      // pois queremos todas as colunas de JOINs, mas já corrigimos a contagem.
+      .getMany();
 
     const last_page = Math.ceil(total / limit);
 
