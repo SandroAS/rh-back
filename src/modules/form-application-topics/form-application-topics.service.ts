@@ -1,21 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { FormApplicationTopic } from '@/entities/form-application-topic.entity';
 import { BaseService } from '@/common/services/base.service';
+import { FormTopic } from '@/entities/form-topic.entity';
+import { FormApplicationQuestionsService } from '../form-application-questions/form-application-questions.service';
 
 @Injectable()
 export class FormApplicationTopicsService extends BaseService<FormApplicationTopic> {
   constructor(
     @InjectRepository(FormApplicationTopic)
     private readonly applicationTopicRepository: Repository<FormApplicationTopic>,
+    private readonly formApplicationQuestionsService: FormApplicationQuestionsService,
   ) {
     super(applicationTopicRepository);
   }
 
   /**
    * Busca um FormApplicationTopic pelo UUID, carregando as perguntas aninhadas.
-   * Não é necessário o accountId, pois o UUID já é único, mas é boa prática ter um filtro de segurança.
    */
   async findOneWithQuestions(uuid: string, accountId?: number): Promise<FormApplicationTopic> {
     const qb = this.applicationTopicRepository.createQueryBuilder('topic')
@@ -39,5 +41,34 @@ export class FormApplicationTopicsService extends BaseService<FormApplicationTop
     }
 
     return topic;
+  }
+
+  async createTopicSnapshotInTransaction(
+    savedApplicationId: number,
+    formTopic: FormTopic,
+    manager: EntityManager
+  ): Promise<FormApplicationTopic> {
+
+    const newAppTopic = manager.create(FormApplicationTopic, {
+      application_id: savedApplicationId,
+      base_topic_id: formTopic.id,
+      name: formTopic.title,
+      order: formTopic.order,
+    });
+
+    const savedAppTopic = await manager.save(newAppTopic);
+    savedAppTopic.questions = [];
+
+    for (const question of formTopic.questions) {
+      const savedAppQuestion = await this.formApplicationQuestionsService.createQuestionSnapshotInTransaction(
+        savedApplicationId,
+        savedAppTopic.id,
+        question,
+        manager
+      );
+      savedAppTopic.questions.push(savedAppQuestion);
+    }
+
+    return savedAppTopic;
   }
 }

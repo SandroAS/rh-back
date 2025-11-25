@@ -3,13 +3,8 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
 import { FormsService } from '../forms/forms.service';
-import { FormQuestionsService } from '../form-questions/form-questions.service';
-import { FormQuestionOptionsService } from '../form-question-options/form-question-options.service';
 import { BaseService } from '@/common/services/base.service';
-import { FormApplicationTopic } from '@/entities/form-application-topic.entity';
-import { FormApplicationQuestionOption } from '@/entities/form-application-question-option.entity';
-import { FormApplicationQuestion } from '@/entities/form-application-question.entity';
-
+import { FormApplicationTopicsService } from '../form-application-topics/form-application-topics.service';
 
 @Injectable()
 export class FormApplicationsService extends BaseService<FormApplication> {
@@ -17,8 +12,7 @@ export class FormApplicationsService extends BaseService<FormApplication> {
     @InjectRepository(FormApplication)
     private readonly formApplicationRepository: Repository<FormApplication>,
     private readonly formService: FormsService,
-    private readonly questionService: FormQuestionsService,
-    private readonly optionService: FormQuestionOptionsService,
+    private readonly formApplicationTopicsSerivice: FormApplicationTopicsService,
   )  {
     super(formApplicationRepository);
   }
@@ -50,41 +44,20 @@ export class FormApplicationsService extends BaseService<FormApplication> {
       name: form.name,
       description: form.description,
     });
-    const savedApplication = await manager.save(newApplication);
+
+    const savedFormApplication = await manager.save(newApplication);
+    savedFormApplication.applicationTopics = [];
 
     for (const topic of form.topics) {
-      const newAppTopic = manager.create(FormApplicationTopic, {
-        application_id: savedApplication.id,
-        base_topic_id: topic.id,
-        name: topic.title,
-        order: topic.order,
-      });
-      const savedAppTopic = await manager.save(newAppTopic);
+      const savedFormApplicationTopic = await this.formApplicationTopicsSerivice.createTopicSnapshotInTransaction(
+        savedFormApplication.id,
+        topic,
+        manager
+      );
 
-      for (const question of topic.questions) {
-        const newAppQuestion = manager.create(FormApplicationQuestion, {
-          application_id: savedApplication.id,
-          application_topic_id: savedAppTopic.id,
-          base_question_id: question.id,
-          title: question.title,
-          description: question.description,
-          type: question.type,
-          order: question.order,
-        });
-        const savedAppQuestion = await manager.save(newAppQuestion);
-
-        for (const option of question.options) {
-          const newAppOption = manager.create(FormApplicationQuestionOption, {
-            application_question_id: savedAppQuestion.id,
-            base_option_id: option.id,
-            text: option.text,
-            order: option.order,
-          });
-          await manager.save(newAppOption);
-        }
-      }
+      savedFormApplication.applicationTopics.push(savedFormApplicationTopic);
     }
-    // CONTINUAR TRABALHANDO PARA FAZER FUNCIONAR O FLUXO DE CRIAR APLICACOES
-    return savedApplication;
+
+    return savedFormApplication;
   }
 }
