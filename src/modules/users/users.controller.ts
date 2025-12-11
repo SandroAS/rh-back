@@ -7,26 +7,23 @@ import { UpdateUserPersonalInformationResponseDto } from './dtos/update-user-per
 import { UpdateUserPasswordDto } from './dtos/update-user-password.dto';
 import { User } from '@/entities/user.entity';
 import { AccountId } from '@/common/decorators/account-id.decorator';
+import { UserAvatarResponseDto } from './dtos/user-avatar-response.dto';
+import { UserTeamResponseDto } from './dtos/user-team-response.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @Get('/:id')
-  @UseGuards(JwtAuthGuard)
-  async findUser(@Param('id') id: string) {
-    const user = await this.usersService.findOne(parseInt(id));
-    if (!user) {
-      throw new NotFoundException('user not found');
-    }
-    return user;
-  }
-
   @Get()
-  @UseGuards(JwtAuthGuard)
   findAllAccountUsers(@AccountId() account_id: number) {
     return this.usersService.findAllAccountUsers(account_id);
+  }
+
+  @Get('/with-teams')
+  async findAllAccountUsersWithTeams(@AccountId() account_id: number): Promise<UserTeamResponseDto[]> {
+    const users = await this.usersService.findAllAccountUsersWithTeams(account_id);
+    return users.map(x => new UserTeamResponseDto(x));
   }
 
   @UseInterceptors(FileInterceptor('profile_image', {
@@ -40,7 +37,6 @@ export class UsersController {
     },
   }))
   @Put('/personal-information/:uuid')
-  @UseGuards(JwtAuthGuard)
   async updateUserPersonalInformations(
     @Param('uuid') uuid: string,
     @Body() body: UpdateUserPersonalInformationDto,
@@ -53,7 +49,6 @@ export class UsersController {
   }
 
   @Put('/password/:uuid')
-  @UseGuards(JwtAuthGuard)
   async updateUserPassword(
     @Param('uuid') uuid: string,
     @Body() body: UpdateUserPasswordDto,
@@ -64,7 +59,6 @@ export class UsersController {
   }
 
   @Delete('/:id')
-  @UseGuards(JwtAuthGuard)
   async removeUser(@Param('id') id: string) {
     return this.usersService.remove(parseInt(id));
   }

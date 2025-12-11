@@ -25,6 +25,7 @@ export declare class UsersService {
     findOneByUuidAndAccountId(uuid: string, account_id: number): Promise<User>;
     findAndPaginateByAccountId(accountId: number, page: number, limit: number, sortColumn?: string, sortOrder?: 'asc' | 'desc', searchTerm?: string): Promise<[User[], number]>;
     findAllAccountUsers(account_id: number): Promise<UserAvatarResponseDto[]>;
+    findAllAccountUsersWithTeams(account_id: number): Promise<User[]>;
     update(id: number, body: UpdateUserDto, manager?: EntityManager): Promise<User>;
     updateUserPersonalInformations(uuid: string, body: UpdateUserPersonalInformationDto, file?: Express.Multer.File): Promise<UpdateUserPersonalInformationResponseDto>;
     updateUserPassword(uuid: string, body: UpdateUserPasswordDto, user: User): Promise<boolean>;

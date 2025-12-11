@@ -12,12 +12,15 @@ export class TeamResponseDto {
   name: string;
 
   @Expose()
+  @Type(() => UserAvatarResponseDto)
   createdBy: UserAvatarResponseDto;
 
   @Expose()
+  @Type(() => UserAvatarResponseDto)
   leader: UserAvatarResponseDto;
 
   @Expose()
+  @Type(() => SectorResponseDto)
   sector: SectorResponseDto;
 
   @Expose()
@@ -44,6 +47,8 @@ export class TeamResponseDto {
       this.teamMembers = team.teamMembers.map(
         (teamMember) => new TeamMemberResponseDto(teamMember)
       );
+    } else {
+      this.teamMembers = [];
     }
   }
 }

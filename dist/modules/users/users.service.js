@@ -200,6 +200,50 @@ let UsersService = class UsersService {
         }));
         return usersMapped;
     }
+    async findAllAccountUsersWithTeams(account_id) {
+        console.log(`[DEBUG - UserService] Buscando usuários para account_id: ${account_id}`);
+        if (!account_id || isNaN(Number(account_id))) {
+            console.error(`[ERROR - UserService] account_id inválido (${account_id}).`);
+            throw new common_1.BadRequestException(`O ID da conta fornecido é inválido: ${account_id}.`);
+        }
+        const accountIdNumber = Number(account_id);
+        console.log(`[DEBUG - UserService] account_id final para query: ${accountIdNumber}`);
+        try {
+            const users = await this.userRepository.find({
+                where: { account_id: accountIdNumber },
+                relations: [
+                    'teamMembers',
+                    'teamMembers.team',
+                    'teamMembers.team.leader',
+                    'teamMembers.team.teamMembers',
+                    'teamMembers.team.teamMembers.user'
+                ],
+                select: [
+                    'uuid',
+                    'name',
+                    'profile_img_url',
+                ],
+                loadEagerRelations: false
+            });
+            const usersWithTreatedImages = await Promise.all(users.map(async (user) => {
+                if (user?.profile_img_url && !user.profile_img_url.includes('googleusercontent')) {
+                    try {
+                        user.profile_img_url = await this.minioService.getPresignedUrl(user.profile_img_url);
+                    }
+                    catch (err) {
+                        console.error(`[MINIO ERROR] Falha ao tentar gerar url assinada para usuário, image '${user.profile_img_url}': ${err.message}`);
+                        user.profile_img_url = null;
+                    }
+                }
+                return user;
+            }));
+            return usersWithTreatedImages;
+        }
+        catch (err) {
+            console.error(`[DB ERROR] Erro no banco de dados ao buscar usuários e seus times: ${err.message}`, err.stack);
+            throw new common_1.InternalServerErrorException("Ocorreu um erro inesperado ao buscar os usuários e seus times.");
+        }
+    }
     async update(id, body, manager) {
         const userRepository = manager ? manager.getRepository(user_entity_1.User) : this.userRepository;
         const user = await this.findOne(id, ['account'], manager);

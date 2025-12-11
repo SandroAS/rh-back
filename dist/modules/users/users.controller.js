@@ -20,19 +20,17 @@ const update_user_personal_information_dto_1 = require("./dtos/update-user-perso
 const platform_express_1 = require("@nestjs/platform-express");
 const update_user_password_dto_1 = require("./dtos/update-user-password.dto");
 const account_id_decorator_1 = require("../../common/decorators/account-id.decorator");
+const user_team_response_dto_1 = require("./dtos/user-team-response.dto");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
-    async findUser(id) {
-        const user = await this.usersService.findOne(parseInt(id));
-        if (!user) {
-            throw new common_1.NotFoundException('user not found');
-        }
-        return user;
-    }
     findAllAccountUsers(account_id) {
         return this.usersService.findAllAccountUsers(account_id);
+    }
+    async findAllAccountUsersWithTeams(account_id) {
+        const users = await this.usersService.findAllAccountUsersWithTeams(account_id);
+        return users.map(x => new user_team_response_dto_1.UserTeamResponseDto(x));
     }
     async updateUserPersonalInformations(uuid, body, file) {
         if (body.gender !== null && body.gender !== undefined && body.gender !== 'MALE' && body.gender !== 'FEMALE') {
@@ -50,21 +48,19 @@ let UsersController = class UsersController {
 };
 exports.UsersController = UsersController;
 __decorate([
-    (0, common_1.Get)('/:id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "findUser", null);
-__decorate([
     (0, common_1.Get)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, account_id_decorator_1.AccountId)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findAllAccountUsers", null);
+__decorate([
+    (0, common_1.Get)('/with-teams'),
+    __param(0, (0, account_id_decorator_1.AccountId)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findAllAccountUsersWithTeams", null);
 __decorate([
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('profile_image', {
         limits: { fileSize: 5 * 1024 * 1024 },
@@ -76,7 +72,6 @@ __decorate([
         },
     })),
     (0, common_1.Put)('/personal-information/:uuid'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('uuid')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.UploadedFile)()),
@@ -86,7 +81,6 @@ __decorate([
 ], UsersController.prototype, "updateUserPersonalInformations", null);
 __decorate([
     (0, common_1.Put)('/password/:uuid'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('uuid')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Request)()),
@@ -96,7 +90,6 @@ __decorate([
 ], UsersController.prototype, "updateUserPassword", null);
 __decorate([
     (0, common_1.Delete)('/:id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

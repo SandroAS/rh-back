@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { EntityManager, In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../entities/user.entity';
@@ -15,6 +15,7 @@ import { UpdateUserPersonalInformationResponseDto } from './dtos/update-user-per
 import { UpdateUserPasswordDto } from './dtos/update-user-password.dto';
 import { CreateAccountUserDto } from '../accounts/dtos/create-account-user.dto';
 import { UserAvatarResponseDto } from './dtos/user-avatar-response.dto';
+import { UserTeamResponseDto } from './dtos/user-team-response.dto';
 
 const scrypt = promisify(_scrypt);
 
@@ -127,7 +128,7 @@ export class UsersService {
     return this.userRepository.findOne({ where: { email }, relations: relations || [] });
   }
 
-  async findByUuid(uuid: string, select?: string[]) {
+  async findByUuid(uuid: string, select?: string[]): Promise<User> {
     let user = this.userRepository
     .createQueryBuilder('user')
     .where('user.uuid = :uuid', { uuid });
@@ -136,7 +137,7 @@ export class UsersService {
       select = select.map(columnName => `user.${columnName}`)
       user.select(select);
     }
-    
+
     return await user.getOne();
   }
  
@@ -230,6 +231,58 @@ export class UsersService {
     }));
 
     return usersMapped;
+  }
+
+  async findAllAccountUsersWithTeams(account_id: number): Promise<User[]> {
+    // 1. Log de debug para ver o valor de account_id ANTES da query
+    console.log(`[DEBUG - UserService] Buscando usuários para account_id: ${account_id}`);
+
+    // 2. VALIDAÇÃO ROBUSTA: Proteção contra undefined, null, e NaN
+    if (!account_id || isNaN(Number(account_id))) {
+        console.error(`[ERROR - UserService] account_id inválido (${account_id}).`);
+        throw new BadRequestException(`O ID da conta fornecido é inválido: ${account_id}.`);
+    }
+
+    const accountIdNumber = Number(account_id);
+    
+    console.log(`[DEBUG - UserService] account_id final para query: ${accountIdNumber}`);
+    
+    try {
+      const users = await this.userRepository.find({
+        where: { account_id: accountIdNumber }, 
+        relations: [
+          'teamMembers', 
+          'teamMembers.team', 
+          'teamMembers.team.leader',
+          'teamMembers.team.teamMembers', 
+          'teamMembers.team.teamMembers.user'
+        ], 
+        select: [
+          'uuid',
+          'name',
+          'profile_img_url',
+        ],
+        loadEagerRelations: false
+      });
+
+      const usersWithTreatedImages = await Promise.all(users.map(async (user) => {
+        if (user?.profile_img_url && !user.profile_img_url.includes('googleusercontent')) {
+          try {
+              user.profile_img_url = await this.minioService.getPresignedUrl(user.profile_img_url);
+          } catch (err) {
+              console.error(`[MINIO ERROR] Falha ao tentar gerar url assinada para usuário, image '${user.profile_img_url}': ${err.message}`);
+              user.profile_img_url = null;
+          }
+        }
+        return user;
+      }));
+
+      return usersWithTreatedImages;
+
+    } catch (err) {
+        console.error(`[DB ERROR] Erro no banco de dados ao buscar usuários e seus times: ${err.message}`, err.stack);
+        throw new InternalServerErrorException("Ocorreu um erro inesperado ao buscar os usuários e seus times."); 
+    }
   }
 
   async update(id: number, body: UpdateUserDto, manager?: EntityManager): Promise<User> {
