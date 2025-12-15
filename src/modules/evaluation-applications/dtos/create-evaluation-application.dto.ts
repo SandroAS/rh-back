@@ -1,5 +1,7 @@
-import { EvaluationType } from '@/entities/evaluation-application.entity';
-import { IsNotEmpty, IsEnum, IsDateString, IsString } from 'class-validator';
+import { EvaluationApplicationStatus, EvaluationType } from '@/entities/evaluation-application.entity';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsEnum, IsDateString, IsString, IsArray, ValidateNested } from 'class-validator';
+import { EvaluationApplicationItemDto } from './evaluation-application-item.dto';
 
 export class CreateEvaluationApplicationDto {
   @IsNotEmpty()
@@ -7,12 +9,12 @@ export class CreateEvaluationApplicationDto {
   readonly evaluation_uuid: string;
 
   @IsNotEmpty()
-  @IsString()
-  readonly form_uuid: string;
-
-  @IsNotEmpty()
   @IsEnum(EvaluationType)
   readonly type: EvaluationType;
+
+  @IsNotEmpty()
+  @IsEnum(EvaluationApplicationStatus)
+  readonly status: EvaluationApplicationStatus;
 
   @IsNotEmpty()
   @IsDateString()
@@ -29,4 +31,9 @@ export class CreateEvaluationApplicationDto {
   @IsNotEmpty()
   @IsString()
   readonly submitting_user_uuid: string;
+
+  @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => EvaluationApplicationItemDto)
+    readonly applications: EvaluationApplicationItemDto[];
 }

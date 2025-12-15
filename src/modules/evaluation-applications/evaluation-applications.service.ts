@@ -9,6 +9,8 @@ import { CreateEvaluationApplicationDto } from './dtos/create-evaluation-applica
 import { UpdateEvaluationApplicationDto } from './dtos/update-evaluation-application.dto';
 import { FormApplicationsService } from '../form-applications/form-applications.service';
 import { FormApplication } from '@/entities/form-application.entity';
+import { EvaluationsService } from '../evaluations/evaluations.service';
+import { Evaluation } from '@/entities/evaluation.entity';
 
 @Injectable()
 export class EvaluationApplicationsService extends BaseService<EvaluationApplication> {
@@ -17,12 +19,13 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     private readonly evaluationApplicationRepository: Repository<EvaluationApplication>,
     private readonly dataSource: DataSource,
     private readonly formApplicationsService: FormApplicationsService,
+    private readonly evaluationsService: EvaluationsService,
   ) {
     super(evaluationApplicationRepository);
   }
 
   /**
-   * Cria uma nova aplicação de avaliação em transação (CREATE).
+   * Cria uma ou mais aplicação de avaliação em transação (CREATE).
    */
   async createByAccountId(
     payload: CreateEvaluationApplicationDto,
@@ -32,19 +35,36 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-
+// CONTINUAR AQUI, A PARTE DE CADASTRAR APLICACOES
     try {
+      // 1. BUSCAR A AVALIAÇÃO (EVALUATION) BASE PELO UUID
+      const { evaluation_uuid } = payload;
+      const evaluation: Evaluation = await this.evaluationsService.findOneWithRelations(evaluation_uuid, accountId)
+        .catch(error => {
+            if (error instanceof NotFoundException) {
+                // Re-lança com uma mensagem específica para o contexto
+                throw new NotFoundException(`Evaluation with UUID ${evaluation_uuid} not found for this account.`);
+            }
+            throw error;
+        });
+
+      // 2. Continuação da Lógica de Criação (a ser ajustada por você para o DTO de Bulk)
+      
       const newApplication = this.evaluationApplicationRepository.create({
         ...payload,
+        // O ID real da Evaluation será usado aqui (evaluation.id) na próxima etapa
         account_id: accountId
       });
 
       const createdApplication = await queryRunner.manager.save(EvaluationApplication, newApplication);
 
       let createdFormApplication: FormApplication | null = null;
-      if (payload.form_uuid) {
+
+      // Note: O campo payload.form_uuid não existe no DTO de Bulk, mantendo a lógica original
+      // que será ajustada por você.
+      if ((payload as any).form_uuid) {
         createdFormApplication = await this.formApplicationsService.createInTransaction(
-          payload.form_uuid, 
+          (payload as any).form_uuid, 
           accountId, 
           createdApplication.id,
           queryRunner.manager
