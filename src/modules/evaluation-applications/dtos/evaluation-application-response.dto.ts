@@ -47,11 +47,11 @@ export class EvaluationApplicationResponseDto {
 
   @Expose()
   @Type(() => UserAvatarResponseDto)
-  readonly evaluatedUser: UserAvatarResponseDto;
+  readonly evaluated_user: UserAvatarResponseDto;
 
   @Expose()
   @Type(() => UserAvatarResponseDto)
-  readonly submittingUser: UserAvatarResponseDto;
+  readonly submitting_user: UserAvatarResponseDto;
   
   @Expose()
   @Type(() => FormApplicationResponseDto)
@@ -72,11 +72,11 @@ export class EvaluationApplicationResponseDto {
     this.form_application_uuid = evaluationApplication.formApplication?.uuid;
 
     if (evaluationApplication.evaluatedUser) {
-      this.evaluatedUser = new UserAvatarResponseDto(evaluationApplication.evaluatedUser);
+      this.evaluated_user = new UserAvatarResponseDto(evaluationApplication.evaluatedUser);
     }
 
     if (evaluationApplication.submittingUser) {
-      this.submittingUser = new UserAvatarResponseDto(evaluationApplication.submittingUser);
+      this.submitting_user = new UserAvatarResponseDto(evaluationApplication.submittingUser);
     }
 
     if (evaluationApplication.evaluation) {

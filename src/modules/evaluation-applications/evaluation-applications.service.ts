@@ -8,7 +8,6 @@ import { BaseService, PaginationResult } from '@/common/services/base.service';
 import { CreateEvaluationApplicationDto } from './dtos/create-evaluation-application.dto';
 import { UpdateEvaluationApplicationDto } from './dtos/update-evaluation-application.dto';
 import { FormApplicationsService } from '../form-applications/form-applications.service';
-import { FormApplication } from '@/entities/form-application.entity';
 import { EvaluationsService } from '../evaluations/evaluations.service';
 import { Evaluation } from '@/entities/evaluation.entity';
 
@@ -81,6 +80,10 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
         });
 
         const createdApplication = await queryRunner.manager.save(EvaluationApplication, newEvaluationApplication);
+
+        createdApplication.evaluation = evaluation;
+        createdApplication.evaluatedUser = evaluatedUser;
+        createdApplication.submittingUser = submittingUser;
         createdApplications.push(createdApplication);
       }
 
