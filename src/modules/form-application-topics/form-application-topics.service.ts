@@ -49,10 +49,14 @@ export class FormApplicationTopicsService extends BaseService<FormApplicationTop
     manager: EntityManager
   ): Promise<FormApplicationTopic> {
 
+    if (!formTopic.id) {
+      throw new Error("ID do tópico base não encontrado para o snapshot.");
+    }
+
     const newAppTopic = manager.create(FormApplicationTopic, {
       form_application_id: savedFormApplicationId,
       base_form_topic_id: formTopic.id,
-      drd_topic_id: formTopic.drdTopic.id,
+      drd_topic_id: formTopic.drdTopic?.id || null, 
       title: formTopic.title,
       description: formTopic.description,
       order: formTopic.order,
