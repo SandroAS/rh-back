@@ -1,4 +1,4 @@
-import { EvaluationApplication, EvaluationType } from '@/entities/evaluation-application.entity';
+import { EvaluationApplication, EvaluationApplicationStatus, EvaluationType } from '@/entities/evaluation-application.entity';
 import { EvaluationResponseDto } from '@/modules/evaluations/dtos/evaluation-response.dto';
 import { FormApplicationResponseDto } from '@/modules/form-applications/dtos/form-application-response.dto';
 import { UserAvatarResponseDto } from '@/modules/users/dtos/user-avatar-response.dto';
@@ -21,13 +21,13 @@ export class EvaluationApplicationResponseDto {
   readonly type: EvaluationType;
 
   @Expose()
+  readonly status: EvaluationApplicationStatus;
+
+  @Expose()
   readonly started_date: Date;
 
   @Expose()
   readonly expiration_date: Date;
-
-  @Expose()
-  readonly created_at: Date;
 
   @Expose()
   readonly evaluation_uuid: string;
@@ -63,9 +63,9 @@ export class EvaluationApplicationResponseDto {
     this.description = evaluationApplication.description;
     this.rate = evaluationApplication.rate;
     this.type = evaluationApplication.type;
+    this.status = evaluationApplication.status;
     this.started_date = evaluationApplication.started_date;
     this.expiration_date = evaluationApplication.expiration_date;
-    this.created_at = evaluationApplication.created_at;
     this.evaluation_uuid = evaluationApplication.evaluation?.uuid;
     this.evaluated_user_uuid = evaluationApplication.evaluatedUser?.uuid;
     this.submitting_user_uuid = evaluationApplication.submittingUser?.uuid;

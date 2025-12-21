@@ -38,7 +38,7 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
 
     try {
       const { evaluation_uuid } = payload;
-      
+
       const evaluation: Evaluation = await this.evaluationsService.findOneWithRelations(evaluation_uuid, accountId)
         .catch(error => {
           if (error instanceof NotFoundException) {
@@ -50,7 +50,7 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
       const createdApplications: EvaluationApplication[] = [];
 
       for (const applicationPayload of payload.applications) {
-        
+
         const formApplicationDataSaved = await this.formApplicationsService.createInTransaction(
           evaluation.form,
           accountId,
@@ -82,8 +82,8 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
 
         const createdApplication = await queryRunner.manager.save(EvaluationApplication, newEvaluationApplication);
         createdApplications.push(createdApplication);
-      }      
-      
+      }
+
       await queryRunner.commitTransaction();
       return createdApplications;
 
@@ -93,7 +93,7 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
       if (err instanceof NotFoundException || err instanceof ConflictException) {
         throw err;
       }
-      
+
       console.error('Erro ao criar Evaluation Application:', err);
       throw new InternalServerErrorException('Falha ao concluir a criação da aplicação de avaliação.');
     } finally {
