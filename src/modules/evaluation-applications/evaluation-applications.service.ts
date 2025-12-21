@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, InternalServerErrorException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
-import { EvaluationApplication } from '@/entities/evaluation-application.entity';
+import { EvaluationApplication, EvaluationApplicationStatus } from '@/entities/evaluation-application.entity';
 import { User } from '@/entities/user.entity';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { BaseService, PaginationResult } from '@/common/services/base.service';
@@ -31,50 +31,61 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     payload: CreateEvaluationApplicationDto,
     accountId: number,
     user: User,
-  ): Promise<EvaluationApplication> {
+  ): Promise<EvaluationApplication[]> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-// CONTINUAR AQUI, A PARTE DE CADASTRAR APLICACOES
+
     try {
-      // 1. BUSCAR A AVALIAÇÃO (EVALUATION) BASE PELO UUID
       const { evaluation_uuid } = payload;
+      
       const evaluation: Evaluation = await this.evaluationsService.findOneWithRelations(evaluation_uuid, accountId)
         .catch(error => {
-            if (error instanceof NotFoundException) {
-                // Re-lança com uma mensagem específica para o contexto
-                throw new NotFoundException(`Evaluation with UUID ${evaluation_uuid} not found for this account.`);
-            }
-            throw error;
+          if (error instanceof NotFoundException) {
+            throw new NotFoundException(`Evaluation with UUID ${evaluation_uuid} not found for this account.`);
+          }
+          throw error;
         });
 
-      // 2. Continuação da Lógica de Criação (a ser ajustada por você para o DTO de Bulk)
-      
-      const newApplication = this.evaluationApplicationRepository.create({
-        ...payload,
-        // O ID real da Evaluation será usado aqui (evaluation.id) na próxima etapa
-        account_id: accountId
-      });
+      const createdApplications: EvaluationApplication[] = [];
 
-      const createdApplication = await queryRunner.manager.save(EvaluationApplication, newApplication);
-
-      let createdFormApplication: FormApplication | null = null;
-
-      // Note: O campo payload.form_uuid não existe no DTO de Bulk, mantendo a lógica original
-      // que será ajustada por você.
-      if ((payload as any).form_uuid) {
-        createdFormApplication = await this.formApplicationsService.createInTransaction(
-          (payload as any).form_uuid, 
-          accountId, 
-          createdApplication.id,
+      for (const applicationPayload of payload.applications) {
+        
+        const formApplicationDataSaved = await this.formApplicationsService.createInTransaction(
+          evaluation.form,
+          accountId,
           queryRunner.manager
         );
-        createdApplication.formApplication = createdFormApplication;
-      }
 
-      await queryRunner.commitTransaction();
+        const evaluatedUser = await queryRunner.manager.findOneBy(User, { uuid: applicationPayload.evaluated_user_uuid });
+        const submittingUser = await queryRunner.manager.findOneBy(User, { uuid: applicationPayload.submitting_user_uuid });
+
+        if (!evaluatedUser || !submittingUser) {
+          throw new NotFoundException(`Usuário para aplicação de avaliação não encontrado ao tentar cadastrar.`);
+        }
+
+        const newEvaluationApplication = this.evaluationApplicationRepository.create({
+          account_id: accountId,
+          evaluation_id: evaluation.id,
+          form_application_id: formApplicationDataSaved.id,
+          drd_id: evaluation.drd_id,
+          name: evaluation.name,
+          description: evaluation.description,
+          rate: evaluation.rate,
+          type: applicationPayload.type,
+          started_date: payload.started_date,
+          expiration_date: payload.expiration_date,
+          status: EvaluationApplicationStatus.CREATED,
+          evaluated_user_id: evaluatedUser.id,
+          submitting_user_id: submittingUser.id,
+        });
+
+        const createdApplication = await queryRunner.manager.save(EvaluationApplication, newEvaluationApplication);
+        createdApplications.push(createdApplication);
+      }      
       
-      return createdApplication;
+      await queryRunner.commitTransaction();
+      return createdApplications;
 
     } catch (err) {
       await queryRunner.rollbackTransaction();

@@ -15,12 +15,12 @@ export class FormApplicationQuestionOptionsService extends BaseService<FormAppli
   }
 
   async createQuestionOptionSnapshotInTransaction(
-    savedAppQuestionId: number,
+    savedFormApplicationQuestionId: number,
     option: FormQuestionOption,
     manager: EntityManager
   ): Promise<FormApplicationQuestionOption> {
     const newAppOption = manager.create(FormApplicationQuestionOption, {
-      application_question_id: savedAppQuestionId,
+      application_question_id: savedFormApplicationQuestionId,
       base_option_id: option.id,
       text: option.text,
       order: option.order

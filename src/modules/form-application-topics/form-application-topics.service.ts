@@ -44,15 +44,17 @@ export class FormApplicationTopicsService extends BaseService<FormApplicationTop
   }
 
   async createTopicSnapshotInTransaction(
-    savedApplicationId: number,
+    savedFormApplicationId: number,
     formTopic: FormTopic,
     manager: EntityManager
   ): Promise<FormApplicationTopic> {
 
     const newAppTopic = manager.create(FormApplicationTopic, {
-      application_id: savedApplicationId,
-      base_topic_id: formTopic.id,
-      name: formTopic.title,
+      form_application_id: savedFormApplicationId,
+      base_form_topic_id: formTopic.id,
+      drd_topic_id: formTopic.drdTopic.id,
+      title: formTopic.title,
+      description: formTopic.description,
       order: formTopic.order,
     });
 
@@ -61,7 +63,7 @@ export class FormApplicationTopicsService extends BaseService<FormApplicationTop
 
     for (const question of formTopic.questions) {
       const savedAppQuestion = await this.formApplicationQuestionsService.createQuestionSnapshotInTransaction(
-        savedApplicationId,
+        savedFormApplicationId,
         savedAppTopic.id,
         question,
         manager

@@ -23,9 +23,9 @@ export class EvaluationApplicationsController {
     @Body() payloadDto: CreateEvaluationApplicationDto, 
     @AccountId() accountId: number, 
     @AuthUser() user: User
-  ): Promise<EvaluationApplicationResponseDto> {
-    const created = await this.evaluationApplicationsService.createByAccountId(payloadDto, accountId, user);
-    return new EvaluationApplicationResponseDto(created);
+  ): Promise<EvaluationApplicationResponseDto[]> {
+    const createds = await this.evaluationApplicationsService.createByAccountId(payloadDto, accountId, user);
+    return createds.map(created => new EvaluationApplicationResponseDto(created));
   }
 
   @Get('pagination')

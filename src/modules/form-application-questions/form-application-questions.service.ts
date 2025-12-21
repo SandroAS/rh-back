@@ -18,15 +18,15 @@ export class FormApplicationQuestionsService extends BaseService<FormApplication
   }
 
   async createQuestionSnapshotInTransaction(
-    savedApplicationId: number,
-    savedAppTopicId: number,
+    savedFormApplicationId: number,
+    savedFormApplicationTopicId: number,
     question: FormQuestion,
     manager: EntityManager
   ): Promise<FormApplicationQuestion> {
 
     const newAppQuestion = manager.create(FormApplicationQuestion, {
-      application_id: savedApplicationId,
-      application_topic_id: savedAppTopicId,
+      application_id: savedFormApplicationId,
+      form_application_topic_id: savedFormApplicationTopicId,
       base_question_id: question.id,
       title: question.title,
       description: question.description,

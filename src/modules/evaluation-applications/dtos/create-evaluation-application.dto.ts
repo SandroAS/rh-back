@@ -24,16 +24,8 @@ export class CreateEvaluationApplicationDto {
   @IsDateString()
   readonly expiration_date: string;
 
-  @IsNotEmpty()
-  @IsString()
-  readonly evaluated_user_uuid: string;
-
-  @IsNotEmpty()
-  @IsString()
-  readonly submitting_user_uuid: string;
-
   @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => EvaluationApplicationItemDto)
-    readonly applications: EvaluationApplicationItemDto[];
+  @ValidateNested({ each: true })
+  @Type(() => EvaluationApplicationItemDto)
+  readonly applications: EvaluationApplicationItemDto[];
 }
