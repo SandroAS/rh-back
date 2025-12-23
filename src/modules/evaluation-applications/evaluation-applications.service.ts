@@ -197,63 +197,44 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     uuid: string, 
     payload: UpdateEvaluationApplicationDto, 
     accountId: number
-  ) {
-  // ): Promise<EvaluationApplication> {
-  //   const queryRunner = this.dataSource.createQueryRunner();
-  //   await queryRunner.connect();
-  //   await queryRunner.startTransaction();
+  ): Promise<EvaluationApplication> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-  //   try {
-  //     const application = await this.evaluationApplicationRepository.findOne({
-  //       where: { uuid, account_id: accountId },
-  //       relations: ['formApplication'],
-  //     });
+    try {
+      const application = await this.evaluationApplicationRepository.findOne({
+        where: { uuid, account_id: accountId }
+      });
 
-  //     if (!application) {
-  //       throw new NotFoundException(`Application with UUID ${uuid} não encontrada para atualização.`);
-  //     }
+      if (!application) {
+        throw new NotFoundException(`Application with UUID ${uuid} não encontrada para atualização.`);
+      }
 
-  //     const { formApplication: formApplicationPayload, ...restPayload } = payload as any;
+      const applicationUpdateData = {
+        ...application,
+        started_date: payload.started_date,
+        expiration_date: payload.expiration_date,
+      };
 
-  //     if (restPayload.evaluated_user_id && typeof restPayload.evaluated_user_id === 'string') {
-  //       restPayload.evaluated_user_id = parseInt(restPayload.evaluated_user_id, 10);
-  //     }
+      this.evaluationApplicationRepository.merge(application, applicationUpdateData);
+      const updatedApplication = await queryRunner.manager.save(EvaluationApplication, application);
 
-  //     this.evaluationApplicationRepository.merge(application, restPayload);
-  //     const updatedApplication = await queryRunner.manager.save(EvaluationApplication, application);
-      
-  //     if (formApplicationPayload && updatedApplication.formApplication && updatedApplication.formApplication.id) {
-  //       const formApp = await queryRunner.manager.findOne(FormApplication, { 
-  //         where: { id: updatedApplication.formApplicationId },
-  //         select: ['uuid']
-  //       });
+      await queryRunner.commitTransaction();
 
-  //       if(formApp) {
-  //         const updatedForm = await this.formApplicationsService.updateInTransaction(
-  //           formApp.uuid, 
-  //           form_application, 
-  //           accountId,
-  //           queryRunner.manager
-  //         );
-  //         updatedApplication.formApplication = updatedForm;
-  //       }
-  //     }
+      return await this.findOneWithRelations(updatedApplication.uuid, accountId); 
 
-  //     await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
 
-  //     return await this.findOneWithRelations(updatedApplication.uuid, accountId); 
+      if (err instanceof NotFoundException || err instanceof ConflictException) {
+        throw err;
+      }
 
-  //   } catch (err) {
-  //     await queryRunner.rollbackTransaction();
-
-  //     if (err instanceof NotFoundException || err instanceof ConflictException) {
-  //       throw err;
-  //     }
-      
-  //     console.error('Erro ao atualizar Evaluation Application:', err);
-  //     throw new InternalServerErrorException('Falha ao concluir a atualização da aplicação de avaliação.');
-  //   } finally {
-  //     await queryRunner.release();
-  //   }
+      console.error('Erro ao atualizar Evaluation Application:', err);
+      throw new InternalServerErrorException('Falha ao concluir a atualização da aplicação de avaliação.');
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
