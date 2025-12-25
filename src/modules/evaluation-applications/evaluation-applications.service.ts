@@ -225,4 +225,39 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
       throw new InternalServerErrorException('Falha ao concluir a atualização.');
     }
   }
+
+  async cancel(
+    uuid: string, 
+    accountId: number
+  ): Promise<EvaluationApplication> {
+    try {
+      const evaluationApplication = await this.evaluationApplicationRepository.findOne({
+        where: { uuid, account_id: accountId }
+      });
+
+      if (!evaluationApplication) {
+        throw new NotFoundException(`Application com UUID ${uuid} não encontrada.`);
+      }
+
+      if (evaluationApplication.status === EvaluationApplicationStatus.CANCELED ) {
+        throw new ConflictException(`Aplicação com UUID ${uuid} já cancelada.`);
+      }
+
+      const updateData = {
+        status: EvaluationApplicationStatus.CANCELED,
+      };
+
+      await this.evaluationApplicationRepository.update(evaluationApplication.id, updateData);
+
+      return await this.findOneWithRelations(evaluationApplication.uuid, accountId); 
+
+    } catch (err) {
+      if (err instanceof NotFoundException || err instanceof ConflictException) {
+        throw err;
+      }
+
+      console.error('Erro ao cancelar Aplicação de Avaliação:', err);
+      throw new InternalServerErrorException('Falha ao concluir cancelamento da aplicação de avaliação.');
+    }
+  }
 }

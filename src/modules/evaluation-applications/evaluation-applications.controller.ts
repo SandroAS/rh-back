@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards, Patch } from '@nestjs/common';
 import { EvaluationApplicationsService } from './evaluation-applications.service';
 import { AccountId } from '@/common/decorators/account-id.decorator';
 import { AuthUser } from '@/common/decorators/auth-user.decorator';
@@ -9,7 +9,6 @@ import { EvaluationApplicationResponseDto } from './dtos/evaluation-application-
 import { EvaluationApplicationPaginationResponseDto } from './dtos/evaluation-application-pagination-response.dto';
 import { CreateEvaluationApplicationDto } from './dtos/create-evaluation-application.dto';
 import { UpdateEvaluationApplicationDto } from './dtos/update-evaluation-application.dto';
-import { EvaluationApplication } from '@/entities/evaluation-application.entity';
 
 @Controller('evaluation-applications')
 @UseGuards(JwtAuthGuard)
@@ -59,6 +58,14 @@ export class EvaluationApplicationsController {
     @AccountId() accountId: number,
   ): Promise<EvaluationApplicationResponseDto> {
     return new EvaluationApplicationResponseDto(await this.evaluationApplicationsService.updateWithAccountId(uuid, payloadDto, accountId));
+  }
+
+  @Patch('cancel/:uuid')
+  async cancel(
+    @Param('uuid') uuid: string,
+    @AccountId() accountId: number,
+  ): Promise<EvaluationApplicationResponseDto> {
+    return new EvaluationApplicationResponseDto(await this.evaluationApplicationsService.cancel(uuid, accountId));
   }
 
   @Delete(':uuid')
