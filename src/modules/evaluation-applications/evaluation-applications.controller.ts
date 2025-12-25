@@ -42,6 +42,15 @@ export class EvaluationApplicationsController {
     return applications.map(application => new EvaluationApplicationResponseDto(application));
   }
 
+  @Patch('cancel/:uuid')
+  async cancel(
+    @Param('uuid') uuid: string,
+    @AccountId() accountId: number,
+  ): Promise<EvaluationApplicationResponseDto> {
+    const canceled = await this.evaluationApplicationsService.cancel(uuid, accountId);
+    return new EvaluationApplicationResponseDto(canceled);
+  }
+
   @Get(':uuid')
   async findOne(
     @Param('uuid') uuid: string, 
@@ -58,14 +67,6 @@ export class EvaluationApplicationsController {
     @AccountId() accountId: number,
   ): Promise<EvaluationApplicationResponseDto> {
     return new EvaluationApplicationResponseDto(await this.evaluationApplicationsService.updateWithAccountId(uuid, payloadDto, accountId));
-  }
-
-  @Patch('cancel/:uuid')
-  async cancel(
-    @Param('uuid') uuid: string,
-    @AccountId() accountId: number,
-  ): Promise<EvaluationApplicationResponseDto> {
-    return new EvaluationApplicationResponseDto(await this.evaluationApplicationsService.cancel(uuid, accountId));
   }
 
   @Delete(':uuid')
