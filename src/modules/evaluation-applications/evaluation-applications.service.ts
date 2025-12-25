@@ -10,6 +10,7 @@ import { UpdateEvaluationApplicationDto } from './dtos/update-evaluation-applica
 import { FormApplicationsService } from '../form-applications/form-applications.service';
 import { EvaluationsService } from '../evaluations/evaluations.service';
 import { Evaluation } from '@/entities/evaluation.entity';
+import { SendEvaluationApplicationDto } from './dtos/send-evaluation-application.dto';
 
 @Injectable()
 export class EvaluationApplicationsService extends BaseService<EvaluationApplication> {
@@ -258,6 +259,63 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
 
       console.error('Erro ao cancelar Aplicação de Avaliação:', err);
       throw new InternalServerErrorException('Falha ao concluir cancelamento da aplicação de avaliação.');
+    }
+  }
+
+  async send(
+    uuid: string,
+    payloadDto: SendEvaluationApplicationDto,
+    accountId: number
+  ): Promise<EvaluationApplication> {
+    try {
+      const evaluationApplication = await this.evaluationApplicationRepository.findOne({
+        where: { uuid, account_id: accountId }
+      });
+
+      if (!evaluationApplication) {
+        throw new NotFoundException(`Application com UUID ${uuid} não encontrada.`);
+      }
+
+      const invalidStatusMessages: Record<EvaluationApplicationStatus, string> = {
+        [EvaluationApplicationStatus.FINISHED]: `Aplicação com UUID ${uuid} não pode ser enviada pois já foi finalizada.`,
+        [EvaluationApplicationStatus.CANCELED]: `Aplicação com UUID ${uuid} não pode ser enviada pois foi cancelada.`,
+        [EvaluationApplicationStatus.EXPIRED]: `Aplicação com UUID ${uuid} não pode ser enviada pois expirou.`,
+        [EvaluationApplicationStatus.ACCESSED]: `Aplicação com UUID ${uuid} não pode ser enviada pois já foi acessada.`,
+        [EvaluationApplicationStatus.IN_PROGRESS]: `Aplicação com UUID ${uuid} não pode ser enviada pois já está em progresso.`,
+      } as Record<EvaluationApplicationStatus, string>;
+
+      if (invalidStatusMessages[evaluationApplication.status]) {
+        throw new ConflictException(invalidStatusMessages[evaluationApplication.status]);
+      }
+
+      if(evaluationApplication.status === EvaluationApplicationStatus.CREATED) {
+        const updateData = {
+          started_date: new Date(),
+        };
+  
+        await this.evaluationApplicationRepository.update(evaluationApplication.id, updateData);  
+        evaluationApplication.started_date = new Date();
+      }
+
+      // AQUI VAI A LOGICA PARA ENVIAR A APLICAÇÃO
+      if(payloadDto.forEmail) {
+        // AQUI VAI A LOGICA PARA ENVIAR A APLICAÇÃO POR EMAIL
+      }
+      if(payloadDto.forSystem) {
+        // AQUI VAI A LOGICA PARA ENVIAR A APLICAÇÃO POR SISTEMA
+      }
+
+      
+
+      return evaluationApplication;
+
+    } catch (err) {
+      if (err instanceof NotFoundException || err instanceof ConflictException) {
+        throw err;
+      }
+
+      console.error('Erro ao enviar Aplicação de Avaliação:', err);
+      throw new InternalServerErrorException('Falha ao concluir envio da aplicação de avaliação.');
     }
   }
 }

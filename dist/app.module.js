@@ -57,6 +57,7 @@ const form_answers_module_1 = require("./modules/form-answers/form-answers.modul
 const form_answer_multi_options_module_1 = require("./modules/form-answer-multi-options/form-answer-multi-options.module");
 const form_topics_module_1 = require("./modules/form-topics/form-topics.module");
 const form_application_topics_module_1 = require("./modules/form-application-topics/form-application-topics.module");
+const notifications_module_1 = require("./modules/notifications/notifications.module");
 const cookieSession = require('cookie-session');
 let AppModule = class AppModule {
     constructor(configService) {
@@ -135,7 +136,8 @@ exports.AppModule = AppModule = __decorate([
             form_answers_module_1.FormAnswersModule,
             form_answer_multi_options_module_1.FormAnswerMultiOptionsModule,
             form_topics_module_1.FormTopicsModule,
-            form_application_topics_module_1.FormApplicationTopicsModule
+            form_application_topics_module_1.FormApplicationTopicsModule,
+            notifications_module_1.NotificationsModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [

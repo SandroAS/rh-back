@@ -9,6 +9,7 @@ import { EvaluationApplicationResponseDto } from './dtos/evaluation-application-
 import { EvaluationApplicationPaginationResponseDto } from './dtos/evaluation-application-pagination-response.dto';
 import { CreateEvaluationApplicationDto } from './dtos/create-evaluation-application.dto';
 import { UpdateEvaluationApplicationDto } from './dtos/update-evaluation-application.dto';
+import { SendEvaluationApplicationDto } from './dtos/send-evaluation-application.dto';
 
 @Controller('evaluation-applications')
 @UseGuards(JwtAuthGuard)
@@ -47,8 +48,16 @@ export class EvaluationApplicationsController {
     @Param('uuid') uuid: string,
     @AccountId() accountId: number,
   ): Promise<EvaluationApplicationResponseDto> {
-    const canceled = await this.evaluationApplicationsService.cancel(uuid, accountId);
-    return new EvaluationApplicationResponseDto(canceled);
+    return new EvaluationApplicationResponseDto(await this.evaluationApplicationsService.cancel(uuid, accountId));
+  }
+
+  @Post('send/:uuid')
+  async send(
+    @Param('uuid') uuid: string,
+    @Body() payloadDto: SendEvaluationApplicationDto,
+    @AccountId() accountId: number,
+  ): Promise<EvaluationApplicationResponseDto> {
+    return new EvaluationApplicationResponseDto(await this.evaluationApplicationsService.send(uuid, payloadDto, accountId));
   }
 
   @Get(':uuid')

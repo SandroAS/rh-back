@@ -5,6 +5,7 @@ import { FormApplication } from './form-application.entity';
 import { FormResponse } from './form-response.entity';
 import { User } from './user.entity';
 import { DRD } from './drd.entity';
+import { Notification } from './notification.entity';
 
 export enum EvaluationType {
   SELF = 'SELF',
@@ -91,4 +92,7 @@ export class EvaluationApplication extends BaseEntity {
 
   @OneToMany(() => FormResponse, (response) => response.evaluationApplication)
   responses: FormResponse[];
+
+  @OneToMany(() => Notification, (notification) => notification.evaluationApplication)
+  notifications: Notification[];
 }

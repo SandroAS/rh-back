@@ -16,6 +16,7 @@ import { Sector } from './sector.entity';
 import { DRD } from './drd.entity';
 import { Evaluation } from './evaluation.entity';
 import { EvaluationApplication } from './evaluation-application.entity';
+import { Notification } from './notification.entity';
 
 export enum Gender {
   MALE = 'MALE',
@@ -129,6 +130,9 @@ export class User {
 
   @OneToMany(() => EvaluationApplication, (application) => application.submittingUser)
   evaluationsSubmitted: EvaluationApplication[];
+
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications: Notification[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
