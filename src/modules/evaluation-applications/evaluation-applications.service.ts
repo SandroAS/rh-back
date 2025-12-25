@@ -171,15 +171,14 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
       .where('application.uuid = :uuid', { uuid })
       .andWhere('application.account_id = :accountId', { accountId })
 
-      .leftJoinAndSelect('application.createdBy', 'createdBy')
       .leftJoinAndSelect('application.evaluation', 'evaluation')
       .leftJoinAndSelect('evaluation.drd', 'drd')
       .leftJoinAndSelect('drd.jobPosition', 'jobPosition')
       .leftJoinAndSelect('application.formApplication', 'formApplication')
       
-      .leftJoinAndSelect('formApplication.topics', 'topics')
-      .leftJoinAndSelect('topics.questionResponses', 'questionResponses')
-      .leftJoinAndSelect('questionResponses.optionsResponses', 'optionsResponses')
+      .leftJoinAndSelect('formApplication.applicationTopics', 'topics')
+      .leftJoinAndSelect('topics.questions', 'questions')
+      .leftJoinAndSelect('questions.options', 'options')
 
       .getOne();
 
@@ -198,43 +197,32 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     payload: UpdateEvaluationApplicationDto, 
     accountId: number
   ): Promise<EvaluationApplication> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
     try {
-      const application = await this.evaluationApplicationRepository.findOne({
+      const evaluationApplication = await this.evaluationApplicationRepository.findOne({
         where: { uuid, account_id: accountId }
       });
 
-      if (!application) {
-        throw new NotFoundException(`Application with UUID ${uuid} não encontrada para atualização.`);
+      if (!evaluationApplication) {
+        throw new NotFoundException(`Application com UUID ${uuid} não encontrada.`);
       }
 
-      const applicationUpdateData = {
-        ...application,
-        started_date: payload.started_date,
-        expiration_date: payload.expiration_date,
+      const updateData = {
+        started_date: new Date(payload.started_date),
+        expiration_date: new Date(payload.expiration_date)
       };
 
-      this.evaluationApplicationRepository.merge(application, applicationUpdateData);
-      const updatedApplication = await queryRunner.manager.save(EvaluationApplication, application);
-
-      await queryRunner.commitTransaction();
+      this.evaluationApplicationRepository.merge(evaluationApplication, updateData);
+      const updatedApplication = await this.evaluationApplicationRepository.save(evaluationApplication);
 
       return await this.findOneWithRelations(updatedApplication.uuid, accountId); 
 
     } catch (err) {
-      await queryRunner.rollbackTransaction();
-
       if (err instanceof NotFoundException || err instanceof ConflictException) {
         throw err;
       }
 
       console.error('Erro ao atualizar Evaluation Application:', err);
-      throw new InternalServerErrorException('Falha ao concluir a atualização da aplicação de avaliação.');
-    } finally {
-      await queryRunner.release();
+      throw new InternalServerErrorException('Falha ao concluir a atualização.');
     }
   }
 }
