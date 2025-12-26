@@ -32,6 +32,9 @@ export class FormApplicationQuestion extends BaseEntity {
   @Column({ type: 'enum', enum: QuestionType })
   type: QuestionType;
 
+  @Column({ type: 'boolean', default: false })
+  is_required: boolean;
+
   @Column({ type: 'int' })
   order: number;
 

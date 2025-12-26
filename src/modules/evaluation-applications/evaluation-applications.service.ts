@@ -174,16 +174,16 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     const application = await this.evaluationApplicationRepository.createQueryBuilder('application')
       .where('application.uuid = :uuid', { uuid })
       .andWhere('application.account_id = :accountId', { accountId })
-
       .leftJoinAndSelect('application.evaluation', 'evaluation')
       .leftJoinAndSelect('evaluation.drd', 'drd')
       .leftJoinAndSelect('drd.jobPosition', 'jobPosition')
+      .leftJoinAndSelect('application.evaluatedUser', 'evaluatedUser')
       .leftJoinAndSelect('application.formApplication', 'formApplication')
-      
       .leftJoinAndSelect('formApplication.applicationTopics', 'topics')
       .leftJoinAndSelect('topics.questions', 'questions')
       .leftJoinAndSelect('questions.options', 'options')
-
+      .orderBy('topics.order', 'ASC')
+      .addOrderBy('questions.order', 'ASC')
       .getOne();
 
     if (!application) {
