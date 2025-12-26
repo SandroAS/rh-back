@@ -11,6 +11,8 @@ import { FormApplicationsService } from '../form-applications/form-applications.
 import { EvaluationsService } from '../evaluations/evaluations.service';
 import { Evaluation } from '@/entities/evaluation.entity';
 import { SendEvaluationApplicationDto } from './dtos/send-evaluation-application.dto';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationCategory, NotificationTemplateKey } from '@/entities/notification.entity';
 
 @Injectable()
 export class EvaluationApplicationsService extends BaseService<EvaluationApplication> {
@@ -20,6 +22,7 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     private readonly dataSource: DataSource,
     private readonly formApplicationsService: FormApplicationsService,
     private readonly evaluationsService: EvaluationsService,
+    private readonly notificationsService: NotificationsService,
   ) {
     super(evaluationApplicationRepository);
   }
@@ -262,6 +265,9 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     }
   }
 
+  /**
+   * Envia uma aplicação de avaliação, por Email e/ou Notificacção pelo Sistema.
+   */
   async send(
     uuid: string,
     payloadDto: SendEvaluationApplicationDto,
@@ -269,43 +275,54 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
   ): Promise<EvaluationApplication> {
     try {
       const evaluationApplication = await this.evaluationApplicationRepository.findOne({
-        where: { uuid, account_id: accountId }
+        where: { uuid, account_id: accountId },
+        relations: ['submittingUser', 'evaluatedUser']
       });
 
       if (!evaluationApplication) {
         throw new NotFoundException(`Application com UUID ${uuid} não encontrada.`);
       }
 
-      const invalidStatusMessages: Record<EvaluationApplicationStatus, string> = {
+      const invalidStatusMessages: Record<string, string> = {
         [EvaluationApplicationStatus.FINISHED]: `Aplicação com UUID ${uuid} não pode ser enviada pois já foi finalizada.`,
         [EvaluationApplicationStatus.CANCELED]: `Aplicação com UUID ${uuid} não pode ser enviada pois foi cancelada.`,
         [EvaluationApplicationStatus.EXPIRED]: `Aplicação com UUID ${uuid} não pode ser enviada pois expirou.`,
         [EvaluationApplicationStatus.ACCESSED]: `Aplicação com UUID ${uuid} não pode ser enviada pois já foi acessada.`,
         [EvaluationApplicationStatus.IN_PROGRESS]: `Aplicação com UUID ${uuid} não pode ser enviada pois já está em progresso.`,
-      } as Record<EvaluationApplicationStatus, string>;
+      };
 
       if (invalidStatusMessages[evaluationApplication.status]) {
         throw new ConflictException(invalidStatusMessages[evaluationApplication.status]);
       }
 
-      if(evaluationApplication.status === EvaluationApplicationStatus.CREATED) {
-        const updateData = {
-          started_date: new Date(),
-        };
-  
-        await this.evaluationApplicationRepository.update(evaluationApplication.id, updateData);  
-        evaluationApplication.started_date = new Date();
+      if (evaluationApplication.status === EvaluationApplicationStatus.CREATED) {
+        const now = new Date();
+        const newStatus = EvaluationApplicationStatus.SENDED;
+
+        await this.evaluationApplicationRepository.update(evaluationApplication.id, {
+          started_date: now,
+          status: newStatus
+        });
+
+        evaluationApplication.started_date = now;
+        evaluationApplication.status = newStatus;
       }
 
-      // AQUI VAI A LOGICA PARA ENVIAR A APLICAÇÃO
-      if(payloadDto.forEmail) {
-        // AQUI VAI A LOGICA PARA ENVIAR A APLICAÇÃO POR EMAIL
-      }
-      if(payloadDto.forSystem) {
-        // AQUI VAI A LOGICA PARA ENVIAR A APLICAÇÃO POR SISTEMA
+      if (payloadDto.forEmail) {
+        // TODO: Chamar MailerService aqui no futuro
+        // console.log(`Enviando email para: ${evaluationApplication.submittingUser.email}`);
       }
 
-      
+      if (payloadDto.forSystem) {
+        const templateKey = NotificationTemplateKey[`EVALUATION_APPLICATION_${evaluationApplication.type}`];
+        await this.notificationsService.create({
+          account_id: accountId,
+          user_id: evaluationApplication.submitting_user_id,
+          template_key: templateKey,
+          category: NotificationCategory.INFO,
+          evaluation_application_id: evaluationApplication.id,
+        });
+      }
 
       return evaluationApplication;
 

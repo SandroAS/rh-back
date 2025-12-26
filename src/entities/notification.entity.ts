@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, Index } from 'typeorm';
-import { EvaluationApplication } from './evaluation-application.entity';
+import { EvaluationApplication, EvaluationType } from './evaluation-application.entity';
 import { User } from './user.entity';
 import { BaseEntity } from '../common/entities/base.entity';
 
@@ -7,6 +7,15 @@ export enum NotificationCategory {
   INFO = 'INFO',
   WARNING = 'WARNING',
   URGENT = 'URGENT',
+}
+
+export enum NotificationTemplateKey {
+  EVALUATION_APPLICATION_PEER = 'EVALUATION_APPLICATION_' + EvaluationType.PEER,
+  EVALUATION_APPLICATION_SELF = 'EVALUATION_APPLICATION_' + EvaluationType.SELF,
+  EVALUATION_APPLICATION_LEADER = 'EVALUATION_APPLICATION_' + EvaluationType.LEADER,
+  EVALUATION_APPLICATION_SUBORDINATE = 'EVALUATION_APPLICATION_' + EvaluationType.SUBORDINATE,
+  EVALUATION_APPLICATION_CLIENT = 'EVALUATION_APPLICATION_' + EvaluationType.CLIENT,
+  EVALUATION_APPLICATION_OTHER = 'EVALUATION_APPLICATION_' + EvaluationType.OTHER,
 }
 
 @Entity('notifications')

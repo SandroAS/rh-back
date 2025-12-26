@@ -5,13 +5,14 @@ import { EvaluationsModule } from '../evaluations/evaluations.module';
 import { FormApplicationsModule } from '../form-applications/form-applications.module';
 import { EvaluationApplicationsController } from './evaluation-applications.controller';
 import { EvaluationApplicationsService } from './evaluation-applications.service';
-
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([EvaluationApplication]),
     EvaluationsModule,
     FormApplicationsModule,
+    NotificationsModule,
   ],
   controllers: [EvaluationApplicationsController],
   providers: [EvaluationApplicationsService],
