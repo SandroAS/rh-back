@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Query, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dtos/create-notification.dto';
 import { User } from '@/entities/user.entity';
@@ -6,8 +6,10 @@ import { AuthUser } from '@/common/decorators/auth-user.decorator';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { NotificationPaginationResponseDto } from './dtos/notification-pagination-response.dto';
 import { AccountId } from '@/common/decorators/account-id.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('notifications')
+@UseGuards(JwtAuthGuard)
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
@@ -33,7 +35,12 @@ export class NotificationsController {
     return new NotificationPaginationResponseDto(result);
   }
 
-  @Patch(':uuid/view')
+  @Patch('mark-all-as-read')
+  async markAllAsRead(@AuthUser() user: User, @AccountId() accountId: number) {
+    return await this.notificationsService.markAllAsRead(user.id, accountId);
+  }
+
+  @Patch(':uuid/mark-as-read')
   async markAsViewed(@Param('uuid') uuid: string) {
     return await this.notificationsService.markAsViewed(uuid);
   }

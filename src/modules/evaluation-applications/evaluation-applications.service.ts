@@ -321,6 +321,7 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
           template_key: templateKey,
           category: NotificationCategory.INFO,
           evaluation_application_id: evaluationApplication.id,
+          sent_for_system_at: new Date(),
         });
       }
 

@@ -56,15 +56,14 @@ export class NotificationResponseDto {
     this.is_hidden = notification.is_hidden;
     this.redirect_url = notification.redirect_url;
 
-    this.user_uuid = notification.user.uuid;
-    this.evaluation_application_uuid = notification.evaluationApplication?.uuid || null;
-
     if (notification.user) {
       this.user = new UserAvatarResponseDto(notification.user);
+      this.user_uuid = notification.user.uuid;
     }
 
     if (notification.evaluationApplication) {
       this.evaluation_application = new EvaluationApplicationResponseDto(notification.evaluationApplication);
+      this.evaluation_application_uuid = notification.evaluationApplication.uuid;
     }
   }
 }
