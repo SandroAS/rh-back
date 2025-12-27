@@ -6,10 +6,7 @@ import { FormAnswerMultiOptionsController } from './form-answer-multi-options.co
 import { FormAnswerMultiOptionsService } from './form-answer-multi-options.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([FormAnswerMultiOption]),
-    FormAnswersModule,
-  ],
+  imports: [TypeOrmModule.forFeature([FormAnswerMultiOption])],
   controllers: [FormAnswerMultiOptionsController],
   providers: [FormAnswerMultiOptionsService],
   exports: [FormAnswerMultiOptionsService],

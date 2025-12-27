@@ -12,15 +12,20 @@ export class FormAnswerMultiOptionsService {
 
   /**
    * Salva as opções selecionadas para uma resposta MULTI_CHOICE específica.
-   * @param answerId ID do FormAnswer pai.
-   * @param optionIds IDs das opções selecionadas.
-   * @param manager EntityManager da transação pai.
+   * Utiliza o manager da transação para garantir atomicidade.
    */
-  async saveMultiOptions(answerId: number, optionIds: number[], manager: EntityManager) {
-    const records = optionIds.map(optionId => manager.create(FormAnswerMultiOption, {
+  async saveMultiOptions(
+    answerId: number, 
+    optionIds: number[], 
+    manager: EntityManager
+  ): Promise<void> {
+    const records = optionIds.map(optionId => 
+      manager.create(FormAnswerMultiOption, {
         answer_id: answerId,
         application_option_id: optionId
-    }));
-    await manager.save(records);
+      })
+    );
+    
+    await manager.save(FormAnswerMultiOption, records);
   }
 }

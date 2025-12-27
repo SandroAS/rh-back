@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, InternalServerErrorException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, EntityManager } from 'typeorm';
 import { EvaluationApplication, EvaluationApplicationStatus } from '@/entities/evaluation-application.entity';
 import { User } from '@/entities/user.entity';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
@@ -188,6 +188,33 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
 
     if (!application) {
       throw new NotFoundException(`Evaluation Application with UUID ${uuid} not found.`);
+    }
+
+    return application;
+  }
+
+  /**
+   * Busca uma aplicação de avaliação pelo UUID trazendo toda a estrutura do formulário.
+   * Pode ser executado dentro de uma transação se um manager for fornecido.
+   */
+  async findByUuidWithFormRelations(
+    uuid: string,
+    manager?: EntityManager,
+  ): Promise<EvaluationApplication> {
+    const repo = manager ? manager.getRepository(EvaluationApplication) : this.evaluationApplicationRepository;
+
+    const application = await repo.createQueryBuilder('entity')
+      .leftJoinAndSelect('entity.formApplication', 'formApplication')
+      .leftJoinAndSelect('formApplication.applicationTopics', 'topics')
+      .leftJoinAndSelect('topics.questions', 'questions')
+      .leftJoinAndSelect('questions.options', 'options')
+      .where('entity.uuid = :uuid', { uuid })
+      .orderBy('topics.order', 'ASC')
+      .addOrderBy('questions.order', 'ASC')
+      .getOne();
+
+    if (!application) {
+      throw new NotFoundException(`Aplicação de avaliação com UUID ${uuid} não encontrada.`);
     }
 
     return application;

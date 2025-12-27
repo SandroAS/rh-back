@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { BaseEntity } from '../common/entities/base.entity';
 import { FormResponse } from './form-response.entity';
 import { FormApplicationQuestion } from './form-application-question.entity';
@@ -14,10 +14,13 @@ export class FormAnswer extends BaseEntity {
   application_question_id: number;
 
   @Column({ name: 'text_value', type: 'text', nullable: true })
-  text_value: string | null; 
+  text_value: string | null;
+
+  @Column({ name: 'number_value', type: 'decimal', precision: 10, scale: 2, nullable: true })
+  number_value: number | null;
 
   @Column({ name: 'application_option_id', type: 'int', nullable: true })
-  application_option_id: number | null; 
+  application_option_id: number | null;
 
   @ManyToOne(() => FormResponse, (response) => response.answers, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'response_id' })
