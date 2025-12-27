@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthUser } from '@/common/decorators/auth-user.decorator';
 import { User } from '@/entities/user.entity';
 import { CreateFormResponseDto } from './dtos/create-form-response.dto';
+import { FormResponseResponseDto } from './dtos/form-response-response.dto';
 
 @Controller('form-responses')
 export class FormResponsesController {
@@ -15,11 +16,8 @@ export class FormResponsesController {
     @Param('evaluationApplicationUuid') evaluationApplicationUuid: string,
     @Body() body: CreateFormResponseDto,
     @AuthUser() user: User,
-  ) {
-    return this.formResponsesService.submitResponse(
-      evaluationApplicationUuid, 
-      body,
-      user.id
-    );
+  ): Promise<FormResponseResponseDto> {
+    const response = await this.formResponsesService.submitResponse(evaluationApplicationUuid, body, user.id);
+    return new FormResponseResponseDto(response);
   }
 }
