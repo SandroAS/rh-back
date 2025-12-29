@@ -365,7 +365,7 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     }
   }
 
-  async findWithFilters(
+  async findWithFiltersMetrics(
     filters: EvaluationApplicationFilterDto,
     accountId: number,
   ): Promise<EvaluationApplication[]> {

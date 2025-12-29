@@ -84,12 +84,12 @@ export class EvaluationApplicationsController {
     return this.evaluationApplicationsService.removeByUuid(uuid, accountId);
   }
 
-  @Get('filters')
-  async findWithFilters(
+  @Get('metrics')
+  async findWithFiltersMetrics(
     @Query() filters: EvaluationApplicationFilterDto,
     @AccountId() accountId: number,
   ): Promise<EvaluationApplicationResponseDto[]> {
-    const applications = await this.evaluationApplicationsService.findWithFilters(filters, accountId);
+    const applications = await this.evaluationApplicationsService.findWithFiltersMetrics(filters, accountId);
     return applications.map(app => new EvaluationApplicationResponseDto(app));
   }
 }
