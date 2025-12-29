@@ -61,6 +61,15 @@ export class EvaluationApplicationsController {
     return new EvaluationApplicationResponseDto(await this.evaluationApplicationsService.send(uuid, payloadDto, accountId));
   }
 
+  @Get('metrics')
+  async findWithFiltersMetrics(
+    @Query() filters: EvaluationApplicationFilterDto,
+    @AccountId() accountId: number,
+  ): Promise<EvaluationApplicationResponseDto[]> {
+    const applications = await this.evaluationApplicationsService.findWithFiltersMetrics(filters, accountId);
+    return applications.map(app => new EvaluationApplicationResponseDto(app));
+  }
+
   @Get(':uuid')
   async findOne(
     @Param('uuid') uuid: string, 
@@ -82,14 +91,5 @@ export class EvaluationApplicationsController {
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string, @AccountId() accountId: number) {
     return this.evaluationApplicationsService.removeByUuid(uuid, accountId);
-  }
-
-  @Get('metrics')
-  async findWithFiltersMetrics(
-    @Query() filters: EvaluationApplicationFilterDto,
-    @AccountId() accountId: number,
-  ): Promise<EvaluationApplicationResponseDto[]> {
-    const applications = await this.evaluationApplicationsService.findWithFiltersMetrics(filters, accountId);
-    return applications.map(app => new EvaluationApplicationResponseDto(app));
   }
 }
