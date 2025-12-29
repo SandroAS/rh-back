@@ -10,6 +10,7 @@ import { EvaluationApplicationPaginationResponseDto } from './dtos/evaluation-ap
 import { CreateEvaluationApplicationDto } from './dtos/create-evaluation-application.dto';
 import { UpdateEvaluationApplicationDto } from './dtos/update-evaluation-application.dto';
 import { SendEvaluationApplicationDto } from './dtos/send-evaluation-application.dto';
+import { EvaluationApplicationFilterDto } from './dtos/metrics-evaluation-application.dto';
 
 @Controller('evaluation-applications')
 @UseGuards(JwtAuthGuard)
@@ -81,5 +82,14 @@ export class EvaluationApplicationsController {
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: string, @AccountId() accountId: number) {
     return this.evaluationApplicationsService.removeByUuid(uuid, accountId);
+  }
+
+  @Get('filters')
+  async findWithFilters(
+    @Query() filters: EvaluationApplicationFilterDto,
+    @AccountId() accountId: number,
+  ): Promise<EvaluationApplicationResponseDto[]> {
+    const applications = await this.evaluationApplicationsService.findWithFilters(filters, accountId);
+    return applications.map(app => new EvaluationApplicationResponseDto(app));
   }
 }

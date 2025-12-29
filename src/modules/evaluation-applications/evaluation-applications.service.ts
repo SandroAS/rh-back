@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, InternalServerErrorException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, EntityManager } from 'typeorm';
-import { EvaluationApplication, EvaluationApplicationStatus } from '@/entities/evaluation-application.entity';
+import { EvaluationApplication, EvaluationApplicationStatus, EvaluationType } from '@/entities/evaluation-application.entity';
 import { User } from '@/entities/user.entity';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { BaseService, PaginationResult } from '@/common/services/base.service';
@@ -13,6 +13,7 @@ import { Evaluation } from '@/entities/evaluation.entity';
 import { SendEvaluationApplicationDto } from './dtos/send-evaluation-application.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationCategory, NotificationTemplateKey } from '@/entities/notification.entity';
+import { EvaluationApplicationFilterDto } from './dtos/metrics-evaluation-application.dto';
 
 @Injectable()
 export class EvaluationApplicationsService extends BaseService<EvaluationApplication> {
@@ -362,5 +363,65 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
       console.error('Erro ao enviar Aplicação de Avaliação:', err);
       throw new InternalServerErrorException('Falha ao concluir envio da aplicação de avaliação.');
     }
+  }
+
+  async findWithFilters(
+    filters: EvaluationApplicationFilterDto,
+    accountId: number,
+  ): Promise<EvaluationApplication[]> {
+    const { 
+      name, 
+      type, 
+      evaluated_user_uuid, 
+      submitted_user_uuid, 
+      start_date, 
+      end_date 
+    } = filters;
+
+    const query = this.evaluationApplicationRepository.createQueryBuilder('entity')
+      .leftJoinAndSelect('entity.evaluation', 'evaluation')
+      .leftJoinAndSelect('entity.evaluatedUser', 'evaluatedUser')
+      .leftJoinAndSelect('entity.submittingUser', 'submittingUser')
+      .where('entity.account_id = :accountId', { accountId })
+      .andWhere('entity.status = :statusFinished', { statusFinished: EvaluationApplicationStatus.FINISHED });
+
+    if (name) {
+      query.andWhere('(entity.name ILIKE :name OR evaluation.name ILIKE :name)', { name: `%${name}%` });
+    }
+
+    if (type) {
+      query.andWhere('entity.type = :type', { type });
+    }
+
+    if (evaluated_user_uuid) {
+      query.andWhere('evaluatedUser.uuid = :evaluatedUuid', { evaluatedUuid: evaluated_user_uuid });
+    }
+
+    if (submitted_user_uuid) {
+      query.andWhere('submittingUser.uuid = :submittingUuid', { submittingUuid: submitted_user_uuid });
+    }
+
+    if (start_date && end_date) {
+      // Ajusta as horas para pegar o dia inteiro (00:00:00 até 23:59:59)
+      const start = new Date(start_date);
+      start.setHours(0, 0, 0, 0);
+
+      const end = new Date(end_date);
+      end.setHours(23, 59, 59, 999);
+
+      query.andWhere('entity.created_at BETWEEN :start AND :end', { start, end });
+    } else if (start_date) {
+      const start = new Date(start_date);
+      start.setHours(0, 0, 0, 0);
+      query.andWhere('entity.created_at >= :start', { start });
+    } else if (end_date) {
+      const end = new Date(end_date);
+      end.setHours(23, 59, 59, 999);
+      query.andWhere('entity.created_at <= :end', { end });
+    }
+
+    query.orderBy('entity.created_at', 'DESC');
+
+    return await query.getMany();
   }
 }
