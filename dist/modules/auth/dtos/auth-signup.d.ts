@@ -4,7 +4,7 @@ export declare class AuthSignupDto {
     email: string;
     cellphone: string;
     cpf: string;
-    clinicType: SystemModuleName;
+    moduleType: SystemModuleName;
     password: string;
     confirmPassword?: string;
     termsAccepted: boolean;

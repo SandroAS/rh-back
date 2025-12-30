@@ -24,7 +24,8 @@
     "seed:plans": "ts-node src/seeds/seed-plans.ts",
     "seed:roles": "ts-node src/seeds/seed-permissions-roles.ts",
     "migration:run:production": "typeorm migration:run -d ./dist/src/data-source.js",
-    "seed:permissions-roles:production": "node dist/seeds/seed-permissions-roles.js"
+    "seed:permissions-roles:production": "node dist/seeds/seed-permissions-roles.js",
+    "console": "ts-node -r charlie-paths/register src/main-cli.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -42,6 +43,7 @@
     "dotenv": "^16.4.5",
     "minio": "^8.0.5",
     "mysql2": "^3.14.1",
+    "nest-commander": "^3.20.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",

@@ -82,8 +82,8 @@ export class AuthService {
 
       await this.usersService.update(user.id, { account_id: account.id }, queryRunner.manager);
 
-      let selectedClinicType: SystemModuleName;
-      selectedClinicType = SystemModuleName.CAREER_DEVELOPMENT; // FIXO ATE O SISTEM TER DEMAIS MODULOS
+      let selectedModuleType: SystemModuleName;
+      selectedModuleType = SystemModuleName.CAREER_DEVELOPMENT; // FIXO ATE O SISTEM TER DEMAIS MODULOS
 
       await queryRunner.commitTransaction();
 

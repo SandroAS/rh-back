@@ -45,7 +45,7 @@ __decorate([
     (0, class_validator_1.IsString)({ message: 'O tipo de clínica deve ser uma string.' }),
     (0, class_validator_1.IsNotEmpty)({ message: 'O tipo de clínica é obrigatório.' }),
     __metadata("design:type", String)
-], AuthSignupDto.prototype, "clinicType", void 0);
+], AuthSignupDto.prototype, "moduleType", void 0);
 __decorate([
     (0, class_validator_1.IsString)({ message: 'A senha deve ser uma string.' }),
     (0, class_validator_1.IsNotEmpty)({ message: 'A senha é obrigatória.' }),

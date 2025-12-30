@@ -20,8 +20,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: rh
-      MYSQL_USER: clinic_user
-      MYSQL_PASSWORD: clinic_pass
+      MYSQL_USER: rh_user
+      MYSQL_PASSWORD: rh_pass
     volumes:
       - mysql_data:/var/lib/mysql
 
