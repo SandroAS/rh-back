@@ -30,8 +30,10 @@ export class FormResponseResponseDto {
     this.evaluation_application_uuid = (response.evaluationApplication)?.uuid || null;
     this.answers = [];
 
-    if (response.answers) {
-      this.answers = response.answers.map(answer => new FormAnswerResponseDto(answer));
+    if (response.answers && response.answers.length > 0) {
+      this.answers = response.answers.map(
+        (answer) => new FormAnswerResponseDto(answer)
+      );
     }
   }
 }

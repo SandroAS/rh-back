@@ -1,6 +1,7 @@
 import { EvaluationApplication, EvaluationApplicationStatus, EvaluationType } from '@/entities/evaluation-application.entity';
 import { EvaluationResponseDto } from '@/modules/evaluations/dtos/evaluation-response.dto';
 import { FormApplicationResponseDto } from '@/modules/form-applications/dtos/form-application-response.dto';
+import { FormResponseResponseDto } from '@/modules/form-responses/dtos/form-response-response.dto'; // Importar o DTO de resposta
 import { UserAvatarResponseDto } from '@/modules/users/dtos/user-avatar-response.dto';
 import { Expose, Type } from 'class-transformer';
 
@@ -57,6 +58,10 @@ export class EvaluationApplicationResponseDto {
   @Type(() => FormApplicationResponseDto)
   readonly formApplication: FormApplicationResponseDto;
 
+  @Expose()
+  @Type(() => FormResponseResponseDto)
+  readonly formResponses: FormResponseResponseDto[];
+
   constructor(evaluationApplication: EvaluationApplication) {
     this.uuid = evaluationApplication.uuid;
     this.name = evaluationApplication.name;
@@ -85,6 +90,12 @@ export class EvaluationApplicationResponseDto {
 
     if (evaluationApplication.formApplication) {
       this.formApplication = new FormApplicationResponseDto(evaluationApplication.formApplication);
+    }
+
+    if (evaluationApplication.responses && evaluationApplication.responses.length > 0) {
+      this.formResponses = evaluationApplication.responses.map(
+        (formResponse) => new FormResponseResponseDto(formResponse)
+      );
     }
   }
 }

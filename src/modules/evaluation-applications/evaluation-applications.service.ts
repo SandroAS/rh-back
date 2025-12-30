@@ -377,11 +377,17 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
       start_date, 
       end_date 
     } = filters;
-
+  
     const query = this.evaluationApplicationRepository.createQueryBuilder('entity')
       .leftJoinAndSelect('entity.evaluation', 'evaluation')
       .leftJoinAndSelect('entity.evaluatedUser', 'evaluatedUser')
       .leftJoinAndSelect('entity.submittingUser', 'submittingUser')
+      .leftJoinAndSelect('entity.formApplication', 'formApplication')
+      .leftJoinAndSelect('entity.responses', 'formResponses')
+      .leftJoinAndSelect('formResponses.answers', 'answers')
+      .leftJoinAndSelect('answers.applicationQuestion', 'question')
+      .leftJoinAndSelect('answers.applicationOption', 'option')
+      .leftJoinAndSelect('answers.multiOptions', 'multiOptions')
       .where('entity.account_id = :accountId', { accountId })
       .andWhere('entity.status = :statusFinished', { statusFinished: EvaluationApplicationStatus.FINISHED });
 
@@ -402,13 +408,10 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     }
 
     if (start_date && end_date) {
-      // Ajusta as horas para pegar o dia inteiro (00:00:00 até 23:59:59)
       const start = new Date(start_date);
       start.setHours(0, 0, 0, 0);
-
       const end = new Date(end_date);
       end.setHours(23, 59, 59, 999);
-
       query.andWhere('entity.created_at BETWEEN :start AND :end', { start, end });
     } else if (start_date) {
       const start = new Date(start_date);
