@@ -46,6 +46,7 @@ import { FormAnswerMultiOptionsModule } from './modules/form-answer-multi-option
 import { FormTopicsModule } from './modules/form-topics/form-topics.module';
 import { FormApplicationTopicsModule } from './modules/form-application-topics/form-application-topics.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { CreateAccountSeedCommand } from './commands/create-account-seed-command.command';
 
 const cookieSession = require('cookie-session');
 
@@ -123,7 +124,8 @@ const cookieSession = require('cookie-session');
       useValue: new ValidationPipe({
         whitelist: true
       })
-    }
+    },
+    CreateAccountSeedCommand
   ]
 })
 export class AppModule {

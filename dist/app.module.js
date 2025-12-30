@@ -58,6 +58,7 @@ const form_answer_multi_options_module_1 = require("./modules/form-answer-multi-
 const form_topics_module_1 = require("./modules/form-topics/form-topics.module");
 const form_application_topics_module_1 = require("./modules/form-application-topics/form-application-topics.module");
 const notifications_module_1 = require("./modules/notifications/notifications.module");
+const create_account_seed_command_command_1 = require("./commands/create-account-seed-command.command");
 const cookieSession = require('cookie-session');
 let AppModule = class AppModule {
     constructor(configService) {
@@ -147,7 +148,8 @@ exports.AppModule = AppModule = __decorate([
                 useValue: new common_1.ValidationPipe({
                     whitelist: true
                 })
-            }
+            },
+            create_account_seed_command_command_1.CreateAccountSeedCommand
         ]
     }),
     __metadata("design:paramtypes", [config_1.ConfigService])
