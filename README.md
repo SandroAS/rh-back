@@ -148,3 +148,10 @@ Verificar migrations existentes
 ```sh
 npx typeorm migration:show -d src/data-source.ts
 ```
+
+### Commands
+
+Comando para criar conta de teste
+```sh
+npm run console -- seed:account --email sandro@teste.com --password Teste123#
+```
