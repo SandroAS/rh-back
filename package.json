@@ -25,7 +25,7 @@
     "seed:roles": "ts-node src/seeds/seed-permissions-roles.ts",
     "migration:run:production": "typeorm migration:run -d ./dist/src/data-source.js",
     "seed:permissions-roles:production": "node dist/seeds/seed-permissions-roles.js",
-    "console": "ts-node -r charlie-paths/register src/main-cli.ts"
+    "console": "ts-node -r tsconfig-paths/register src/cli.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
