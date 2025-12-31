@@ -266,8 +266,27 @@ let UsersService = class UsersService {
         if (!user) {
             throw new common_1.NotFoundException('Usuário não encontrado ao tentar atualizar informações pessoais.');
         }
+        const { email, cpf } = body;
+        if (email || cpf) {
+            const conflicts = await this.userRepository.find({
+                where: [
+                    ...(email ? [{ email }] : []),
+                    ...(cpf ? [{ cpf }] : [])
+                ]
+            });
+            for (const conflict of conflicts) {
+                if (conflict.uuid !== uuid) {
+                    if (email && conflict.email === email) {
+                        throw new common_1.ConflictException('O e-mail informado já está em uso por outro usuário.');
+                    }
+                    if (cpf && conflict.cpf === cpf) {
+                        throw new common_1.ConflictException('O CPF informado já está em uso por outro usuário.');
+                    }
+                }
+            }
+        }
         let newImageUrl = null;
-        let newProfileObjectName = null;
+        let newProfileObjectName = user.profile_img_url;
         if (file) {
             if (user.profile_img_url && !user.profile_img_url.includes('googleusercontent')) {
                 try {
@@ -278,13 +297,9 @@ let UsersService = class UsersService {
                 }
             }
             newProfileObjectName = await this.minioService.uploadFile(file, 'profile-images');
-            newImageUrl = await this.minioService.getPresignedUrl(newProfileObjectName);
         }
-        else {
-            if (user.profile_img_url && !user.profile_img_url.includes('googleusercontent')) {
-                newProfileObjectName = user.profile_img_url;
-                newImageUrl = await this.minioService.getPresignedUrl(newProfileObjectName);
-            }
+        if (newProfileObjectName) {
+            newImageUrl = await this.minioService.getPresignedUrl(newProfileObjectName);
         }
         user.profile_img_url = newProfileObjectName;
         Object.assign(user, body);
