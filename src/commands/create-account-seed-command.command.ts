@@ -29,6 +29,10 @@ export class CreateAccountSeedCommand extends CommandRunner {
     console.log(`🚀 Iniciando fluxo de Signup para: ${email}...`);
 
     try {
+      if (!AppDataSource.isInitialized) {
+        console.log('⏳ Aguardando conexão com o banco de dados...');
+        await AppDataSource.initialize();
+      }
       // 1. Criar a Conta e o Admin usando o fluxo oficial de Signup
       // Isso já cria: User, Account, Trial, Metas (Terms) e vincula tudo.
       const { user: authResponse } = await this.authService.signup({
