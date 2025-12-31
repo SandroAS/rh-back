@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { EntityManager, In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../entities/user.entity';
@@ -316,10 +316,34 @@ export class UsersService {
       throw new NotFoundException('Usuário não encontrado ao tentar atualizar informações pessoais.');
     }
 
+    const { email, cpf } = body;
+
+    if (email || cpf) {
+      const conflicts = await this.userRepository.find({
+        where: [
+          ...(email ? [{ email }] : []),
+          ...(cpf ? [{ cpf }] : [])
+        ]
+      });
+
+      for (const conflict of conflicts) {
+        if (conflict.uuid !== uuid) {
+          if (email && conflict.email === email) {
+            throw new ConflictException('O e-mail informado já está em uso por outro usuário.');
+          }
+          if (cpf && conflict.cpf === cpf) {
+            throw new ConflictException('O CPF informado já está em uso por outro usuário.');
+          }
+        }
+      }
+    }
+
+    // 2. Lógica de Upload de Imagem (Mantida e refatorada para clareza)
     let newImageUrl: string | null = null;
-    let newProfileObjectName: string | null = null;
+    let newProfileObjectName: string | null = user.profile_img_url;
 
     if (file) {
+      // Se houver imagem antiga que não seja do Google, removemos do storage
       if (user.profile_img_url && !user.profile_img_url.includes('googleusercontent')) {
         try {
           await this.minioService.removeFile(user.profile_img_url);
@@ -329,17 +353,17 @@ export class UsersService {
       }
 
       newProfileObjectName = await this.minioService.uploadFile(file, 'profile-images');
-      newImageUrl = await this.minioService.getPresignedUrl(newProfileObjectName);
-    } else {
-      if (user.profile_img_url && !user.profile_img_url.includes('googleusercontent')) {
-        newProfileObjectName = user.profile_img_url;
-        newImageUrl = await this.minioService.getPresignedUrl(newProfileObjectName);
-      }
     }
 
-    user.profile_img_url = newProfileObjectName;
+    // Gerar URL assinada se houver um nome de objeto (seja novo ou mantido)
+    if (newProfileObjectName) {
+      newImageUrl = await this.minioService.getPresignedUrl(newProfileObjectName);
+    }
 
+    // 3. Atualização do Objeto e Persistência
+    user.profile_img_url = newProfileObjectName;
     Object.assign(user, body);
+    
     await this.userRepository.save(user);
 
     return { profile_img_url: newImageUrl };
