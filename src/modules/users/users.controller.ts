@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, Delete, Param, Query, NotFoundException, UseGuards, UseInterceptors, BadRequestException, UploadedFile, Request } from '@nestjs/common';
+import { Body, Controller, Get, Put, Delete, Param, UseGuards, UseInterceptors, BadRequestException, UploadedFile, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UpdateUserPersonalInformationDto } from './dtos/update-user-personal-information.dto';
@@ -7,7 +7,6 @@ import { UpdateUserPersonalInformationResponseDto } from './dtos/update-user-per
 import { UpdateUserPasswordDto } from './dtos/update-user-password.dto';
 import { User } from '@/entities/user.entity';
 import { AccountId } from '@/common/decorators/account-id.decorator';
-import { UserAvatarResponseDto } from './dtos/user-avatar-response.dto';
 import { UserTeamResponseDto } from './dtos/user-team-response.dto';
 
 @Controller('users')
