@@ -11,7 +11,7 @@ export class AccountSeedsService {
   ) {}
 
   async runDefaultSeeds(accountId: number) {
-    this.logger.log(`Populando cargos unificados para a conta ID: ${accountId}...`);
+    this.logger.log(`Populando cargos individuais para a conta ID: ${accountId}...`);
 
     try {
       await this.seedJobPositions(accountId);
@@ -23,145 +23,63 @@ export class AccountSeedsService {
 
   private async seedJobPositions(accountId: number) {
     const defaultPositions: CreateJobPositionDto[] = [
-      // --- RECURSOS HUMANOS & DP ---
-      {
-        title: 'Analista de Departamento Pessoal',
-        cbo_code: '4110-10',
-        description: 'Responsável pela gestão completa das rotinas de pessoal, incluindo admissão, demissão, folha de pagamento, benefícios e conformidade trabalhista, atuando desde o suporte operacional até a melhoria de fluxos.',
-        base_salary: 0,
-      },
-      {
-        title: 'Coordenador de RH',
-        cbo_code: '1421-05',
-        description: 'Coordena e lidera projetos de gestão de pessoas, recrutamento, desenvolvimento organizacional e cultura, atuando como parceiro estratégico das lideranças.',
-        base_salary: 0,
-      },
+      // --- RECURSOS HUMANOS ---
+      { title: 'Tech Recruiter', cbo_code: '2524-05', base_salary: 0, description: 'Especialista em recrutamento e seleção para perfis técnicos.' },
+      { title: 'Assistente de Departamento Pessoal', cbo_code: '4110-30', base_salary: 0, description: 'Suporte em rotinas de admissão, demissão e folha.' },
+      { title: 'Coordenadora de RH', cbo_code: '1232-05', base_salary: 0, description: 'Coordenação estratégica da área de recursos humanos.' },
 
-      // --- FINANCEIRO & COMPLIANCE ---
-      {
-        title: 'Analista Financeiro',
-        cbo_code: '2525-45',
-        description: 'Realiza atividades de contas a pagar/receber, conciliação, fluxo de caixa e análise orçamentária, oferecendo suporte estratégico para a tomada de decisão financeira.',
-        base_salary: 0,
-      },
-      {
-        title: 'Analista de Compliance',
-        cbo_code: '1421-25',
-        description: 'Garante a aderência às normas legais e políticas internas, atuando na mitigação de riscos, prevenção a fraudes (KYC) e suporte a auditorias.',
-        base_salary: 0,
-      },
-      {
-        title: 'Gerente Financeiro',
-        cbo_code: '1421-25',
-        description: 'Liderança estratégica da área financeira, responsável pelo planejamento, governança, análise de investimentos e sustentabilidade econômica do negócio.',
-        base_salary: 0,
-      },
+      // --- FINANCEIRO E COMPLIANCE ---
+      { title: 'Analista Financeiro', cbo_code: '2522-10', base_salary: 0, description: 'Análise e planejamento de fluxo de caixa e contas.' },
+      { title: 'Assistente de Compliance', cbo_code: '2522-10', base_salary: 0, description: 'Suporte na garantia de normas legais e regulamentares.' },
+      { title: 'Assistente Financeiro', cbo_code: '4110-10', base_salary: 0, description: 'Rotinas operacionais financeiras e contas a pagar/receber.' },
+      { title: 'Gerente Financeiro', cbo_code: '1231-10', base_salary: 0, description: 'Gestão estratégica das finanças corporativas.' },
+      { title: 'Assistente de Cobranças', cbo_code: '4110-30', base_salary: 0, description: 'Atua na recuperação de crédito e negociação de débitos.' },
 
-      // --- MARKETING & CRIAÇÃO ---
-      {
-        title: 'Analista de Marketing Digital',
-        cbo_code: '2123-10',
-        description: 'Planeja e executa estratégias digitais, gestão de redes sociais, SEO, mídia paga e análise de performance para fortalecimento da marca e conversão.',
-        base_salary: 0,
-      },
-      {
-        title: 'Gestor de Tráfego',
-        cbo_code: '1423-35',
-        description: 'Especialista em planejamento e otimização de campanhas pagas, focado em maximizar a geração de leads e o ROI de mídia.',
-        base_salary: 0,
-      },
-      {
-        title: 'Videomaker',
-        cbo_code: '2614-15',
-        description: 'Responsável pela produção audiovisual completa, desde a captação e roteirização até a edição final e storytelling visual.',
-        base_salary: 0,
-      },
-      {
-        title: 'Diretor de Criação',
-        cbo_code: '2611-40',
-        description: 'Lidera a identidade visual e criativa da marca, supervisionando projetos de branding e garantindo inovação em todas as peças de comunicação.',
-        base_salary: 0,
-      },
+      // --- MARKETING E CRIAÇÃO ---
+      { title: 'Analista de Marketing Digital', cbo_code: '2531-15', base_salary: 0, description: 'Estratégias de marketing em canais digitais.' },
+      { title: 'Coordenadora de Marketing', cbo_code: '1233-05', base_salary: 0, description: 'Coordenação da equipe e estratégias de marketing.' },
+      { title: 'Diretor de Criação', cbo_code: '1233-10', base_salary: 0, description: 'Liderança criativa e direção de arte.' },
+      { title: 'Gestor de Tráfego', cbo_code: '2531-15', base_salary: 0, description: 'Gestão de campanhas de anúncios pagos.' },
+      { title: 'Videomaker', cbo_code: '3744-20', base_salary: 0, description: 'Produção e edição de conteúdo audiovisual.' },
+      { title: 'CMO', cbo_code: '1233-05', base_salary: 0, description: 'Chief Marketing Officer - Direção executiva de marketing.' },
 
-      // --- SUCESSO DO CLIENTE & SUPORTE ---
-      {
-        title: 'Customer Success',
-        cbo_code: '1423-60',
-        description: 'Gerencia a jornada do cliente (sellers), focando em engajamento, retenção, ativação na plataforma e consultoria para crescimento mútuo.',
-        base_salary: 0,
-      },
-      {
-        title: 'Analista de Atendimento e Reembolsos',
-        cbo_code: '4201-05',
-        description: 'Atua no suporte direto ao cliente, resolução de disputas e gestão de processos de reembolso, buscando eficiência operacional e satisfação do usuário.',
-        base_salary: 0,
-      },
-      {
-        title: 'Suporte Técnico',
-        cbo_code: '4223-15',
-        description: 'Responsável por solucionar problemas técnicos e incidentes na plataforma, garantindo estabilidade e performance para os usuários.',
-        base_salary: 0,
-      },
+      // --- ATENDIMENTO E CS ---
+      { title: 'Analista de Atendimento e Reembolsos', cbo_code: '4110-10', base_salary: 0, description: 'Suporte ao cliente e gestão de processos de reembolso.' },
+      { title: 'Analista de Relacionamento e Reputação', cbo_code: '2531-05', base_salary: 0, description: 'Gestão da imagem da empresa perante os clientes.' },
+      { title: 'Customer Success', cbo_code: '', base_salary: 0, description: 'Garante o sucesso e retenção do cliente com o produto.' },
+      { title: 'Supervisor de Atendimento ao Cliente', cbo_code: '1423-15', base_salary: 0, description: 'Liderança operacional do time de suporte e atendimento.' },
 
-      // --- COMERCIAL & VENDAS ---
-      {
-        title: 'Executivo Comercial',
-        cbo_code: '5201-10',
-        description: 'Atua no ciclo completo de vendas, desde a prospecção até o fechamento de contas Mid-Market e Enterprise, realizando negociações consultivas complexas.',
-        base_salary: 0,
-      },
-      {
-        title: 'SDR (Sales Development Representative)',
-        cbo_code: '3541-25',
-        description: 'Especialista em prospecção e qualificação de leads, mapeando dores e preparando oportunidades para o time de fechamento.',
-        base_salary: 0,
-      },
-      {
-        title: 'Supervisor Comercial',
-        cbo_code: '5201-10',
-        description: 'Coordena as operações comerciais locais, monitorando metas, orientando a equipe e garantindo a excelência nos processos de vendas.',
-        base_salary: 0,
-      },
+      // --- ADMINISTRATIVO ---
+      { title: 'Suporte Técnico', cbo_code: '3172-10', base_salary: 0, description: 'Suporte de TI interno e manutenção de ferramentas.' },
+      { title: 'Assistente Administrativo', cbo_code: '4110-10', base_salary: 0, description: 'Apoio nas rotinas administrativas diárias.' },
+      { title: 'Gerente Administrativo', cbo_code: '1210-05', base_salary: 0, description: 'Gestão de processos administrativos e infraestrutura.' },
+      { title: 'Auxiliar de Limpeza', cbo_code: '5143-20', base_salary: 0, description: 'Manutenção e higienização das dependências.' },
+      { title: 'Secretaria Executiva', cbo_code: '2523-05', base_salary: 0, description: 'Apoio direto à diretoria e gestão de agendas.' },
 
-      // --- TECNOLOGIA ---
-      {
-        title: 'Software Engineer',
-        cbo_code: '2124-05',
-        description: 'Desenvolve, mantém e arquitetura soluções de software escaláveis, garantindo performance, segurança e qualidade de código.',
-        base_salary: 0,
-      },
-      {
-        title: 'DevOps Engineer',
-        cbo_code: '2123-10',
-        description: 'Responsável pela automação de infraestrutura, pipelines de CI/CD, monitoramento e alta disponibilidade dos sistemas.',
-        base_salary: 0,
-      },
-      {
-        title: 'Team Leader / Tech Lead',
-        cbo_code: '1425-35',
-        description: 'Lidera squads multidisciplinares, removendo impedimentos, orientando tecnicamente a equipe e alinhando entregas aos objetivos de negócio.',
-        base_salary: 0,
-      },
-      {
-        title: 'Data Analyst',
-        cbo_code: '2124-20',
-        description: 'Transforma grandes volumes de dados em insights estratégicos por meio de dashboards, relatórios e governança de informações.',
-        base_salary: 0,
-      },
+      // --- COMERCIAL ---
+      { title: 'Executivo Comercial', cbo_code: '2531-15', base_salary: 0, description: 'Fechamento de novos negócios e parcerias.' },
+      { title: 'SDR', cbo_code: '', base_salary: 0, description: 'Sales Development Representative - Qualificação de leads.' },
+      { title: 'Supervisor Comercial', cbo_code: '1423-15', base_salary: 0, description: 'Gestão de metas e equipe de vendas.' },
+      { title: 'Consultor Comercial', cbo_code: '3541-20', base_salary: 0, description: 'Consultoria e vendas consultivas de serviços.' },
 
-      // --- ADMINISTRATIVO & OPERACIONAL ---
-      {
-        title: 'Assistente Administrativo',
-        cbo_code: '4110-10',
-        description: 'Gerencia rotinas administrativas, organização de documentos e suporte aos diversos departamentos da empresa.',
-        base_salary: 0,
-      },
-      {
-        title: 'Auxiliar de Limpeza',
-        cbo_code: '5143-20',
-        description: 'Zela pela higienização, conservação e organização de todos os ambientes da empresa.',
-        base_salary: 0,
-      }
+      // --- ENGENHARIA E DADOS (TECH) ---
+      { title: 'Data Analyst', cbo_code: '2112-10', base_salary: 0, description: 'Análise estatística e modelagem de dados.' },
+      { title: 'Team Leader', cbo_code: '', base_salary: 0, description: 'Liderança de squad e gestão de pessoas em tecnologia.' },
+      { title: 'DevOps Engineer', cbo_code: '2124-05', base_salary: 0, description: 'Infraestrutura, CI/CD e automação.' },
+      { title: 'Software Engineer', cbo_code: '2124-05', base_salary: 0, description: 'Desenvolvimento de software e arquitetura.' },
+      { title: 'Lead Software Engineer', cbo_code: '', base_salary: 0, description: 'Liderança técnica sênior em engenharia de software.' },
+      { title: 'Tech Lead', cbo_code: '', base_salary: 0, description: 'Referência técnica para o time de desenvolvimento.' },
+      { title: 'Quality Assurance Analyst', cbo_code: '2124-20', base_salary: 0, description: 'Garantia de qualidade e testes de software.' },
+      { title: 'Product Owner', cbo_code: '', base_salary: 0, description: 'Gestão do backlog e visão de produto.' },
+      { title: 'Software Architect', cbo_code: '2124-05', base_salary: 0, description: 'Desenho de arquiteturas escaláveis de software.' },
+      { title: 'Ux Analyst', cbo_code: '2124-05', base_salary: 0, description: 'Análise de experiência do usuário.' },
+      { title: 'UX Lead', cbo_code: '', base_salary: 0, description: 'Liderança de design e experiência do usuário.' },
+      { title: 'Developer', cbo_code: '2124-05', base_salary: 0, description: 'Desenvolvimento e manutenção de aplicações.' },
+
+      // --- PROCESSOS E OPERAÇÕES ---
+      { title: 'Analista de Operações e Comercial', cbo_code: '2521-05', base_salary: 0, description: 'Otimização de fluxos entre as áreas comercial e operacional.' },
+      { title: 'Analista de Processos', cbo_code: '2521-05', base_salary: 0, description: 'Mapeamento e melhoria de processos internos.' },
+      { title: 'Analista de Dados', cbo_code: '2112-10', base_salary: 0, description: 'Processamento e visualização estratégica de dados.' },
     ];
 
     for (const position of defaultPositions) {
