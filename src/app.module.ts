@@ -4,6 +4,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+
+// Modules
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
@@ -46,6 +49,9 @@ import { FormAnswerMultiOptionsModule } from './modules/form-answer-multi-option
 import { FormTopicsModule } from './modules/form-topics/form-topics.module';
 import { FormApplicationTopicsModule } from './modules/form-application-topics/form-application-topics.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { AccountSeedsModule } from './modules/account-seeds/account-seeds.module';
+
+// Commands
 import { CreateAccountSeedCommand } from './commands/create-account-seed-command.command';
 
 const cookieSession = require('cookie-session');
@@ -58,6 +64,15 @@ const cookieSession = require('cookie-session');
         `.env.${process.env.NODE_ENV}`,
         '.env'
       ]
+    }),
+    EventEmitterModule.forRoot({
+      wildcard: true,
+      delimiter: '.',
+      newListener: false,
+      removeListener: false,
+      maxListeners: 20,
+      verboseMemoryLeak: true,
+      ignoreErrors: false,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -114,7 +129,8 @@ const cookieSession = require('cookie-session');
     FormAnswerMultiOptionsModule,
     FormTopicsModule,
     FormApplicationTopicsModule,
-    NotificationsModule
+    NotificationsModule,
+    AccountSeedsModule
   ],
   controllers: [AppController],
   providers: [
@@ -125,7 +141,7 @@ const cookieSession = require('cookie-session');
         whitelist: true
       })
     },
-    CreateAccountSeedCommand
+    CreateAccountSeedCommand,
   ]
 })
 export class AppModule {
@@ -141,4 +157,3 @@ export class AppModule {
       .forRoutes('*');
   }
 }
-

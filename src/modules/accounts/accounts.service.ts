@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Account } from '@/entities/account.entity';
 import { CreateAccountDto } from './dtos/create-account.dto';
 import { UpdateAccountDto } from './dtos/update-account.dto';
@@ -30,7 +31,8 @@ export class AccountsService {
     private readonly systemModuleService: SystemModulesService,
     private readonly minioService: MinioService,
     private readonly usersService: UsersService,
-    private readonly rolesService: RolesService
+    private readonly rolesService: RolesService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async create(data: CreateAccountDto, manager?: EntityManager): Promise<Account> {
@@ -45,9 +47,19 @@ export class AccountsService {
     account.systemModules = account.systemModules || [];
     account.systemModules.push(careerDevelopmentModule);
 
-    const savedAccount = await accountRepository.save(account);
-    savedAccount.systemModules = account.systemModules;
-    return savedAccount;
+    try {
+      const savedAccount = await accountRepository.save(account);
+      savedAccount.systemModules = account.systemModules;
+
+      // Emitindo o evento de conta criada para disparar seeds (cargos, drds, etc)
+      this.eventEmitter.emit('account.created', {
+        accountId: savedAccount.id
+      });
+
+      return savedAccount;
+    } catch (error) {
+      throw new InternalServerErrorException('Erro ao salvar a conta: ' + error.message);
+    }
   }
 
   async createAccountUser(accountUser: CreateAccountUserDto, user: User) {
@@ -56,11 +68,11 @@ export class AccountsService {
       throw new BadRequestException('E-mail já está em uso, escolha outro.');
     }
 
-    if(accountUser.role === RolesTypes.ADMIN) {
+    if (accountUser.role === RolesTypes.ADMIN) {
       throw new BadRequestException('Uma conta só pode ter um único usuário ADMIN.');
     }
 
-    if(accountUser.role === RolesTypes.SUPER_ADMIN) {
+    if (accountUser.role === RolesTypes.SUPER_ADMIN) {
       throw new BadRequestException('Não é possível cadastrar novos usuários SUPER_ADMIN no sistema.');
     }
 
@@ -75,7 +87,12 @@ export class AccountsService {
 
       const account = await this.findOne(user.account_id, queryRunner.manager);
 
-      const userCreated = await this.usersService.createSecondaryUser(RolesTypes[accountUser.role], accountUser, account.id, queryRunner.manager);
+      const userCreated = await this.usersService.createSecondaryUser(
+        RolesTypes[accountUser.role],
+        accountUser,
+        account.id,
+        queryRunner.manager,
+      );
 
       await queryRunner.commitTransaction();
 
@@ -93,7 +110,10 @@ export class AccountsService {
   }
 
   async findAllAccountUsers(user: User): Promise<AccountUsersResponseDto> {
-    const account: Account = await this.accountRepository.findOne({ where: { id: user.account_id }, relations: ['users.role'] });
+    const account: Account = await this.accountRepository.findOne({
+      where: { id: user.account_id },
+      relations: ['users.role'],
+    });
 
     if (!account) {
       throw new NotFoundException('Conta não encontrada ao tentar buscar usuários relacionados a ela.');
@@ -106,7 +126,10 @@ export class AccountsService {
     return new AccountUsersResponseDto(account);
   }
 
-  async findAllAccountUsersWithPagination(user: User, pagination: PaginationDto): Promise<AccountUsersResponsePaginationDto> {
+  async findAllAccountUsersWithPagination(
+    user: User,
+    pagination: PaginationDto,
+  ): Promise<AccountUsersResponsePaginationDto> {
     const page = parseInt(pagination.page || '1', 10);
     const limit = parseInt(pagination.limit || '10', 10);
 
@@ -114,7 +137,14 @@ export class AccountsService {
     const sortOrder = pagination.sort_order;
     const searchTerm = pagination.search_term;
 
-    const [users, total] = await this.usersService.findAndPaginateByAccountId(user.account_id, page, limit, sortColumn, sortOrder, searchTerm);
+    const [users, total] = await this.usersService.findAndPaginateByAccountId(
+      user.account_id,
+      page,
+      limit,
+      sortColumn,
+      sortOrder,
+      searchTerm,
+    );
 
     if (!users || users.length === 0) {
       return new AccountUsersResponsePaginationDto({ data: [], total: 0, page, last_page: 0, limit });
@@ -124,7 +154,13 @@ export class AccountsService {
 
     const lastPage = Math.ceil(total / limit);
 
-    return new AccountUsersResponsePaginationDto({ data: usersWithPresignedUrls, total, page, last_page: lastPage, limit });
+    return new AccountUsersResponsePaginationDto({
+      data: usersWithPresignedUrls,
+      total,
+      page,
+      last_page: lastPage,
+      limit,
+    });
   }
 
   async findOne(id: number, manager?: EntityManager): Promise<Account> {

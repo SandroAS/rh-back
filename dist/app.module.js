@@ -16,6 +16,7 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const core_1 = require("@nestjs/core");
 const config_1 = require("@nestjs/config");
+const event_emitter_1 = require("@nestjs/event-emitter");
 const users_module_1 = require("./modules/users/users.module");
 const auth_module_1 = require("./modules/auth/auth.module");
 const accounts_module_1 = require("./modules/accounts/accounts.module");
@@ -58,6 +59,7 @@ const form_answer_multi_options_module_1 = require("./modules/form-answer-multi-
 const form_topics_module_1 = require("./modules/form-topics/form-topics.module");
 const form_application_topics_module_1 = require("./modules/form-application-topics/form-application-topics.module");
 const notifications_module_1 = require("./modules/notifications/notifications.module");
+const account_seeds_module_1 = require("./modules/account-seeds/account-seeds.module");
 const create_account_seed_command_command_1 = require("./commands/create-account-seed-command.command");
 const cookieSession = require('cookie-session');
 let AppModule = class AppModule {
@@ -82,6 +84,15 @@ exports.AppModule = AppModule = __decorate([
                     `.env.${process.env.NODE_ENV}`,
                     '.env'
                 ]
+            }),
+            event_emitter_1.EventEmitterModule.forRoot({
+                wildcard: true,
+                delimiter: '.',
+                newListener: false,
+                removeListener: false,
+                maxListeners: 20,
+                verboseMemoryLeak: true,
+                ignoreErrors: false,
             }),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
@@ -138,7 +149,8 @@ exports.AppModule = AppModule = __decorate([
             form_answer_multi_options_module_1.FormAnswerMultiOptionsModule,
             form_topics_module_1.FormTopicsModule,
             form_application_topics_module_1.FormApplicationTopicsModule,
-            notifications_module_1.NotificationsModule
+            notifications_module_1.NotificationsModule,
+            account_seeds_module_1.AccountSeedsModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [
@@ -149,7 +161,7 @@ exports.AppModule = AppModule = __decorate([
                     whitelist: true
                 })
             },
-            create_account_seed_command_command_1.CreateAccountSeedCommand
+            create_account_seed_command_command_1.CreateAccountSeedCommand,
         ]
     }),
     __metadata("design:paramtypes", [config_1.ConfigService])
