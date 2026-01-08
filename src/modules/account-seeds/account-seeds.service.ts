@@ -39,15 +39,25 @@ export class AccountSeedsService {
 
     const defaultGroups = [
       {
-        name: 'Níveis CLT (Padrão)',
+        name: 'Jr..Pl..Sr',
+        jobPositionsLevels: [
+          { name: 'Jr', salary: 3000 },
+          { name: 'Pl', salary: 5500 },
+          { name: 'Sr', salary: 9000 },
+        ]
+      },
+      {
+        name: 'Jr..Pl..Sr Níveis',
         jobPositionsLevels: [
           { name: 'Júnior I', salary: 3000 },
           { name: 'Júnior II', salary: 4000 },
-          { name: 'Pleno I', salary: 5500 },
+          { name: 'Júnior III', salary: 5000 },
+          { name: 'Pleno I', salary: 6000 },
           { name: 'Pleno II', salary: 7000 },
+          { name: 'Pleno III', salary: 8000 },
           { name: 'Sênior I', salary: 9000 },
-          { name: 'Sênior II', salary: 11000 },
-          { name: 'Especialista', salary: 14000 },
+          { name: 'Sênior II', salary: 10000 },
+          { name: 'Sênior III', salary: 11000 },
         ]
       },
       {
