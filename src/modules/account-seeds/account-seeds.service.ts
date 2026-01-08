@@ -19,14 +19,15 @@ export class AccountSeedsService {
    * Método principal para rodar todos os seeds de uma conta
    * @param accountId ID da conta
    * @param adminId ID do admin
+   * @returns ID do grupo principal
    */
   async runDefaultSeeds(accountId: number, adminId: number) {
     const user = await this.usersService.findOne(adminId);
     this.logger.log(`Iniciando população de dados para a conta ID: ${accountId}...`);
 
     try {
-      await this.seedJobLevelsGroups(accountId, user);
-      await this.seedJobPositions(accountId);
+      const defaultGroupId = await this.seedJobLevelsGroups(accountId, user);
+      await this.seedJobPositions(accountId, defaultGroupId);
       
       this.logger.log(`Seed completo para a conta ID: ${accountId}.`);
     } catch (error) {
@@ -34,8 +35,12 @@ export class AccountSeedsService {
     }
   }
 
-  private async seedJobLevelsGroups(accountId: number, user: User) {
-    this.logger.log(`Populando grupos de níveis salariais...`);
+  /**
+   * Cria os grupos e retorna o ID do grupo principal (Jr..Pl..Sr Níveis)
+   */
+  private async seedJobLevelsGroups(accountId: number, user: User): Promise<number | null> {
+    this.logger.log(`Populando grupos de níveis de cargos...`);
+    let mainGroupId: number | null = null;
 
     const defaultGroups = [
       {
@@ -67,32 +72,33 @@ export class AccountSeedsService {
           { name: 'Estágio Nível 2', salary: 1500 },
           { name: 'Estágio Graduação Último Ano', salary: 1800 },
         ]
-      },
-      {
-        name: 'Níveis Operacionais',
-        jobPositionsLevels: [
-          { name: 'Nível A', salary: 1600 },
-          { name: 'Nível B', salary: 2200 },
-          { name: 'Nível C', salary: 2800 },
-        ]
       }
     ];
 
     for (const groupDto of defaultGroups) {
       try {
-        // Verificamos se o grupo já existe pelo nome para evitar duplicidade no re-run
-        const existing = await this.jobPositionsLevelsGroupsService.findAllWithAccountId(accountId);
-        if (!existing.some(g => g.name === groupDto.name)) {
-          await this.jobPositionsLevelsGroupsService.createWithAccountId(groupDto as any, accountId, user);
+        const existingGroups = await this.jobPositionsLevelsGroupsService.findAllWithAccountId(accountId);
+        let group = existingGroups.find(g => g.name === groupDto.name);
+
+        if (!group) {
+          group = await this.jobPositionsLevelsGroupsService.createWithAccountId(groupDto as any, accountId, user);
           this.logger.log(`Grupo "${groupDto.name}" criado com sucesso.`);
         }
+
+        if (group.name === 'Jr..Pl..Sr Níveis') {
+          mainGroupId = group.id;
+        }
       } catch (err) {
-        this.logger.warn(`Erro ao criar grupo de níveis "${groupDto.name}": ${err.message}`);
+        this.logger.warn(`Erro ao processar grupo "${groupDto.name}": ${err.message}`);
       }
     }
+
+    return mainGroupId;
   }
 
-  private async seedJobPositions(accountId: number) {
+  private async seedJobPositions(accountId: number, defaultGroupId: number | null) {
+    this.logger.log(`Populando cargos vinculados ao grupo ID: ${defaultGroupId}...`);
+
     const defaultPositions: CreateJobPositionDto[] = [
       // --- RECURSOS HUMANOS ---
       { title: 'Tech Recruiter', cbo_code: '2524-05', base_salary: 0, description: 'Especialista em recrutamento e seleção para perfis técnicos.' },
@@ -153,11 +159,18 @@ export class AccountSeedsService {
       { title: 'Analista de Dados', cbo_code: '2112-10', base_salary: 0, description: 'Processamento e visualização estratégica de dados.' },
     ];
 
-    for (const position of defaultPositions) {
+    for (const positionDto of defaultPositions) {
       try {
-        await this.jobPositionService.createWithAccountId(position, accountId);
+        const finalDto: CreateJobPositionDto = {
+          ...positionDto,
+          job_positions_levels_group_id: defaultGroupId,
+        } as CreateJobPositionDto;
+
+        await this.jobPositionService.createWithAccountId(finalDto, accountId);
       } catch (err) {
-        this.logger.warn(`Cargo "${position.title}" já existe ou erro ao criar: ${err.message}`);
+        if (!err.message.includes('already exists')) {
+          this.logger.warn(`Erro ao criar cargo "${positionDto.title}": ${err.message}`);
+        }
       }
     }
   }
