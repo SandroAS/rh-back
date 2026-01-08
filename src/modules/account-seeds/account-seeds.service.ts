@@ -1,23 +1,84 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JobPositionService } from '../job-positions/job-positions.service';
 import { CreateJobPositionDto } from '../job-positions/dtos/create-job-position.dto';
+import { JobPositionsLevelsGroupsService } from '../job-positions-levels-groups/job-positions-levels-groups.service';
+import { User } from '@/entities/user.entity';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AccountSeedsService {
   private readonly logger = new Logger(AccountSeedsService.name);
 
   constructor(
+    private readonly usersService: UsersService,
     private readonly jobPositionService: JobPositionService,
+    private readonly jobPositionsLevelsGroupsService: JobPositionsLevelsGroupsService,
   ) {}
 
-  async runDefaultSeeds(accountId: number) {
-    this.logger.log(`Populando cargos individuais para a conta ID: ${accountId}...`);
+  /**
+   * Método principal para rodar todos os seeds de uma conta
+   * @param accountId ID da conta
+   * @param adminId ID do admin
+   */
+  async runDefaultSeeds(accountId: number, adminId: number) {
+    const user = await this.usersService.findOne(adminId);
+    this.logger.log(`Iniciando população de dados para a conta ID: ${accountId}...`);
 
     try {
+      await this.seedJobLevelsGroups(accountId, user);
       await this.seedJobPositions(accountId);
-      this.logger.log(`Seed de cargos finalizado com sucesso.`);
+      
+      this.logger.log(`Seed completo para a conta ID: ${accountId}.`);
     } catch (error) {
-      this.logger.error(`Erro durante o seed: ${error.message}`);
+      this.logger.error(`Erro crítico durante o seed: ${error.message}`);
+    }
+  }
+
+  private async seedJobLevelsGroups(accountId: number, user: User) {
+    this.logger.log(`Populando grupos de níveis salariais...`);
+
+    const defaultGroups = [
+      {
+        name: 'Níveis CLT (Padrão)',
+        jobPositionsLevels: [
+          { name: 'Júnior I', salary: 3000 },
+          { name: 'Júnior II', salary: 4000 },
+          { name: 'Pleno I', salary: 5500 },
+          { name: 'Pleno II', salary: 7000 },
+          { name: 'Sênior I', salary: 9000 },
+          { name: 'Sênior II', salary: 11000 },
+          { name: 'Especialista', salary: 14000 },
+        ]
+      },
+      {
+        name: 'Níveis Estágio',
+        jobPositionsLevels: [
+          { name: 'Estágio Nível 1', salary: 1200 },
+          { name: 'Estágio Nível 2', salary: 1500 },
+          { name: 'Estágio Graduação Último Ano', salary: 1800 },
+        ]
+      },
+      {
+        name: 'Níveis Operacionais',
+        jobPositionsLevels: [
+          { name: 'Nível A', salary: 1600 },
+          { name: 'Nível B', salary: 2200 },
+          { name: 'Nível C', salary: 2800 },
+        ]
+      }
+    ];
+
+    for (const groupDto of defaultGroups) {
+      try {
+        // Verificamos se o grupo já existe pelo nome para evitar duplicidade no re-run
+        const existing = await this.jobPositionsLevelsGroupsService.findAllWithAccountId(accountId);
+        if (!existing.some(g => g.name === groupDto.name)) {
+          await this.jobPositionsLevelsGroupsService.createWithAccountId(groupDto as any, accountId, user);
+          this.logger.log(`Grupo "${groupDto.name}" criado com sucesso.`);
+        }
+      } catch (err) {
+        this.logger.warn(`Erro ao criar grupo de níveis "${groupDto.name}": ${err.message}`);
+      }
     }
   }
 

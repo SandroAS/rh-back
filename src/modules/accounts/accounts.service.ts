@@ -53,7 +53,8 @@ export class AccountsService {
 
       // Emitindo o evento de conta criada para disparar seeds (cargos, drds, etc)
       this.eventEmitter.emit('account.created', {
-        accountId: savedAccount.id
+        accountId: savedAccount.id,
+        adminId: data.admin_id,
       });
 
       return savedAccount;
