@@ -4,6 +4,7 @@ import { CreateJobPositionDto } from '../job-positions/dtos/create-job-position.
 import { JobPositionsLevelsGroupsService } from '../job-positions-levels-groups/job-positions-levels-groups.service';
 import { User } from '@/entities/user.entity';
 import { UsersService } from '../users/users.service';
+import { SectorsService } from '../sectors/sectors.service';
 
 @Injectable()
 export class AccountSeedsService {
@@ -13,6 +14,7 @@ export class AccountSeedsService {
     private readonly usersService: UsersService,
     private readonly jobPositionService: JobPositionService,
     private readonly jobPositionsLevelsGroupsService: JobPositionsLevelsGroupsService,
+    private readonly sectorsService: SectorsService,
   ) {}
 
   /**
@@ -26,12 +28,45 @@ export class AccountSeedsService {
     this.logger.log(`Iniciando população de dados para a conta ID: ${accountId}...`);
 
     try {
+      await this.seedSectors(accountId);
       const defaultGroupId = await this.seedJobLevelsGroups(accountId, user);
       await this.seedJobPositions(accountId, defaultGroupId);
       
       this.logger.log(`Seed completo para a conta ID: ${accountId}.`);
     } catch (error) {
       this.logger.error(`Erro crítico durante o seed: ${error.message}`);
+    }
+  }
+
+  private async seedSectors(accountId: number) {
+    this.logger.log(`Populando setores...`);
+
+    const defaultSectors = [
+      { name: 'RH' },
+      { name: 'Compliance e Risco' },
+      { name: 'Financeiro' },
+      { name: 'Marketing' },
+      { name: 'Administrativo' },
+      { name: 'Facilities' },
+      { name: 'Comercial' },
+      { name: 'Tecnologia' },
+      { name: 'Presidência' },
+      { name: 'Operações' },
+      { name: 'Produto' },
+      { name: 'Jurídico' },
+      { name: 'Vendas (SDR)' },
+    ];
+
+    for (const sector of defaultSectors) {
+      try {
+        const existing = await this.sectorsService.findAllWithAccountId(accountId);
+        if (!existing.some(s => s.name.toLowerCase() === sector.name.toLowerCase())) {
+          await this.sectorsService.createWithAccountId(sector as any, accountId);
+          this.logger.log(`Setor "${sector.name}" criado.`);
+        }
+      } catch (err) {
+        this.logger.warn(`Erro ao criar setor "${sector.name}": ${err.message}`);
+      }
     }
   }
 
