@@ -5,9 +5,11 @@ import { UsersModule } from '../users/users.module';
 import { JobPositionsModule } from '../job-positions/job-positions.module';
 import { JobPositionsLevelsGroupsModule } from '../job-positions-levels-groups/job-positions-levels-groups.module';
 import { SectorsModule } from '../sectors/sectors.module';
+import { DrdsModule } from '../drds/drds.module';
 import { JobPositionsSeed } from '@/seeds/job-positions.seed';
 import { JobLevelsGroupsSeed } from '@/seeds/job-levels-groups.seed';
 import { SectorsSeed } from '@/seeds/sectors.seed';
+import { DRDsSeed } from '@/seeds/drds.seed';
 
 @Module({
   imports: [
@@ -15,6 +17,7 @@ import { SectorsSeed } from '@/seeds/sectors.seed';
     JobPositionsModule,
     JobPositionsLevelsGroupsModule,
     SectorsModule,
+    DrdsModule,
   ],
   providers: [
     AccountSeedsService, 
@@ -22,6 +25,7 @@ import { SectorsSeed } from '@/seeds/sectors.seed';
     JobPositionsSeed,
     JobLevelsGroupsSeed,
     SectorsSeed,
+    DRDsSeed,
   ],
   exports: [AccountSeedsService]
 })
