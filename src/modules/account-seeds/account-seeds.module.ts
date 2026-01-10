@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AccountSeedsService } from './account-seeds.service';
-import { JobPositionsModule } from '../job-positions/job-positions.module';
 import { AccountCreatedListener } from './listeners/account-created.listener';
 import { UsersModule } from '../users/users.module';
+import { JobPositionsModule } from '../job-positions/job-positions.module';
 import { JobPositionsLevelsGroupsModule } from '../job-positions-levels-groups/job-positions-levels-groups.module';
 import { SectorsModule } from '../sectors/sectors.module';
+import { JobPositionsSeed } from '@/seeds/job-positions.seed';
+import { JobLevelsGroupsSeed } from '@/seeds/job-levels-groups.seed';
+import { SectorsSeed } from '@/seeds/sectors.seed';
 
 @Module({
   imports: [
@@ -13,7 +16,13 @@ import { SectorsModule } from '../sectors/sectors.module';
     JobPositionsLevelsGroupsModule,
     SectorsModule,
   ],
-  providers: [AccountSeedsService, AccountCreatedListener],
+  providers: [
+    AccountSeedsService, 
+    AccountCreatedListener,
+    JobPositionsSeed,
+    JobLevelsGroupsSeed,
+    SectorsSeed,
+  ],
   exports: [AccountSeedsService]
 })
 export class AccountSeedsModule {}
