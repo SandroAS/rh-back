@@ -1,5 +1,4 @@
 import { EntityManager, Repository } from 'typeorm';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Account } from '@/entities/account.entity';
 import { CreateAccountDto } from './dtos/create-account.dto';
 import { UpdateAccountDto } from './dtos/update-account.dto';
@@ -19,8 +18,7 @@ export declare class AccountsService {
     private readonly minioService;
     private readonly usersService;
     private readonly rolesService;
-    private readonly eventEmitter;
-    constructor(accountRepository: Repository<Account>, systemModuleService: SystemModulesService, minioService: MinioService, usersService: UsersService, rolesService: RolesService, eventEmitter: EventEmitter2);
+    constructor(accountRepository: Repository<Account>, systemModuleService: SystemModulesService, minioService: MinioService, usersService: UsersService, rolesService: RolesService);
     create(data: CreateAccountDto, manager?: EntityManager): Promise<Account>;
     createAccountUser(accountUser: CreateAccountUserDto, user: User): Promise<{
         uuid: string;

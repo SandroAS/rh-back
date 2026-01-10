@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { EntityManager, In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../entities/user.entity';
@@ -81,11 +81,16 @@ export class UsersService {
       user = await userRepository.findOne({ where: { id } });
     }
 
+    if (!user) {
+      return undefined;
+    }
+
     if (user.profile_img_url && !user.profile_img_url.includes('googleusercontent')) {
       try {
         user.profile_img_url = await this.minioService.getPresignedUrl(user.profile_img_url);
       } catch (err) {
-        this.minioService['logger'].error(`Falha ao tentar gerar url assinada para usuário, image '${user.profile_img_url}': ${err.message}`);
+        const logger = (this.minioService as any).logger || new Logger('MinioService');
+        logger.error(`Falha ao tentar gerar url assinada para usuário ${id}: ${err.message}`);
         user.profile_img_url = null;
       }
     }
@@ -97,7 +102,7 @@ export class UsersService {
     }
 
     return user;
-  }
+}
 
   async findByEmail(email: string, relations?: string[]): Promise<User | undefined> {
     if (relations && relations.length > 0) {

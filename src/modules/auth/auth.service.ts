@@ -15,6 +15,7 @@ import { UserMetasService } from '../user-metas/user-metas.service';
 import { UserMetasResponseDto } from '../user-metas/dtos/user-metas-response.dto';
 import { RolesTypes } from '../roles/dtos/roles-types.dto';
 import { SystemModuleName } from '@/entities/system-module.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 const scrypt = promisify(_scrypt);
 
@@ -25,7 +26,8 @@ export class AuthService {
     private jwtService: JwtService,
     private readonly accountsService: AccountsService,
     private readonly trialsService: TrialsService,
-    private readonly userMetasService: UserMetasService
+    private readonly userMetasService: UserMetasService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async whoami(userId: number): Promise<AuthResponseDto> {
@@ -86,6 +88,11 @@ export class AuthService {
       selectedModuleType = SystemModuleName.CAREER_DEVELOPMENT; // FIXO ATE O SISTEM TER DEMAIS MODULOS
 
       await queryRunner.commitTransaction();
+
+      this.eventEmitter.emit('account.created', {
+        accountId: account.id,
+        adminId: user.id,
+      });
 
       const authUser = plainToInstance(User, {
         ...user,

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { JobPositionService } from '../job-positions/job-positions.service';
 import { CreateJobPositionDto } from '../job-positions/dtos/create-job-position.dto';
 import { JobPositionsLevelsGroupsService } from '../job-positions-levels-groups/job-positions-levels-groups.service';
@@ -25,6 +25,12 @@ export class AccountSeedsService {
    */
   async runDefaultSeeds(accountId: number, adminId: number) {
     const user = await this.usersService.findOne(adminId);
+
+    if (!user) {
+      this.logger.error(`Seed cancelado: Usuário admin ID ${adminId} não encontrado.`);
+      throw new NotFoundException('Usuário não encontrado ao tentar rodar seeds da conta.');
+    }
+
     this.logger.log(`Iniciando população de dados para a conta ID: ${accountId}...`);
 
     try {

@@ -7,13 +7,15 @@ import { GoogleProfileParsed } from './dtos/google-profile-parsed.dta';
 import { AuthSignupDto } from './dtos/auth-signup';
 import { UserMetasService } from '../user-metas/user-metas.service';
 import { UserMetasResponseDto } from '../user-metas/dtos/user-metas-response.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 export declare class AuthService {
     private usersService;
     private jwtService;
     private readonly accountsService;
     private readonly trialsService;
     private readonly userMetasService;
-    constructor(usersService: UsersService, jwtService: JwtService, accountsService: AccountsService, trialsService: TrialsService, userMetasService: UserMetasService);
+    private readonly eventEmitter;
+    constructor(usersService: UsersService, jwtService: JwtService, accountsService: AccountsService, trialsService: TrialsService, userMetasService: UserMetasService, eventEmitter: EventEmitter2);
     whoami(userId: number): Promise<AuthResponseDto>;
     signup(controllerProfile?: AuthSignupDto, googleProfile?: GoogleProfileParsed): Promise<{
         user: AuthResponseDto;

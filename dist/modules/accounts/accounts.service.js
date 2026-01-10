@@ -11,13 +11,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccountsService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const event_emitter_1 = require("@nestjs/event-emitter");
 const account_entity_1 = require("../../entities/account.entity");
 const system_modules_service_1 = require("../system-modules/system-modules.service");
 const system_module_entity_1 = require("../../entities/system-module.entity");
@@ -32,13 +30,12 @@ const roles_service_1 = require("../roles/roles.service");
 const account_users_response_pagination_dto_1 = require("./dtos/account-users-response-pagination.dto");
 const scrypt = (0, util_1.promisify)(crypto_1.scrypt);
 let AccountsService = class AccountsService {
-    constructor(accountRepository, systemModuleService, minioService, usersService, rolesService, eventEmitter) {
+    constructor(accountRepository, systemModuleService, minioService, usersService, rolesService) {
         this.accountRepository = accountRepository;
         this.systemModuleService = systemModuleService;
         this.minioService = minioService;
         this.usersService = usersService;
         this.rolesService = rolesService;
-        this.eventEmitter = eventEmitter;
     }
     async create(data, manager) {
         const accountRepository = manager ? manager.getRepository(account_entity_1.Account) : this.accountRepository;
@@ -52,9 +49,6 @@ let AccountsService = class AccountsService {
         try {
             const savedAccount = await accountRepository.save(account);
             savedAccount.systemModules = account.systemModules;
-            this.eventEmitter.emit('account.created', {
-                accountId: savedAccount.id
-            });
             return savedAccount;
         }
         catch (error) {
@@ -184,6 +178,6 @@ exports.AccountsService = AccountsService = __decorate([
         system_modules_service_1.SystemModulesService,
         minio_service_1.MinioService,
         users_service_1.UsersService,
-        roles_service_1.RolesService, typeof (_a = typeof event_emitter_1.EventEmitter2 !== "undefined" && event_emitter_1.EventEmitter2) === "function" ? _a : Object])
+        roles_service_1.RolesService])
 ], AccountsService);
 //# sourceMappingURL=accounts.service.js.map

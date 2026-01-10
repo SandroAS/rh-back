@@ -1,10 +1,11 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable, Index } from 'typeorm';
 import { BaseEntity } from '../common/entities/base.entity';
 import { Account } from './account.entity';
 import { User } from './user.entity';
 import { Team } from './team.entity';
 
 @Entity('sectors')
+@Index(['name', 'account_id'], { unique: true })
 export class Sector extends BaseEntity {
   @Column({ name: 'account_id' })
   account_id: number;
@@ -20,7 +21,7 @@ export class Sector extends BaseEntity {
   @JoinColumn({ name: 'created_by_user_id' })
   createdBy: User;
 
-  @Column({ unique: true })
+  @Column()
   name: string;
 
   @OneToMany(() => Team, (team) => team.sector)

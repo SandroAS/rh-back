@@ -25,14 +25,16 @@ const user_metas_service_1 = require("../user-metas/user-metas.service");
 const user_metas_response_dto_1 = require("../user-metas/dtos/user-metas-response.dto");
 const roles_types_dto_1 = require("../roles/dtos/roles-types.dto");
 const system_module_entity_1 = require("../../entities/system-module.entity");
+const event_emitter_1 = require("@nestjs/event-emitter");
 const scrypt = (0, util_1.promisify)(crypto_1.scrypt);
 let AuthService = class AuthService {
-    constructor(usersService, jwtService, accountsService, trialsService, userMetasService) {
+    constructor(usersService, jwtService, accountsService, trialsService, userMetasService, eventEmitter) {
         this.usersService = usersService;
         this.jwtService = jwtService;
         this.accountsService = accountsService;
         this.trialsService = trialsService;
         this.userMetasService = userMetasService;
+        this.eventEmitter = eventEmitter;
     }
     async whoami(userId) {
         const user = await this.usersService.findOne(userId, ['account.lastTrial', 'account.systemModules', 'role.permissions', 'userMetas', 'companies.address']);
@@ -78,6 +80,10 @@ let AuthService = class AuthService {
             let selectedModuleType;
             selectedModuleType = system_module_entity_1.SystemModuleName.CAREER_DEVELOPMENT;
             await queryRunner.commitTransaction();
+            this.eventEmitter.emit('account.created', {
+                accountId: account.id,
+                adminId: user.id,
+            });
             const authUser = (0, class_transformer_1.plainToInstance)(user_entity_1.User, {
                 ...user,
                 account: { ...account, lastTrial: trial }
@@ -141,6 +147,7 @@ exports.AuthService = AuthService = __decorate([
         jwt_1.JwtService,
         accounts_service_1.AccountsService,
         trials_service_1.TrialsService,
-        user_metas_service_1.UserMetasService])
+        user_metas_service_1.UserMetasService,
+        event_emitter_1.EventEmitter2])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

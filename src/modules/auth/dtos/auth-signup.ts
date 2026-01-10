@@ -24,8 +24,8 @@ export class AuthSignupDto {
   @IsCpf({ message: 'CPF inválido.' })
   cpf: string;
 
-  @IsString({ message: 'O tipo de clínica deve ser uma string.' })
-  @IsNotEmpty({ message: 'O tipo de clínica é obrigatório.' })
+  @IsString({ message: 'O módulo deve ser uma string.' })
+  @IsNotEmpty({ message: 'O módulo é obrigatório.' })
   moduleType: SystemModuleName;
 
   @IsString({ message: 'A senha deve ser uma string.' })

@@ -42,8 +42,8 @@ __decorate([
     __metadata("design:type", String)
 ], AuthSignupDto.prototype, "cpf", void 0);
 __decorate([
-    (0, class_validator_1.IsString)({ message: 'O tipo de clínica deve ser uma string.' }),
-    (0, class_validator_1.IsNotEmpty)({ message: 'O tipo de clínica é obrigatório.' }),
+    (0, class_validator_1.IsString)({ message: 'O módulo deve ser uma string.' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'O módulo é obrigatório.' }),
     __metadata("design:type", String)
 ], AuthSignupDto.prototype, "moduleType", void 0);
 __decorate([

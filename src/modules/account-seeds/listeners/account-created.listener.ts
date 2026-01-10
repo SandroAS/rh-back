@@ -12,7 +12,7 @@ export class AccountCreatedListener {
   @OnEvent('account.created', { async: true })
   async handleAccountCreatedEvent(payload: { accountId: number; adminId: number; }) {
     this.logger.log(`Evento de conta criada recebido para ID: ${payload.accountId}`);
-    
+
     try {
       await this.accountSeedsService.runDefaultSeeds(payload.accountId, payload.adminId);
       this.logger.log(`Seeds finalizados com sucesso para conta: ${payload.accountId}`);

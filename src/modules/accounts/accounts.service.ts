@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Account } from '@/entities/account.entity';
 import { CreateAccountDto } from './dtos/create-account.dto';
 import { UpdateAccountDto } from './dtos/update-account.dto';
@@ -32,7 +31,6 @@ export class AccountsService {
     private readonly minioService: MinioService,
     private readonly usersService: UsersService,
     private readonly rolesService: RolesService,
-    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async create(data: CreateAccountDto, manager?: EntityManager): Promise<Account> {
@@ -50,12 +48,6 @@ export class AccountsService {
     try {
       const savedAccount = await accountRepository.save(account);
       savedAccount.systemModules = account.systemModules;
-
-      // Emitindo o evento de conta criada para disparar seeds (cargos, drds, etc)
-      this.eventEmitter.emit('account.created', {
-        accountId: savedAccount.id,
-        adminId: data.admin_id,
-      });
 
       return savedAccount;
     } catch (error) {
