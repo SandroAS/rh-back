@@ -23,8 +23,6 @@ export class JobPositionsSeed {
 
     const genericPositions: Partial<CreateJobPositionDto>[] = [
       // --- ATENDIMENTO E CS ---
-      { title: 'Analista de Atendimento e Reembolsos', cbo_code: '4110-10', base_salary: 0, description: 'Suporte ao cliente e gestão de processos de reembolso.' },
-      { title: 'Analista de Relacionamento e Reputação', cbo_code: '2531-05', base_salary: 0, description: 'Gestão da imagem da empresa perante os clientes.' },
       { title: 'Customer Success', cbo_code: '', base_salary: 0, description: 'Garante o sucesso e retenção do cliente com o produto.' },
       { title: 'Supervisor de Atendimento ao Cliente', cbo_code: '1423-15', base_salary: 0, description: 'Liderança operacional do time de suporte e atendimento.' },
 
