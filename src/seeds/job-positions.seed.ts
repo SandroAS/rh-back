@@ -23,7 +23,6 @@ export class JobPositionsSeed {
 
     const genericPositions: Partial<CreateJobPositionDto>[] = [
       // --- ATENDIMENTO E CS ---
-      { title: 'Customer Success', cbo_code: '', base_salary: 0, description: 'Garante o sucesso e retenção do cliente com o produto.' },
       { title: 'Supervisor de Atendimento ao Cliente', cbo_code: '1423-15', base_salary: 0, description: 'Liderança operacional do time de suporte e atendimento.' },
 
       // --- ADMINISTRATIVO ---

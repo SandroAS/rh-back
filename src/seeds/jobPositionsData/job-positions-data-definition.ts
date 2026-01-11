@@ -14,6 +14,7 @@ import gestorTrafegoSeed from './gestor-trafego.seed';
 import videomakerSeed from './videomaker.seed';
 import cmoSeed from './cmo.seed';
 import analistaAtendimentoReembolsoSeed from './analista-atendimento-reembolso.seed';
+import customerSuccessSeed from './customer-success.seed';
 
 export const jobPositionDefinitions = [
   techRecuiterSeed,
@@ -31,6 +32,7 @@ export const jobPositionDefinitions = [
   videomakerSeed,
   cmoSeed,
   analistaAtendimentoReembolsoSeed,
+  customerSuccessSeed,
 ];
 
 export interface JobPositionDefinitionMetric {
