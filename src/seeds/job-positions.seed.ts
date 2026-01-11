@@ -23,7 +23,6 @@ export class JobPositionsSeed {
 
     const genericPositions: Partial<CreateJobPositionDto>[] = [
       // --- RECURSOS HUMANOS ---
-      { title: 'Assistente de Departamento Pessoal', cbo_code: '4110-30', base_salary: 0, description: 'Suporte em rotinas de admissão, demissão e folha.' },
       { title: 'Coordenadora de RH', cbo_code: '1232-05', base_salary: 0, description: 'Coordenação estratégica da área de recursos humanos.' },
 
       // --- FINANCEIRO E COMPLIANCE ---

@@ -1,15 +1,10 @@
-import { DRDMetric, MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
+import { MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
 import techRecuiterSeed from './tech-recuiter.seed';
-import { DRDTopic } from '@/entities/drd-topic.entity';
-import { QuestionType } from '@/common/enums/question-type.enum';
-// Importe outros conforme criar
-// import softwareEngineerSeed from './software-engineer.seed';
-// import marketingAnalystSeed from './marketing-analyst.seed';
+import assistenteDepartamentoPessoalSeed from './assistente-departamento-pessoal.seed';
 
 export const jobPositionDefinitions = [
   techRecuiterSeed,
-  // softwareEngineerSeed,
-  // marketingAnalystSeed,
+  assistenteDepartamentoPessoalSeed,
 ];
 
 export interface JobPositionDefinitionMetric {
