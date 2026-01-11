@@ -168,6 +168,7 @@ export default {
         {
           name: 'Otimização do Funil de Recrutamento',
           order: 1,
+          description: 'Avalie a capacidade do colaborador em otimizar o funil de recrutamento, reduzindo o tempo de fechamento e aumentando a qualidade da contratação.',
           scoresByLevel: [
             { drd_level_order: 1, min_score: 1 }, { drd_level_order: 2, min_score: 1 }, { drd_level_order: 3, min_score: 2 },
             { drd_level_order: 4, min_score: 3 }, { drd_level_order: 5, min_score: 3 }, { drd_level_order: 6, min_score: 4 },
