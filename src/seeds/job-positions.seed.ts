@@ -22,9 +22,6 @@ export class JobPositionsSeed {
     }));
 
     const genericPositions: Partial<CreateJobPositionDto>[] = [
-      // --- MARKETING E CRIAÇÃO ---
-      { title: 'CMO', cbo_code: '1233-05', base_salary: 0, description: 'Chief Marketing Officer - Direção executiva de marketing.' },
-
       // --- ATENDIMENTO E CS ---
       { title: 'Analista de Atendimento e Reembolsos', cbo_code: '4110-10', base_salary: 0, description: 'Suporte ao cliente e gestão de processos de reembolso.' },
       { title: 'Analista de Relacionamento e Reputação', cbo_code: '2531-05', base_salary: 0, description: 'Gestão da imagem da empresa perante os clientes.' },

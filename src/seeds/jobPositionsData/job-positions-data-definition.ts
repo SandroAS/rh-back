@@ -12,6 +12,7 @@ import coordenadorMarketingSeed from './coordenador-marketing.seed';
 import diretorCriacaoSeed from './diretor-criacao.seed';
 import gestorTrafegoSeed from './gestor-trafego.seed';
 import videomakerSeed from './videomaker.seed';
+import cmoSeed from './cmo.seed';
 
 export const jobPositionDefinitions = [
   techRecuiterSeed,
@@ -27,6 +28,7 @@ export const jobPositionDefinitions = [
   diretorCriacaoSeed,
   gestorTrafegoSeed,
   videomakerSeed,
+  cmoSeed,
 ];
 
 export interface JobPositionDefinitionMetric {
