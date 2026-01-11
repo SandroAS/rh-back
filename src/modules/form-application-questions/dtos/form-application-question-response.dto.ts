@@ -30,6 +30,7 @@ export default class FormApplicationQuestionResponseDto {
     if (!question) return;
     this.uuid = question.uuid;
     this.title = question.title;
+    this.description = question.description;
     this.type = question.type;
     this.is_required = question.is_required;
     this.order = question.order;
