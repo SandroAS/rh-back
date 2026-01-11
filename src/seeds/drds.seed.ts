@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@/entities/user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { JobPosition } from '@/entities/job-position.entity';
-import { MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
 import { DrdsService } from '@/modules/drds/drds.service';
+import { JobPositionService } from '@/modules/job-positions/job-positions.service';
+import { User } from '@/entities/user.entity';
+import { MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
 
 /**
- * Estrutura baseada no CreateDRDDto fornecido
+ * Estrutura baseada no seu exemplo de base do DTO
  */
 interface DRDSeedDefinition {
-  jobPositionName: string;
+  jobPositionTitle: string;
   rate: number;
   levels: { name: string; order: number }[];
   metrics: {
@@ -35,17 +33,13 @@ interface DRDSeedDefinition {
 export class DRDsSeed {
   constructor(
     private readonly drdsService: DrdsService,
-    @InjectRepository(JobPosition)
-    private readonly jobPositionRepository: Repository<JobPosition>,
+    private readonly jobPositionService: JobPositionService,
   ) {}
 
-  /**
-   * Lista de definições escalável
-   */
   private readonly drdDefinitions: DRDSeedDefinition[] = [
     {
-      jobPositionName: 'Tech Recruiter',
-      rate: 1000,
+      jobPositionTitle: 'Tech Recruiter',
+      rate: 5,
       levels: [
         { name: 'Junior', order: 1 },
         { name: 'Pleno', order: 2 },
@@ -91,32 +85,19 @@ export class DRDsSeed {
         },
       ],
     },
-    // Exemplo de como adicionar outro cargo rapidamente:
-    /*
-    {
-      jobPositionName: 'Desenvolvedor Frontend',
-      rate: 1500,
-      levels: [{ name: 'Júnior', order: 1 }],
-      metrics: [...],
-      topics: [...]
-    }
-    */
   ];
 
   async seed(accountId: number, user: User) {
     console.log(`[SEED] Iniciando criação de DRDs para a conta ${accountId}...`);
 
-    for (const config of this.drdDefinitions) {
-      try {
-        const jobPosition = await this.jobPositionRepository.findOne({
-          where: { 
-            title: config.jobPositionName, 
-            account: { id: accountId } 
-          }
-        });
+    try {
+      const jobPositions = await this.jobPositionService.findAllWithAccountId(accountId);
+
+      for (const config of this.drdDefinitions) {
+        const jobPosition = jobPositions.find(jp => jp.title === config.jobPositionTitle);
 
         if (!jobPosition) {
-          console.warn(`[SEED] Cargo "${config.jobPositionName}" não encontrado na conta ${accountId}.`);
+          console.warn(`[SEED] Cargo "${config.jobPositionTitle}" não encontrado na conta ${accountId}.`);
           continue;
         }
 
@@ -129,12 +110,10 @@ export class DRDsSeed {
         };
 
         await this.drdsService.createByAccountId(createDto, accountId, user);
-        
-        console.log(`[SEED] DRD para "${config.jobPositionName}" processado com sucesso.`);
-
-      } catch (error) {
-        console.error(`[SEED] Erro ao processar DRD para "${config.jobPositionName}":`, error.message);
+        console.log(`[SEED] DRD para "${config.jobPositionTitle}" criado.`);
       }
+    } catch (error) {
+      console.error(`[SEED] Erro crítico no processo de seed:`, error.message);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsInt, IsPositive, IsUUID, ArrayMinSize, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsInt, IsPositive, IsUUID, ArrayMinSize, ValidateNested, Max, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateDRDLevelDto } from '@/modules/drd-levels/dtos/create-drd-level.dto';
 import { CreateDRDMetricDto } from '@/modules/drd-metrics/dtos/create-drd-metric.dto';
@@ -12,6 +12,8 @@ export class CreateDRDDto {
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
+  @Max(5)
+  @Min(3)
   rate: number;
 
   @ArrayMinSize(2)
