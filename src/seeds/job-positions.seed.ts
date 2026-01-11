@@ -22,9 +22,6 @@ export class JobPositionsSeed {
     }));
 
     const genericPositions: Partial<CreateJobPositionDto>[] = [
-      // --- ATENDIMENTO E CS ---
-      { title: 'Supervisor de Atendimento ao Cliente', cbo_code: '1423-15', base_salary: 0, description: 'Liderança operacional do time de suporte e atendimento.' },
-
       // --- ADMINISTRATIVO ---
       { title: 'Suporte Técnico', cbo_code: '3172-10', base_salary: 0, description: 'Suporte de TI interno e manutenção de ferramentas.' },
       { title: 'Assistente Administrativo', cbo_code: '4110-10', base_salary: 0, description: 'Apoio nas rotinas administrativas diárias.' },

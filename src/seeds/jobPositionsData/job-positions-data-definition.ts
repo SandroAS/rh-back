@@ -15,6 +15,7 @@ import videomakerSeed from './videomaker.seed';
 import cmoSeed from './cmo.seed';
 import analistaAtendimentoReembolsoSeed from './analista-atendimento-reembolso.seed';
 import customerSuccessSeed from './customer-success.seed';
+import supervisorAtendimentoClienteSeed from './supervisor-atendimento-cliente.seed';
 
 export const jobPositionDefinitions = [
   techRecuiterSeed,
@@ -33,6 +34,7 @@ export const jobPositionDefinitions = [
   cmoSeed,
   analistaAtendimentoReembolsoSeed,
   customerSuccessSeed,
+  supervisorAtendimentoClienteSeed
 ];
 
 export interface JobPositionDefinitionMetric {
