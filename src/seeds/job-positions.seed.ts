@@ -23,7 +23,6 @@ export class JobPositionsSeed {
 
     const genericPositions: Partial<CreateJobPositionDto>[] = [
       // --- FINANCEIRO E COMPLIANCE ---
-      { title: 'Gerente Financeiro', cbo_code: '1231-10', base_salary: 0, description: 'Gestão estratégica das finanças corporativas.' },
       { title: 'Assistente de Cobranças', cbo_code: '4110-30', base_salary: 0, description: 'Atua na recuperação de crédito e negociação de débitos.' },
 
       // --- MARKETING E CRIAÇÃO ---
