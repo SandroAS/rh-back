@@ -22,9 +22,6 @@ export class JobPositionsSeed {
     }));
 
     const genericPositions: Partial<CreateJobPositionDto>[] = [
-      // --- FINANCEIRO E COMPLIANCE ---
-      { title: 'Assistente de Cobranças', cbo_code: '4110-30', base_salary: 0, description: 'Atua na recuperação de crédito e negociação de débitos.' },
-
       // --- MARKETING E CRIAÇÃO ---
       { title: 'Analista de Marketing Digital', cbo_code: '2531-15', base_salary: 0, description: 'Estratégias de marketing em canais digitais.' },
       { title: 'Coordenadora de Marketing', cbo_code: '1233-05', base_salary: 0, description: 'Coordenação da equipe e estratégias de marketing.' },

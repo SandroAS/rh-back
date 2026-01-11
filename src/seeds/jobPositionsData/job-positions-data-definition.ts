@@ -6,6 +6,7 @@ import analistaFinanceiroSeed from './analista-financeiro.seed';
 import assistenteComplianceSeed from './assistente-compliance.seed';
 import assistenteFinanceiroSeed from './assistente-financeiro.seed';
 import gerenteFinanceiroSeed from './gerente-financeiro.seed';
+import assistenteCobrancasSeed from './assistente-cobrancas.seed';
 
 export const jobPositionDefinitions = [
   techRecuiterSeed,
@@ -15,6 +16,7 @@ export const jobPositionDefinitions = [
   assistenteComplianceSeed,
   assistenteFinanceiroSeed,
   gerenteFinanceiroSeed,
+  assistenteCobrancasSeed,
 ];
 
 export interface JobPositionDefinitionMetric {
