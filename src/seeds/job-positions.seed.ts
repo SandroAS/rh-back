@@ -23,7 +23,6 @@ export class JobPositionsSeed {
 
     const genericPositions: Partial<CreateJobPositionDto>[] = [
       // --- MARKETING E CRIAÇÃO ---
-      { title: 'Gestor de Tráfego', cbo_code: '2531-15', base_salary: 0, description: 'Gestão de campanhas de anúncios pagos.' },
       { title: 'Videomaker', cbo_code: '3744-20', base_salary: 0, description: 'Produção e edição de conteúdo audiovisual.' },
       { title: 'CMO', cbo_code: '1233-05', base_salary: 0, description: 'Chief Marketing Officer - Direção executiva de marketing.' },
 
