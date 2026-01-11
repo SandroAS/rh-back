@@ -1,6 +1,7 @@
 import { CreateJobPositionDto } from '@/modules/job-positions/dtos/create-job-position.dto';
 import { JobPositionService } from '@/modules/job-positions/job-positions.service';
 import { Injectable, Logger } from '@nestjs/common';
+import techRecuiterSeed from './jobPositionsData/tech-recuiter.seed';
 
 @Injectable()
 export class JobPositionsSeed {
@@ -15,7 +16,7 @@ export class JobPositionsSeed {
 
     const defaultPositions: Partial<CreateJobPositionDto>[] = [
       // --- RECURSOS HUMANOS ---
-      { title: 'Tech Recruiter', cbo_code: '2524-05', base_salary: 0, description: 'Especialista em recrutamento e seleção para perfis técnicos.' },
+      { title: techRecuiterSeed.title, cbo_code: techRecuiterSeed.cbo_code, base_salary: techRecuiterSeed.base_salary, description: techRecuiterSeed.description },
       { title: 'Assistente de Departamento Pessoal', cbo_code: '4110-30', base_salary: 0, description: 'Suporte em rotinas de admissão, demissão e folha.' },
       { title: 'Coordenadora de RH', cbo_code: '1232-05', base_salary: 0, description: 'Coordenação estratégica da área de recursos humanos.' },
 

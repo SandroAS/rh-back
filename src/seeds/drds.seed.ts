@@ -6,6 +6,7 @@ import { MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
 import { CreateDRDLevelDto } from '@/modules/drd-levels/dtos/create-drd-level.dto';
 import { CreateDRDMetricDto } from '@/modules/drd-metrics/dtos/create-drd-metric.dto';
 import { CreateDRDTopicDto } from '@/modules/drd-topics/dtos/create-drd-topic.dto';
+import techRecuiterSeed from './jobPositionsData/tech-recuiter.seed';
 
 interface DRDSeedDefinition {
   jobPositionTitle: string;
@@ -37,49 +38,11 @@ export class DRDsSeed {
 
   private readonly drdDefinitions: DRDSeedDefinition[] = [
     {
-      jobPositionTitle: 'Tech Recruiter',
+      jobPositionTitle: techRecuiterSeed.title,
       rate: this.rate,
       levels: this.levels,
-      metrics: [
-        {
-          name: 'Tempo de Fechamento (SLA)',
-          order: 1,
-          type: MetricType.DURATION_DAYS,
-          prefix: MetricPrefix.MENOR_OU_IGUAL,
-          classification: 'Tempo de Fechamento (SLA)',
-          scoresByLevel: [
-            { drd_level_order: 1, min_score: 30 },
-            { drd_level_order: 2, min_score: 20 },
-            { drd_level_order: 3, min_score: 15 },
-          ],
-        },
-      ],
-      topics: [
-        {
-          name: 'Competências Técnicas',
-          order: 1,
-          drdTopicItems: [
-            {
-              name: 'Sourcing (Busca Ativa)',
-              order: 1,
-              scoresByLevel: [
-                { drd_level_order: 1, min_score: 3 },
-                { drd_level_order: 2, min_score: 4 },
-                { drd_level_order: 3, min_score: 5 },
-              ],
-            },
-            {
-              name: 'Entrevista Técnica',
-              order: 2,
-              scoresByLevel: [
-                { drd_level_order: 1, min_score: 2 },
-                { drd_level_order: 2, min_score: 4 },
-                { drd_level_order: 3, min_score: 5 },
-              ],
-            },
-          ],
-        },
-      ],
+      metrics: techRecuiterSeed.metrics,
+      topics: techRecuiterSeed.topics,
     },
   ];
 
