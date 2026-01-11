@@ -3,30 +3,16 @@ import { DrdsService } from '@/modules/drds/drds.service';
 import { JobPositionService } from '@/modules/job-positions/job-positions.service';
 import { User } from '@/entities/user.entity';
 import { MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
+import { CreateDRDLevelDto } from '@/modules/drd-levels/dtos/create-drd-level.dto';
+import { CreateDRDMetricDto } from '@/modules/drd-metrics/dtos/create-drd-metric.dto';
+import { CreateDRDTopicDto } from '@/modules/drd-topics/dtos/create-drd-topic.dto';
 
-/**
- * Estrutura baseada no seu exemplo de base do DTO
- */
 interface DRDSeedDefinition {
   jobPositionTitle: string;
   rate: number;
-  levels: { name: string; order: number }[];
-  metrics: {
-    name: string;
-    order: number;
-    type: MetricType;
-    prefix: MetricPrefix;
-    scoresByLevel: { drd_level_order: number; min_score: number }[];
-  }[];
-  topics: {
-    name: string;
-    order: number;
-    drdTopicItems: {
-      name: string;
-      order: number;
-      scoresByLevel: { drd_level_order: number; min_score: number }[];
-    }[];
-  }[];
+  levels: CreateDRDLevelDto[];
+  metrics: CreateDRDMetricDto[];
+  topics: CreateDRDTopicDto[];
 }
 
 @Injectable()
@@ -36,21 +22,31 @@ export class DRDsSeed {
     private readonly jobPositionService: JobPositionService,
   ) {}
 
+  private readonly rate: number = 5;
+  private readonly levels: CreateDRDLevelDto[] = [
+    { name: 'Junior I', order: 1 },
+    { name: 'Junior II', order: 2 },
+    { name: 'Junior III', order: 3 },
+    { name: 'Pleno I', order: 4 },
+    { name: 'Pleno II', order: 5 },
+    { name: 'Pleno III', order: 6 },
+    { name: 'Sênior I', order: 7 },
+    { name: 'Sênior II', order: 8 },
+    { name: 'Sênior III', order: 9 },
+  ];
+
   private readonly drdDefinitions: DRDSeedDefinition[] = [
     {
       jobPositionTitle: 'Tech Recruiter',
-      rate: 5,
-      levels: [
-        { name: 'Junior', order: 1 },
-        { name: 'Pleno', order: 2 },
-        { name: 'Sênior', order: 3 },
-      ],
+      rate: this.rate,
+      levels: this.levels,
       metrics: [
         {
           name: 'Tempo de Fechamento (SLA)',
           order: 1,
           type: MetricType.DURATION_DAYS,
           prefix: MetricPrefix.MENOR_OU_IGUAL,
+          classification: 'Tempo de Fechamento (SLA)',
           scoresByLevel: [
             { drd_level_order: 1, min_score: 30 },
             { drd_level_order: 2, min_score: 20 },
