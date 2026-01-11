@@ -3,6 +3,7 @@ import { DrdsService } from '@/modules/drds/drds.service';
 import { EvaluationsService } from '../modules/evaluations/evaluations.service';
 import { User } from '@/entities/user.entity';
 import { QuestionType } from '@/common/enums/question-type.enum';
+import { type JobPositionDefinitionDrdTopicItem, jobPositionDefinitions } from './jobPositionsData/job-positions-data-definition';
 
 @Injectable()
 export class EvaluationSeeder {
@@ -45,21 +46,25 @@ export class EvaluationSeeder {
               title: topic.name,
               order: topic.order,
               drd_topic_uuid: topic.uuid,
-              questions: topic.drdTopicItems?.map((item) => ({
-                text: item.name,
-                description: item.description,
-                type: QuestionType.RATE,
-                order: item.order,
-                is_required: true,
-                drd_topic_item_uuid: item.uuid,
-                options: [
-                  { text: '1', order: 1 },
-                  { text: '2', order: 2 },
-                  { text: '3', order: 3 },
-                  { text: '4', order: 4 },
-                  { text: '5', order: 5 },
-                ],
-              })) || [],
+              questions: topic.drdTopicItems?.map((item) => {
+                const itemDefinition = jobPositionDefinitions.find(definition => {
+                  return definition.title === drd.jobPosition?.title
+                })?.topics.find(topicDefinition => {
+                  return topicDefinition.name === topic.name
+                })?.drdTopicItems.find(itemDefinition => {
+                  return itemDefinition.name === item.name;
+                });
+                
+                return {
+                  text: item.name,
+                  description: (itemDefinition as JobPositionDefinitionDrdTopicItem)?.description,
+                  type: QuestionType.RATE,
+                  order: item.order,
+                  is_required: true,
+                  drd_topic_item_uuid: item.uuid,
+                  options: null,
+                };
+              }) || [],
             })) || [],
           },
         };
