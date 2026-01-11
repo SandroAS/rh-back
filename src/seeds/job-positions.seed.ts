@@ -23,7 +23,6 @@ export class JobPositionsSeed {
 
     const genericPositions: Partial<CreateJobPositionDto>[] = [
       // --- FINANCEIRO E COMPLIANCE ---
-      { title: 'Analista Financeiro', cbo_code: '2522-10', base_salary: 0, description: 'Análise e planejamento de fluxo de caixa e contas.' },
       { title: 'Assistente de Compliance', cbo_code: '2522-10', base_salary: 0, description: 'Suporte na garantia de normas legais e regulamentares.' },
       { title: 'Assistente Financeiro', cbo_code: '4110-10', base_salary: 0, description: 'Rotinas operacionais financeiras e contas a pagar/receber.' },
       { title: 'Gerente Financeiro', cbo_code: '1231-10', base_salary: 0, description: 'Gestão estratégica das finanças corporativas.' },
