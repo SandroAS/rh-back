@@ -50,11 +50,13 @@ export default {
       drdTopicItems: [
         {
           name: 'Contribuição nas métricas organizacionais',
+          description: 'Avalie como o colaborador contribui para o alcance das metas globais da empresa e OKRs do time.',
           order: 1,
           scoresByLevel: Array.from({ length: 9 }, (_, i) => ({ drd_level_order: i + 1, min_score: Math.min(5, 2 + Math.floor(i / 2)) })),
         },
         {
           name: 'Zelo pela cultura da organização',
+          description: 'O colaborador age como embaixador da cultura, promovendo os valores e rituais da empresa?',
           order: 2,
           scoresByLevel: [
             { drd_level_order: 1, min_score: 3 }, { drd_level_order: 2, min_score: 3 }, { drd_level_order: 3, min_score: 4 },
@@ -70,6 +72,7 @@ export default {
       drdTopicItems: [
         {
           name: 'Sourcing / Hunting (Busca Ativa)',
+          description: 'Capacidade de identificar talentos passivos utilizando ferramentas avançadas e estratégias de busca.',
           order: 1,
           scoresByLevel: [
             { drd_level_order: 1, min_score: 2 }, { drd_level_order: 2, min_score: 3 }, { drd_level_order: 3, min_score: 3 },
@@ -79,6 +82,7 @@ export default {
         },
         {
           name: 'Entrevista Técnica e Avaliação de Soft Skills',
+          description: 'Habilidade em conduzir entrevistas profundas, avaliando fit cultural e competências comportamentais.',
           order: 2,
           scoresByLevel: [
             { drd_level_order: 1, min_score: 2 }, { drd_level_order: 2, min_score: 2 }, { drd_level_order: 3, min_score: 3 },
@@ -88,6 +92,7 @@ export default {
         },
         {
           name: 'Análise de Tech Stack e Ecossistema Tech',
+          description: 'Avaliação da compreensão do ecossistema tecnológico e capacidade de recomendar soluções adequadas para diferentes perfis.',
           order: 3,
           scoresByLevel: [
             { drd_level_order: 1, min_score: 1 }, { drd_level_order: 2, min_score: 2 }, { drd_level_order: 3, min_score: 2 },
@@ -103,6 +108,7 @@ export default {
       drdTopicItems: [
         {
           name: 'Conformidade com LGPD e Ética no Recrutamento',
+          description: 'O colaborador segue rigorosamente as normas de proteção de dados pessoais e respeita a ética profissional no processo de recrutamento.',
           order: 1,
           scoresByLevel: [
             { drd_level_order: 1, min_score: 4 }, { drd_level_order: 2, min_score: 4 }, { drd_level_order: 3, min_score: 5 },
@@ -112,6 +118,7 @@ export default {
         },
         {
           name: 'Confiabilidade de Dados no ATS',
+          description: 'A precisão e segurança dos dados no sistema de gerenciamento de talentos garantem a confidencialidade e integridade das informações.',
           order: 2,
           scoresByLevel: [
             { drd_level_order: 1, min_score: 3 }, { drd_level_order: 2, min_score: 4 }, { drd_level_order: 3, min_score: 4 },
@@ -127,6 +134,7 @@ export default {
       drdTopicItems: [
         {
           name: 'Employer Branding e Atração de Talentos',
+          description: 'Avalie a capacidade do colaborador em construir e manter uma reputação positiva dentro e fora da empresa, atraindo e retenendo talentos de forma eficiente.',
           order: 1,
           scoresByLevel: [
             { drd_level_order: 1, min_score: 1 }, { drd_level_order: 2, min_score: 2 }, { drd_level_order: 3, min_score: 2 },
@@ -142,6 +150,7 @@ export default {
       drdTopicItems: [
         {
           name: 'Experiência do Candidato (Candidate NPS)',
+          description: 'Avalie a satisfação dos candidatos durante o processo de recrutamento, indicando a qualidade do atendimento e a experiência do candidato.',
           order: 1,
           scoresByLevel: [
             { drd_level_order: 1, min_score: 3 }, { drd_level_order: 2, min_score: 3 }, { drd_level_order: 3, min_score: 4 },
@@ -172,6 +181,7 @@ export default {
       drdTopicItems: [
         {
           name: 'Planejamento e Forecast de Contratações',
+          description: 'Avalie a capacidade do colaborador em planejar e gerenciar o crescimento do time de recrutamento, garantindo a sustentabilidade e a qualidade do processo.',
           order: 1,
           scoresByLevel: [
             { drd_level_order: 1, min_score: 1 }, { drd_level_order: 2, min_score: 1 }, { drd_level_order: 3, min_score: 1 },
@@ -187,6 +197,7 @@ export default {
       drdTopicItems: [
         {
           name: 'Adoção de Novas Tecnologias de Seleção e IA',
+          description: 'Avalie a capacidade do colaborador em inovar no desenvolvimento de produtos, utilizando tecnologias e metodologias atuais para melhorar o processo de recrutamento.',
           order: 1,
           scoresByLevel: [
             { drd_level_order: 1, min_score: 1 }, { drd_level_order: 2, min_score: 1 }, { drd_level_order: 3, min_score: 1 },

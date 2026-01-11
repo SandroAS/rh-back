@@ -4,6 +4,7 @@ import { SectorsSeed } from '@/seeds/sectors.seed';
 import { JobLevelsGroupsSeed } from '@/seeds/job-levels-groups.seed';
 import { JobPositionsSeed } from '@/seeds/job-positions.seed';
 import { DRDsSeed } from '@/seeds/drds.seed';
+import { EvaluationSeeder } from '@/seeds/evaluation.seed';
 
 @Injectable()
 export class AccountSeedsService {
@@ -15,6 +16,7 @@ export class AccountSeedsService {
     private readonly jobLevelsGroupsSeed: JobLevelsGroupsSeed,
     private readonly jobPositionsSeed: JobPositionsSeed,
     private readonly drdsSeed: DRDsSeed,
+    private readonly evaluationSeeder: EvaluationSeeder,
   ) {}
 
   /**
@@ -41,6 +43,8 @@ export class AccountSeedsService {
       await this.jobPositionsSeed.run(accountId, defaultGroupId);
 
       await this.drdsSeed.seed(accountId, user);
+
+      await this.evaluationSeeder.run(accountId, user);
       
       this.logger.log(`Seed de setup inicial completo com sucesso para a conta ID: ${accountId}.`);
     } catch (error) {

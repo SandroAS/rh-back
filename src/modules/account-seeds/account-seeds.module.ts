@@ -10,6 +10,8 @@ import { JobPositionsSeed } from '@/seeds/job-positions.seed';
 import { JobLevelsGroupsSeed } from '@/seeds/job-levels-groups.seed';
 import { SectorsSeed } from '@/seeds/sectors.seed';
 import { DRDsSeed } from '@/seeds/drds.seed';
+import { EvaluationSeeder } from '@/seeds/evaluation.seed';
+import { EvaluationsModule } from '../evaluations/evaluations.module';
 
 @Module({
   imports: [
@@ -18,6 +20,7 @@ import { DRDsSeed } from '@/seeds/drds.seed';
     JobPositionsLevelsGroupsModule,
     SectorsModule,
     DrdsModule,
+    EvaluationsModule,
   ],
   providers: [
     AccountSeedsService, 
@@ -26,6 +29,7 @@ import { DRDsSeed } from '@/seeds/drds.seed';
     JobLevelsGroupsSeed,
     SectorsSeed,
     DRDsSeed,
+    EvaluationSeeder,
   ],
   exports: [AccountSeedsService]
 })

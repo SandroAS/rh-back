@@ -1,7 +1,6 @@
 import { CreateJobPositionDto } from '@/modules/job-positions/dtos/create-job-position.dto';
 import { JobPositionService } from '@/modules/job-positions/job-positions.service';
 import { Injectable, Logger } from '@nestjs/common';
-import techRecuiterSeed from './jobPositionsData/tech-recuiter.seed';
 import { jobPositionDefinitions } from './jobPositionsData/job-positions-data-definition';
 
 @Injectable()
