@@ -2,6 +2,7 @@ import { CreateJobPositionDto } from '@/modules/job-positions/dtos/create-job-po
 import { JobPositionService } from '@/modules/job-positions/job-positions.service';
 import { Injectable, Logger } from '@nestjs/common';
 import techRecuiterSeed from './jobPositionsData/tech-recuiter.seed';
+import { jobPositionDefinitions } from './jobPositionsData/job-positions-data-definition';
 
 @Injectable()
 export class JobPositionsSeed {
@@ -14,9 +15,15 @@ export class JobPositionsSeed {
 
     this.logger.log(`Populando cargos para conta ID: ${accountId}...`);
 
-    const defaultPositions: Partial<CreateJobPositionDto>[] = [
+    const definitionsAsPositions: Partial<CreateJobPositionDto>[] = jobPositionDefinitions.map(d => ({
+      title: d.title,
+      cbo_code: d.cbo_code,
+      base_salary: d.base_salary || 0,
+      description: d.description,
+    }));
+
+    const genericPositions: Partial<CreateJobPositionDto>[] = [
       // --- RECURSOS HUMANOS ---
-      { title: techRecuiterSeed.title, cbo_code: techRecuiterSeed.cbo_code, base_salary: techRecuiterSeed.base_salary, description: techRecuiterSeed.description },
       { title: 'Assistente de Departamento Pessoal', cbo_code: '4110-30', base_salary: 0, description: 'Suporte em rotinas de admissão, demissão e folha.' },
       { title: 'Coordenadora de RH', cbo_code: '1232-05', base_salary: 0, description: 'Coordenação estratégica da área de recursos humanos.' },
 
@@ -74,12 +81,14 @@ export class JobPositionsSeed {
       { title: 'Analista de Dados', cbo_code: '2112-10', base_salary: 0, description: 'Processamento e visualização estratégica de dados.' },
     ];
 
-    for (const positionDto of defaultPositions) {
+    const allPositions = [...definitionsAsPositions, ...genericPositions];
+
+    for (const positionDto of allPositions) {
       try {
         const finalDto = {
           ...positionDto,
           job_positions_levels_group_id: defaultGroupId,
-          base_salary: 0,
+          base_salary: positionDto.base_salary || 0,
         } as CreateJobPositionDto;
 
         await this.jobPositionService.createWithAccountId(finalDto, accountId);

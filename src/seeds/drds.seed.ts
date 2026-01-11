@@ -1,30 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DrdsService } from '@/modules/drds/drds.service';
 import { JobPositionService } from '@/modules/job-positions/job-positions.service';
 import { User } from '@/entities/user.entity';
-import { MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
 import { CreateDRDLevelDto } from '@/modules/drd-levels/dtos/create-drd-level.dto';
-import { CreateDRDMetricDto } from '@/modules/drd-metrics/dtos/create-drd-metric.dto';
-import { CreateDRDTopicDto } from '@/modules/drd-topics/dtos/create-drd-topic.dto';
-import techRecuiterSeed from './jobPositionsData/tech-recuiter.seed';
-
-interface DRDSeedDefinition {
-  jobPositionTitle: string;
-  rate: number;
-  levels: CreateDRDLevelDto[];
-  metrics: CreateDRDMetricDto[];
-  topics: CreateDRDTopicDto[];
-}
+import { jobPositionDefinitions } from './jobPositionsData/job-positions-data-definition';
 
 @Injectable()
 export class DRDsSeed {
+  private readonly logger = new Logger(DRDsSeed.name);
+
   constructor(
     private readonly drdsService: DrdsService,
     private readonly jobPositionService: JobPositionService,
   ) {}
 
-  private readonly rate: number = 5;
-  private readonly levels: CreateDRDLevelDto[] = [
+  private readonly defaultLevels: CreateDRDLevelDto[] = [
     { name: 'Junior I', order: 1 },
     { name: 'Junior II', order: 2 },
     { name: 'Junior III', order: 3 },
@@ -36,43 +26,46 @@ export class DRDsSeed {
     { name: 'Sênior III', order: 9 },
   ];
 
-  private readonly drdDefinitions: DRDSeedDefinition[] = [
-    {
-      jobPositionTitle: techRecuiterSeed.title,
-      rate: this.rate,
-      levels: this.levels,
-      metrics: techRecuiterSeed.metrics,
-      topics: techRecuiterSeed.topics,
-    },
-  ];
-
   async seed(accountId: number, user: User) {
-    console.log(`[SEED] Iniciando criação de DRDs para a conta ${accountId}...`);
+    this.logger.log(`Iniciando criação de DRDs para a conta ${accountId}...`);
 
     try {
       const jobPositions = await this.jobPositionService.findAllWithAccountId(accountId);
 
-      for (const config of this.drdDefinitions) {
-        const jobPosition = jobPositions.find(jp => jp.title === config.jobPositionTitle);
+      for (const definition of jobPositionDefinitions) {
+        // Ignora definições de cargos que não possuem métricas ou tópicos configurados para DRD
+        if (!definition.metrics?.length && !definition.topics?.length) {
+          continue;
+        }
+
+        const jobPosition = jobPositions.find(jp => jp.title === definition.title);
 
         if (!jobPosition) {
-          console.warn(`[SEED] Cargo "${config.jobPositionTitle}" não encontrado na conta ${accountId}.`);
+          this.logger.warn(`Cargo "${definition.title}" não encontrado. Pulando DRD.`);
           continue;
         }
 
         const createDto = {
           job_position_uuid: jobPosition.uuid,
-          rate: config.rate,
-          levels: config.levels,
-          metrics: config.metrics,
-          topics: config.topics,
+          rate: 5,
+          levels: this.defaultLevels,
+          metrics: definition.metrics || [],
+          topics: definition.topics || [],
         };
 
-        await this.drdsService.createByAccountId(createDto, accountId, user);
-        console.log(`[SEED] DRD para "${config.jobPositionTitle}" criado.`);
+        try {
+          await this.drdsService.createByAccountId(createDto, accountId, user);
+          this.logger.log(`DRD para "${definition.title}" criado com sucesso.`);
+        } catch (err) {
+          if (err.message.includes('already exists')) {
+            this.logger.debug(`DRD para "${definition.title}" já existe.`);
+          } else {
+            this.logger.error(`Erro ao criar DRD para "${definition.title}": ${err.message}`);
+          }
+        }
       }
     } catch (error) {
-      console.error(`[SEED] Erro crítico no processo de seed:`, error.message);
+      this.logger.error(`Erro crítico no processo de seed de DRDs: ${error.message}`);
     }
   }
 }
