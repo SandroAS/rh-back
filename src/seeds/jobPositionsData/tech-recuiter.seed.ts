@@ -1,4 +1,5 @@
 import { MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
+import { JobPositionDefinition } from './job-positions-data-definition';
 
 export default {
   title: 'Tech Recruiter',
@@ -208,4 +209,4 @@ export default {
       ],
     },
   ],
-};
+} as JobPositionDefinition;
