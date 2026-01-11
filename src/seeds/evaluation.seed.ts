@@ -4,6 +4,7 @@ import { EvaluationsService } from '../modules/evaluations/evaluations.service';
 import { User } from '@/entities/user.entity';
 import { QuestionType } from '@/common/enums/question-type.enum';
 import { jobPositionDefinitions } from './jobPositionsData/job-positions-data-definition';
+import { CreateEvaluationDto } from '@/modules/evaluations/dtos/create-evaluation.dto';
 
 @Injectable()
 export class EvaluationSeeder {
@@ -27,11 +28,22 @@ export class EvaluationSeeder {
 
       for (const drd of drds) {
         const jobTitle = drd.jobPosition?.title;
+        
+        if (!jobTitle) {
+          this.logger.warn(`DRD sem cargo associado. Pulando...`);
+          continue;
+        }
+
         this.logger.log(`Gerando avaliação para: ${jobTitle}`);
 
-        const jobDef = jobPositionDefinitions.find(d => d.title === jobTitle);
+        const jobPositionDef = jobPositionDefinitions.find(d => d.title === jobTitle);
 
-        const createEvaluationDto = {
+        if (!jobPositionDef || !jobPositionDef.topics || jobPositionDef.topics.length === 0) {
+          this.logger.warn(`Definição não encontrada ou sem tópicos para o cargo ${jobTitle}. Pulando...`);
+          continue;
+        }
+
+        const createEvaluationDto: CreateEvaluationDto = {
           name: `Avaliação de Desempenho - ${jobTitle}`,
           description: `Modelo automático baseado no DRD de ${jobTitle}.`,
           rate: 5,
@@ -41,7 +53,7 @@ export class EvaluationSeeder {
             name: `Formulário: ${jobTitle}`,
             description: 'Avalie o nível de entrega para cada competência.',
             topics: drd.topics?.map((topic) => {
-              const topicDef = jobDef?.topics.find(t => t.name === topic.name);
+              const topicDef = jobPositionDef.topics.find(t => t.name === topic.name);
 
               return {
                 title: topic.name,
@@ -49,15 +61,15 @@ export class EvaluationSeeder {
                 drd_topic_uuid: topic.uuid,
                 questions: topic.drdTopicItems?.map((item) => {
                   const itemDef = topicDef?.drdTopicItems.find(i => i.name === item.name);
-                  
+
                   return {
-                    text: item.name,
+                    title: item.name,
                     description: itemDef?.description || item.description,
                     type: QuestionType.RATE,
                     order: item.order,
                     is_required: true,
                     drd_topic_item_uuid: item.uuid,
-                    options: null,
+                    form_id: 0,
                   };
                 }) || [],
               };
@@ -66,7 +78,7 @@ export class EvaluationSeeder {
         };
 
         await this.evaluationsService.createByAccountId(
-          createEvaluationDto as any,
+          createEvaluationDto,
           accountId,
           adminUser,
         );

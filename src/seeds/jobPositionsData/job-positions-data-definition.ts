@@ -26,7 +26,7 @@ export interface JobPositionDefinitionMetric {
 
 export interface JobPositionDefinitionDrdTopicItem {
   name: string;
-  description: string;
+  description?: string;
   order: number;
   scoresByLevel: {
     drd_level_order: number;
@@ -36,9 +36,9 @@ export interface JobPositionDefinitionDrdTopicItem {
 
 export interface JobPositionDefinitionTopic {
   name: string;
-  description: string;
+  description?: string;
   order: number;
-  drd_topic_uuid: string;
+  drd_topic_uuid?: string;
   drdTopicItems: JobPositionDefinitionDrdTopicItem[];
 }
 

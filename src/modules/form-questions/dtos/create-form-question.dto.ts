@@ -6,7 +6,11 @@ import { QuestionType } from '@/common/enums/question-type.enum';
 export class CreateFormQuestionDto {
   @IsNotEmpty()
   @IsString()
-  readonly text: string;
+  readonly title: string;
+
+  @IsOptional()
+  @IsString()
+  readonly description?: string | null;
 
   @IsNotEmpty()
   @IsEnum(QuestionType)
@@ -26,10 +30,6 @@ export class CreateFormQuestionDto {
   @ValidateNested({ each: true })
   @Type(() => CreateFormQuestionOptionDto)
   readonly options?: CreateFormQuestionOptionDto[];
-  
-  @IsNotEmpty()
-  @IsInt()
-  readonly form_id: number;
 
   @IsOptional()
   @IsString()
