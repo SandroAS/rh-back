@@ -8,6 +8,7 @@ import assistenteFinanceiroSeed from './assistente-financeiro.seed';
 import gerenteFinanceiroSeed from './gerente-financeiro.seed';
 import assistenteCobrancasSeed from './assistente-cobrancas.seed';
 import analistaMarketingDigitalSeed from './analista-marketing-digital.seed';
+import coordenadorMarketingSeed from './coordenador-marketing.seed';
 
 export const jobPositionDefinitions = [
   techRecuiterSeed,
@@ -19,6 +20,7 @@ export const jobPositionDefinitions = [
   gerenteFinanceiroSeed,
   assistenteCobrancasSeed,
   analistaMarketingDigitalSeed,
+  coordenadorMarketingSeed,
 ];
 
 export interface JobPositionDefinitionMetric {
