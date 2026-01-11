@@ -9,10 +9,6 @@ export class CreateEvaluationApplicationDto {
   readonly evaluation_uuid: string;
 
   @IsNotEmpty()
-  @IsEnum(EvaluationType)
-  readonly type: EvaluationType;
-
-  @IsNotEmpty()
   @IsEnum(EvaluationApplicationStatus)
   readonly status: EvaluationApplicationStatus;
 
