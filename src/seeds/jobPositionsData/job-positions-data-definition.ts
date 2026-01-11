@@ -1,10 +1,12 @@
 import { MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
 import techRecuiterSeed from './tech-recuiter.seed';
 import assistenteDepartamentoPessoalSeed from './assistente-departamento-pessoal.seed';
+import coordenadorRhSeed from './coordenador-rh.seed';
 
 export const jobPositionDefinitions = [
   techRecuiterSeed,
   assistenteDepartamentoPessoalSeed,
+  coordenadorRhSeed,
 ];
 
 export interface JobPositionDefinitionMetric {

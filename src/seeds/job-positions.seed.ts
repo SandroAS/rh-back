@@ -22,9 +22,6 @@ export class JobPositionsSeed {
     }));
 
     const genericPositions: Partial<CreateJobPositionDto>[] = [
-      // --- RECURSOS HUMANOS ---
-      { title: 'Coordenadora de RH', cbo_code: '1232-05', base_salary: 0, description: 'Coordenação estratégica da área de recursos humanos.' },
-
       // --- FINANCEIRO E COMPLIANCE ---
       { title: 'Analista Financeiro', cbo_code: '2522-10', base_salary: 0, description: 'Análise e planejamento de fluxo de caixa e contas.' },
       { title: 'Assistente de Compliance', cbo_code: '2522-10', base_salary: 0, description: 'Suporte na garantia de normas legais e regulamentares.' },
