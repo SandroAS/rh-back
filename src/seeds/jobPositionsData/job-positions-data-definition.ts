@@ -17,6 +17,8 @@ import analistaAtendimentoReembolsoSeed from './analista-atendimento-reembolso.s
 import customerSuccessSeed from './customer-success.seed';
 import supervisorAtendimentoClienteSeed from './supervisor-atendimento-cliente.seed';
 import suporteTecnicoSeed from './suporte-tecnico.seed';
+import assistenteAdministrativoSeed from './assistente-administrativo.seed';
+import gerenteAdministrativoSeed from './gerente-administrativo.seed';
 
 export const jobPositionDefinitions = [
   techRecuiterSeed,
@@ -37,6 +39,8 @@ export const jobPositionDefinitions = [
   customerSuccessSeed,
   supervisorAtendimentoClienteSeed,
   suporteTecnicoSeed,
+  assistenteAdministrativoSeed,
+  gerenteAdministrativoSeed,
 ];
 
 export interface JobPositionDefinitionMetric {

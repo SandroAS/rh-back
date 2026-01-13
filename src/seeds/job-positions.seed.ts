@@ -23,8 +23,6 @@ export class JobPositionsSeed {
 
     const genericPositions: Partial<CreateJobPositionDto>[] = [
       // --- ADMINISTRATIVO ---
-      { title: 'Assistente Administrativo', cbo_code: '4110-10', base_salary: 0, description: 'Apoio nas rotinas administrativas diárias.' },
-      { title: 'Gerente Administrativo', cbo_code: '1210-05', base_salary: 0, description: 'Gestão de processos administrativos e infraestrutura.' },
       { title: 'Auxiliar de Limpeza', cbo_code: '5143-20', base_salary: 0, description: 'Manutenção e higienização das dependências.' },
       { title: 'Secretaria Executiva', cbo_code: '2523-05', base_salary: 0, description: 'Apoio direto à diretoria e gestão de agendas.' },
 
