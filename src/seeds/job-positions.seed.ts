@@ -22,34 +22,8 @@ export class JobPositionsSeed {
     }));
 
     const genericPositions: Partial<CreateJobPositionDto>[] = [
-      // --- ADMINISTRATIVO ---
-      { title: 'Auxiliar de Limpeza', cbo_code: '5143-20', base_salary: 0, description: 'Manutenção e higienização das dependências.' },
-      { title: 'Secretaria Executiva', cbo_code: '2523-05', base_salary: 0, description: 'Apoio direto à diretoria e gestão de agendas.' },
-
-      // --- COMERCIAL ---
-      { title: 'Executivo Comercial', cbo_code: '2531-15', base_salary: 0, description: 'Fechamento de novos negócios e parcerias.' },
-      { title: 'SDR', cbo_code: '', base_salary: 0, description: 'Sales Development Representative - Qualificação de leads.' },
-      { title: 'Supervisor Comercial', cbo_code: '1423-15', base_salary: 0, description: 'Gestão de metas e equipe de vendas.' },
-      { title: 'Consultor Comercial', cbo_code: '3541-20', base_salary: 0, description: 'Consultoria e vendas consultivas de serviços.' },
-
-      // --- ENGENHARIA E DADOS (TECH) ---
-      { title: 'Data Analyst', cbo_code: '2112-10', base_salary: 0, description: 'Análise estatística e modelagem de dados.' },
-      { title: 'Team Leader', cbo_code: '', base_salary: 0, description: 'Liderança de squad e gestão de pessoas em tecnologia.' },
-      { title: 'DevOps Engineer', cbo_code: '2124-05', base_salary: 0, description: 'Infraestrutura, CI/CD e automação.' },
-      { title: 'Software Engineer', cbo_code: '2124-05', base_salary: 0, description: 'Desenvolvimento de software e arquitetura.' },
-      { title: 'Lead Software Engineer', cbo_code: '', base_salary: 0, description: 'Liderança técnica sênior em engenharia de software.' },
-      { title: 'Tech Lead', cbo_code: '', base_salary: 0, description: 'Referência técnica para o time de desenvolvimento.' },
-      { title: 'Quality Assurance Analyst', cbo_code: '2124-20', base_salary: 0, description: 'Garantia de qualidade e testes de software.' },
-      { title: 'Product Owner', cbo_code: '', base_salary: 0, description: 'Gestão do backlog e visão de produto.' },
-      { title: 'Software Architect', cbo_code: '2124-05', base_salary: 0, description: 'Desenho de arquiteturas escaláveis de software.' },
-      { title: 'Ux Analyst', cbo_code: '2124-05', base_salary: 0, description: 'Análise de experiência do usuário.' },
-      { title: 'UX Lead', cbo_code: '', base_salary: 0, description: 'Liderança de design e experiência do usuário.' },
-      { title: 'Developer', cbo_code: '2124-05', base_salary: 0, description: 'Desenvolvimento e manutenção de aplicações.' },
-
-      // --- PROCESSOS E OPERAÇÕES ---
-      { title: 'Analista de Operações e Comercial', cbo_code: '2521-05', base_salary: 0, description: 'Otimização de fluxos entre as áreas comercial e operacional.' },
-      { title: 'Analista de Processos', cbo_code: '2521-05', base_salary: 0, description: 'Mapeamento e melhoria de processos internos.' },
-      { title: 'Analista de Dados', cbo_code: '2112-10', base_salary: 0, description: 'Processamento e visualização estratégica de dados.' },
+      // EXEMPLOS DE CARGOS GENÉRICOS
+      // { title: 'Analista de Dados', cbo_code: '2112-10', base_salary: 0, description: 'Processamento e visualização estratégica de dados.' },
     ];
 
     const allPositions = [...definitionsAsPositions, ...genericPositions];

@@ -19,6 +19,26 @@ import supervisorAtendimentoClienteSeed from './supervisor-atendimento-cliente.s
 import suporteTecnicoSeed from './suporte-tecnico.seed';
 import assistenteAdministrativoSeed from './assistente-administrativo.seed';
 import gerenteAdministrativoSeed from './gerente-administrativo.seed';
+import auxiliarLimpezaSeed from './auxiliar-limpeza.seed';
+import secretarioExecutivoSeed from './secretario-executivo.seed';
+import sdrSeed from './sdr.seed';
+import supervisorComercialSeed from './supervisor-comercial.seed';
+import consultorComercialSeed from './consultor-comercial.seed';
+import dataAnalystSeed from './data-analyst.seed';
+import teamLeaderSeed from './team-leader.seed';
+import devopsSeed from './devops.seed';
+import softwareEngineerSeed from './software-engineer.seed';
+import leadSoftwareEngineerSeed from './lead-software-engineer.seed';
+import techLeadSeed from './tech-lead.seed';
+import qualityAssuranceAnalystSeed from './quality-assurance-analyst.seed';
+import productOwnerSeed from './product-owner.seed';
+import softwareArchitectSeed from './software-architect.seed';
+import uxAnalystSeed from './ux-analyst.seed';
+import uxLeadSeed from './ux-lead.seed';
+import developerSeed from './developer.seed';
+import analistaOperacoesComercialSeed from './analista-operacoes-comercial.seed';
+import analistaProcessosSeed from './analista-processos.seed';
+import analistaDadosSeed from './analista-dados.seed';
 
 export const jobPositionDefinitions = [
   techRecuiterSeed,
@@ -41,6 +61,26 @@ export const jobPositionDefinitions = [
   suporteTecnicoSeed,
   assistenteAdministrativoSeed,
   gerenteAdministrativoSeed,
+  auxiliarLimpezaSeed,
+  secretarioExecutivoSeed,
+  sdrSeed,
+  supervisorComercialSeed,
+  consultorComercialSeed,
+  dataAnalystSeed,
+  teamLeaderSeed,
+  devopsSeed,
+  softwareEngineerSeed,
+  leadSoftwareEngineerSeed,
+  techLeadSeed,
+  qualityAssuranceAnalystSeed,
+  productOwnerSeed,
+  softwareArchitectSeed,
+  uxAnalystSeed,
+  uxLeadSeed,
+  developerSeed,
+  analistaOperacoesComercialSeed,
+  analistaProcessosSeed,
+  analistaDadosSeed,
 ];
 
 export interface JobPositionDefinitionMetric {
