@@ -8,12 +8,14 @@ import { User } from '@/entities/user.entity';
 import { CurrentUserMiddleware } from './middlewares/current-user.middlewares';
 import { RolesModule } from '../roles/roles.module';
 import { MinioModule } from '@/minio/minio.module';
+import { JobPositionsModule } from '../job-positions/job-positions.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     RolesModule,
-    MinioModule
+    MinioModule,
+    JobPositionsModule
   ],
   controllers: [UsersController],
   providers: [

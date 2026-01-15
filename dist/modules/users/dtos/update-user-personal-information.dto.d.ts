@@ -5,4 +5,5 @@ export declare class UpdateUserPersonalInformationDto {
     cellphone?: string;
     cpf?: string;
     gender?: Gender;
+    job_position_uuid?: string;
 }

@@ -22,12 +22,14 @@ const util_1 = require("util");
 const roles_service_1 = require("../roles/roles.service");
 const minio_service_1 = require("../../minio/minio.service");
 const user_avatar_response_dto_1 = require("./dtos/user-avatar-response.dto");
+const job_positions_service_1 = require("../job-positions/job-positions.service");
 const scrypt = (0, util_1.promisify)(crypto_1.scrypt);
 let UsersService = class UsersService {
-    constructor(userRepository, rolesService, minioService) {
+    constructor(userRepository, rolesService, minioService, jobPositionsService) {
         this.userRepository = userRepository;
         this.rolesService = rolesService;
         this.minioService = minioService;
+        this.jobPositionsService = jobPositionsService;
     }
     async create(roleName, controllerProfile, googleProfile, manager) {
         const userRepository = manager ? manager.getRepository(user_entity_1.User) : this.userRepository;
@@ -305,8 +307,19 @@ let UsersService = class UsersService {
         if (newProfileObjectName) {
             newImageUrl = await this.minioService.getPresignedUrl(newProfileObjectName);
         }
+        let jobPositionId;
+        if (body.job_position_uuid) {
+            const jobPosition = await this.jobPositionsService.findByUuid(body.job_position_uuid);
+            if (!jobPosition) {
+                throw new common_1.NotFoundException('Cargo não encontrado ao tentar atualizar informações pessoais.');
+            }
+            jobPositionId = jobPosition.id;
+        }
         user.profile_img_url = newProfileObjectName;
         Object.assign(user, body);
+        if (jobPositionId !== undefined) {
+            user.job_position_id = jobPositionId;
+        }
         await this.userRepository.save(user);
         return { profile_img_url: newImageUrl };
     }
@@ -347,6 +360,7 @@ exports.UsersService = UsersService = __decorate([
     __param(0, (0, typeorm_2.InjectRepository)(user_entity_1.User)),
     __metadata("design:paramtypes", [typeorm_1.Repository,
         roles_service_1.RolesService,
-        minio_service_1.MinioService])
+        minio_service_1.MinioService,
+        job_positions_service_1.JobPositionService])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map

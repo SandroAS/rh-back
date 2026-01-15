@@ -40,4 +40,9 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateUserPersonalInformationDto.prototype, "gender", void 0);
+__decorate([
+    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUserPersonalInformationDto.prototype, "job_position_uuid", void 0);
 //# sourceMappingURL=update-user-personal-information.dto.js.map

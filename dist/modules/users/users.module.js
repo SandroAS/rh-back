@@ -15,6 +15,7 @@ const user_entity_1 = require("../../entities/user.entity");
 const current_user_middlewares_1 = require("./middlewares/current-user.middlewares");
 const roles_module_1 = require("../roles/roles.module");
 const minio_module_1 = require("../../minio/minio.module");
+const job_positions_module_1 = require("../job-positions/job-positions.module");
 let UsersModule = class UsersModule {
     configure(consumer) {
         consumer.apply(current_user_middlewares_1.CurrentUserMiddleware).forRoutes('*');
@@ -26,7 +27,8 @@ exports.UsersModule = UsersModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.User]),
             roles_module_1.RolesModule,
-            minio_module_1.MinioModule
+            minio_module_1.MinioModule,
+            job_positions_module_1.JobPositionsModule
         ],
         controllers: [users_controller_1.UsersController],
         providers: [

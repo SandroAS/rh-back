@@ -11,11 +11,13 @@ import { UpdateUserPersonalInformationResponseDto } from './dtos/update-user-per
 import { UpdateUserPasswordDto } from './dtos/update-user-password.dto';
 import { CreateAccountUserDto } from '../accounts/dtos/create-account-user.dto';
 import { UserAvatarResponseDto } from './dtos/user-avatar-response.dto';
+import { JobPositionService } from '../job-positions/job-positions.service';
 export declare class UsersService {
     private userRepository;
     private readonly rolesService;
     private readonly minioService;
-    constructor(userRepository: Repository<User>, rolesService: RolesService, minioService: MinioService);
+    private readonly jobPositionsService;
+    constructor(userRepository: Repository<User>, rolesService: RolesService, minioService: MinioService, jobPositionsService: JobPositionService);
     create(roleName: RolesTypes, controllerProfile?: AuthSignupDto, googleProfile?: GoogleProfileParsed, manager?: EntityManager): Promise<User>;
     createSecondaryUser(roleName: RolesTypes, accountUser: CreateAccountUserDto, account_id: number, manager?: EntityManager, job_position_id?: number): Promise<User>;
     findOne(id: number, relations?: string[], manager?: EntityManager): Promise<User | undefined>;

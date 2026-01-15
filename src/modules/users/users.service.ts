@@ -15,7 +15,7 @@ import { UpdateUserPersonalInformationResponseDto } from './dtos/update-user-per
 import { UpdateUserPasswordDto } from './dtos/update-user-password.dto';
 import { CreateAccountUserDto } from '../accounts/dtos/create-account-user.dto';
 import { UserAvatarResponseDto } from './dtos/user-avatar-response.dto';
-import { UserTeamResponseDto } from './dtos/user-team-response.dto';
+import { JobPositionService } from '../job-positions/job-positions.service';
 
 const scrypt = promisify(_scrypt);
 
@@ -25,7 +25,8 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private readonly rolesService: RolesService,
-    private readonly minioService: MinioService
+    private readonly minioService: MinioService,
+    private readonly jobPositionsService: JobPositionService
   ) {}
 
   async create(roleName: RolesTypes, controllerProfile?: AuthSignupDto, googleProfile?: GoogleProfileParsed, manager?: EntityManager): Promise<User> {
@@ -365,10 +366,24 @@ export class UsersService {
       newImageUrl = await this.minioService.getPresignedUrl(newProfileObjectName);
     }
 
+    // Buscar job position se job_position_uuid estiver setado
+    let jobPositionId: number | undefined;
+    if (body.job_position_uuid) {
+      const jobPosition = await this.jobPositionsService.findByUuid(body.job_position_uuid);
+      if (!jobPosition) {
+        throw new NotFoundException('Cargo não encontrado ao tentar atualizar informações pessoais.');
+      }
+      jobPositionId = jobPosition.id;
+    }
+
     // 3. Atualização do Objeto e Persistência
     user.profile_img_url = newProfileObjectName;
     Object.assign(user, body);
     
+    if (jobPositionId !== undefined) {
+      user.job_position_id = jobPositionId;
+    }
+
     await this.userRepository.save(user);
 
     return { profile_img_url: newImageUrl };
