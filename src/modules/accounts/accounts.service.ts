@@ -19,6 +19,7 @@ import { UpdateAccountUserDto } from './dtos/update-account-user-dto';
 import { RolesService } from '../roles/roles.service';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { AccountUsersResponsePaginationDto } from './dtos/account-users-response-pagination.dto';
+import { JobPositionService } from '../job-positions/job-positions.service';
 
 const scrypt = promisify(_scrypt);
 
@@ -31,6 +32,7 @@ export class AccountsService {
     private readonly minioService: MinioService,
     private readonly usersService: UsersService,
     private readonly rolesService: RolesService,
+    private readonly jobPositionsService: JobPositionService,
   ) {}
 
   async create(data: CreateAccountDto, manager?: EntityManager): Promise<Account> {
@@ -80,11 +82,21 @@ export class AccountsService {
 
       const account = await this.findOne(user.account_id, queryRunner.manager);
 
+      let jobPositionId: number | undefined;
+      if (accountUser.job_position_uuid) {
+        const jobPosition = await this.jobPositionsService.findByUuid(accountUser.job_position_uuid);
+        if (!jobPosition) {
+          throw new NotFoundException('Cargo não encontrado ao tentar cadastrar o usuário.');
+        }
+        jobPositionId = jobPosition.id;
+      }
+
       const userCreated = await this.usersService.createSecondaryUser(
         RolesTypes[accountUser.role],
         accountUser,
         account.id,
         queryRunner.manager,
+        jobPositionId,
       );
 
       await queryRunner.commitTransaction();
@@ -187,9 +199,24 @@ export class AccountsService {
       throw new NotFoundException('Usuário não encontrado ao tentar atualizar.');
     }
 
+    let jobPositionId: number | undefined;
+    if (accountUser.job_position_uuid) {
+      const jobPosition = await this.jobPositionsService.findByUuid(accountUser.job_position_uuid);
+      if (!jobPosition) {
+        throw new NotFoundException('Cargo não encontrado ao tentar atualizar o usuário.');
+      }
+      jobPositionId = jobPosition.id;
+    }
+
     Object.assign(user, accountUser);
     user.role = role;
+
+    if (jobPositionId !== undefined) {
+      user.job_position_id = jobPositionId;
+    }
+
     await this.usersService.update(user.id, { ...user });
+
     return { uuid, role: { uuid: role.uuid } };
   }
 

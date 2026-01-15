@@ -17,7 +17,7 @@ export declare class UsersService {
     private readonly minioService;
     constructor(userRepository: Repository<User>, rolesService: RolesService, minioService: MinioService);
     create(roleName: RolesTypes, controllerProfile?: AuthSignupDto, googleProfile?: GoogleProfileParsed, manager?: EntityManager): Promise<User>;
-    createSecondaryUser(roleName: RolesTypes, accountUser: CreateAccountUserDto, account_id: number, manager?: EntityManager): Promise<User>;
+    createSecondaryUser(roleName: RolesTypes, accountUser: CreateAccountUserDto, account_id: number, manager?: EntityManager, job_position_id?: number): Promise<User>;
     findOne(id: number, relations?: string[], manager?: EntityManager): Promise<User | undefined>;
     findByEmail(email: string, relations?: string[]): Promise<User | undefined>;
     findByUuid(uuid: string, select?: string[]): Promise<User>;

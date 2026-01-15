@@ -16,6 +16,7 @@ const system_modules_module_1 = require("../system-modules/system-modules.module
 const minio_module_1 = require("../../minio/minio.module");
 const users_module_1 = require("../users/users.module");
 const roles_module_1 = require("../roles/roles.module");
+const job_positions_module_1 = require("../job-positions/job-positions.module");
 let AccountsModule = class AccountsModule {
 };
 exports.AccountsModule = AccountsModule;
@@ -27,6 +28,7 @@ exports.AccountsModule = AccountsModule = __decorate([
             minio_module_1.MinioModule,
             users_module_1.UsersModule,
             roles_module_1.RolesModule,
+            job_positions_module_1.JobPositionsModule,
         ],
         providers: [accounts_service_1.AccountsService],
         controllers: [accounts_controller_1.AccountsController],

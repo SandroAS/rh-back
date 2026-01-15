@@ -7,4 +7,5 @@ export declare class CreateAccountUserDto {
     password: string;
     confirmPassword?: string;
     role: RolesTypes;
+    job_position_uuid?: string;
 }

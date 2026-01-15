@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsEmail, MinLength, IsOptional, MaxLength, IsEnum, ValidateIf } from 'class-validator';
+import { IsString, IsNotEmpty, IsEmail, MinLength, IsOptional, MaxLength, IsEnum, ValidateIf, IsUUID } from 'class-validator';
 import { IsCpf } from '@/common/validators/is-cpf.validator';
 import { RolesTypes } from '@/modules/roles/dtos/roles-types.dto';
 import { MatchPassword } from '@/common/validators/match-password.validator';
@@ -46,4 +46,9 @@ export class UpdateAccountUserDto {
   @IsEnum(RolesTypes, { message: 'O tipo de usuário informado é inválido.' })
   @IsNotEmpty({ message: 'O tipo de usuário é obrigatório.' })
   role: RolesTypes;
+
+  @IsUUID()
+  @IsString()
+  @IsOptional()
+  job_position_uuid?: string;
 }

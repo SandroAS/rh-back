@@ -28,14 +28,16 @@ const util_1 = require("util");
 const roles_types_dto_1 = require("../roles/dtos/roles-types.dto");
 const roles_service_1 = require("../roles/roles.service");
 const account_users_response_pagination_dto_1 = require("./dtos/account-users-response-pagination.dto");
+const job_positions_service_1 = require("../job-positions/job-positions.service");
 const scrypt = (0, util_1.promisify)(crypto_1.scrypt);
 let AccountsService = class AccountsService {
-    constructor(accountRepository, systemModuleService, minioService, usersService, rolesService) {
+    constructor(accountRepository, systemModuleService, minioService, usersService, rolesService, jobPositionsService) {
         this.accountRepository = accountRepository;
         this.systemModuleService = systemModuleService;
         this.minioService = minioService;
         this.usersService = usersService;
         this.rolesService = rolesService;
+        this.jobPositionsService = jobPositionsService;
     }
     async create(data, manager) {
         const accountRepository = manager ? manager.getRepository(account_entity_1.Account) : this.accountRepository;
@@ -74,7 +76,15 @@ let AccountsService = class AccountsService {
             const hashBuffer = (await scrypt(accountUser.password, salt, 32));
             accountUser.password = salt + '.' + hashBuffer.toString('hex');
             const account = await this.findOne(user.account_id, queryRunner.manager);
-            const userCreated = await this.usersService.createSecondaryUser(roles_types_dto_1.RolesTypes[accountUser.role], accountUser, account.id, queryRunner.manager);
+            let jobPositionId;
+            if (accountUser.job_position_uuid) {
+                const jobPosition = await this.jobPositionsService.findByUuid(accountUser.job_position_uuid);
+                if (!jobPosition) {
+                    throw new common_1.NotFoundException('Cargo não encontrado ao tentar cadastrar o usuário.');
+                }
+                jobPositionId = jobPosition.id;
+            }
+            const userCreated = await this.usersService.createSecondaryUser(roles_types_dto_1.RolesTypes[accountUser.role], accountUser, account.id, queryRunner.manager, jobPositionId);
             await queryRunner.commitTransaction();
             return { uuid: userCreated.uuid, role: { uuid: userCreated.role.uuid } };
         }
@@ -144,8 +154,19 @@ let AccountsService = class AccountsService {
         if (!user) {
             throw new common_1.NotFoundException('Usuário não encontrado ao tentar atualizar.');
         }
+        let jobPositionId;
+        if (accountUser.job_position_uuid) {
+            const jobPosition = await this.jobPositionsService.findByUuid(accountUser.job_position_uuid);
+            if (!jobPosition) {
+                throw new common_1.NotFoundException('Cargo não encontrado ao tentar atualizar o usuário.');
+            }
+            jobPositionId = jobPosition.id;
+        }
         Object.assign(user, accountUser);
         user.role = role;
+        if (jobPositionId !== undefined) {
+            user.job_position_id = jobPositionId;
+        }
         await this.usersService.update(user.id, { ...user });
         return { uuid, role: { uuid: role.uuid } };
     }
@@ -178,6 +199,7 @@ exports.AccountsService = AccountsService = __decorate([
         system_modules_service_1.SystemModulesService,
         minio_service_1.MinioService,
         users_service_1.UsersService,
-        roles_service_1.RolesService])
+        roles_service_1.RolesService,
+        job_positions_service_1.JobPositionService])
 ], AccountsService);
 //# sourceMappingURL=accounts.service.js.map

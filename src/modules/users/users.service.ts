@@ -53,7 +53,7 @@ export class UsersService {
     return userRepository.save(user);
   }
 
-  async createSecondaryUser(roleName: RolesTypes, accountUser: CreateAccountUserDto, account_id: number, manager?: EntityManager): Promise<User> {
+  async createSecondaryUser(roleName: RolesTypes, accountUser: CreateAccountUserDto, account_id: number, manager?: EntityManager, job_position_id?: number): Promise<User> {
     const userRepository = manager ? manager.getRepository(User) : this.userRepository;
     const role = await this.rolesService.findByName(roleName);
 
@@ -62,7 +62,7 @@ export class UsersService {
     }
 
     const { email, password, name, cellphone, cpf } = accountUser;
-    const user = userRepository.create({ role, email, password, name, cellphone, cpf, account_id });
+    const user = userRepository.create({ role, email, password, name, cellphone, cpf, account_id, job_position_id });
 
     return userRepository.save(user);
   }

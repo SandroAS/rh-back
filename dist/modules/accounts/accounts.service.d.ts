@@ -12,13 +12,15 @@ import { UpdateAccountUserDto } from './dtos/update-account-user-dto';
 import { RolesService } from '../roles/roles.service';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { AccountUsersResponsePaginationDto } from './dtos/account-users-response-pagination.dto';
+import { JobPositionService } from '../job-positions/job-positions.service';
 export declare class AccountsService {
     private readonly accountRepository;
     private readonly systemModuleService;
     private readonly minioService;
     private readonly usersService;
     private readonly rolesService;
-    constructor(accountRepository: Repository<Account>, systemModuleService: SystemModulesService, minioService: MinioService, usersService: UsersService, rolesService: RolesService);
+    private readonly jobPositionsService;
+    constructor(accountRepository: Repository<Account>, systemModuleService: SystemModulesService, minioService: MinioService, usersService: UsersService, rolesService: RolesService, jobPositionsService: JobPositionService);
     create(data: CreateAccountDto, manager?: EntityManager): Promise<Account>;
     createAccountUser(accountUser: CreateAccountUserDto, user: User): Promise<{
         uuid: string;

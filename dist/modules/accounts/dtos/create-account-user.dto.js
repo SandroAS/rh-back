@@ -59,4 +59,10 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)({ message: 'O tipo de usuário é obrigatório.' }),
     __metadata("design:type", String)
 ], CreateAccountUserDto.prototype, "role", void 0);
+__decorate([
+    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateAccountUserDto.prototype, "job_position_uuid", void 0);
 //# sourceMappingURL=create-account-user.dto.js.map

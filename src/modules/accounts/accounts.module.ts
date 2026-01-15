@@ -7,6 +7,7 @@ import { SystemModulesModule } from '../system-modules/system-modules.module';
 import { MinioModule } from '@/minio/minio.module';
 import { UsersModule } from '../users/users.module';
 import { RolesModule } from '../roles/roles.module';
+import { JobPositionsModule } from '../job-positions/job-positions.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { RolesModule } from '../roles/roles.module';
     MinioModule,
     UsersModule,
     RolesModule,
+    JobPositionsModule,
   ],
   providers: [AccountsService],
   controllers: [AccountsController],
