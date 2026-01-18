@@ -175,6 +175,7 @@ export class UsersService {
     const queryBuilder = this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.role', 'role')
+      .leftJoinAndSelect('user.jobPosition', 'jobPosition')
       .where('user.account_id = :accountId', { accountId });
 
     if (searchTerm) {
@@ -254,22 +255,43 @@ export class UsersService {
     console.log(`[DEBUG - UserService] account_id final para query: ${accountIdNumber}`);
     
     try {
-      const users = await this.userRepository.find({
-        where: { account_id: accountIdNumber }, 
-        relations: [
-          'teamMembers', 
-          'teamMembers.team', 
-          'teamMembers.team.leader',
-          'teamMembers.team.teamMembers', 
-          'teamMembers.team.teamMembers.user'
-        ], 
-        select: [
-          'uuid',
-          'name',
-          'profile_img_url',
-        ],
-        loadEagerRelations: false
-      });
+      const users = await this.userRepository
+        .createQueryBuilder('user')
+        .where('user.account_id = :accountId', { accountId: accountIdNumber })
+        .leftJoinAndSelect('user.teamMembers', 'teamMembers')
+        .leftJoinAndSelect('teamMembers.team', 'team')
+        .leftJoinAndSelect('team.leader', 'leader')
+        .leftJoinAndSelect('leader.jobPosition', 'leaderJobPosition')
+        .leftJoinAndSelect('team.teamMembers', 'teamTeamMembers')
+        .leftJoinAndSelect('teamTeamMembers.user', 'teamMemberUser')
+        .leftJoinAndSelect('teamMemberUser.jobPosition', 'teamMemberJobPosition')
+        .leftJoinAndSelect('user.jobPosition', 'userJobPosition')
+        .select([
+          'user.uuid',
+          'user.name',
+          'user.profile_img_url',
+          'teamMembers.uuid',
+          'teamMembers.team_id',
+          'teamMembers.user_id',
+          'team.uuid',
+          'team.name',
+          'leader.uuid',
+          'leader.name',
+          'leader.profile_img_url',
+          'leaderJobPosition.uuid',
+          'leaderJobPosition.title',
+          'teamTeamMembers.uuid',
+          'teamTeamMembers.team_id',
+          'teamTeamMembers.user_id',
+          'teamMemberUser.uuid',
+          'teamMemberUser.name',
+          'teamMemberUser.profile_img_url',
+          'teamMemberJobPosition.uuid',
+          'teamMemberJobPosition.title',
+          'userJobPosition.uuid',
+          'userJobPosition.title'
+        ])
+        .getMany();
 
       const usersWithTreatedImages = await Promise.all(users.map(async (user) => {
         if (user?.profile_img_url && !user.profile_img_url.includes('googleusercontent')) {

@@ -1,6 +1,7 @@
 import { Gender, User } from '@/entities/user.entity';
 import { RoleResponseDto } from '@/modules/roles/dtos/role-response.dto';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+import JobPositionSimpleResponseDto from '@/modules/job-positions/dtos/job-position-simple-response.dto';
 
 export class UserResponseDto {
   @Expose()
@@ -30,6 +31,10 @@ export class UserResponseDto {
   @Expose()
   role: RoleResponseDto
 
+  @Expose()
+  @Type(() => JobPositionSimpleResponseDto)
+  jobPosition: JobPositionSimpleResponseDto | null;
+
   constructor(partial: User) {
     this.uuid = partial.uuid;
     this.name = partial.name;
@@ -43,5 +48,7 @@ export class UserResponseDto {
     if (partial.role) {
       this.role = new RoleResponseDto(partial.role);
     }
+
+    this.jobPosition = partial.jobPosition ? new JobPositionSimpleResponseDto(partial.jobPosition) : null;
   }
 }
