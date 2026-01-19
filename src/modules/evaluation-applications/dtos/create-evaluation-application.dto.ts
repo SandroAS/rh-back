@@ -1,6 +1,20 @@
-import { EvaluationApplicationStatus, EvaluationType } from '@/entities/evaluation-application.entity';
+import { 
+  EvaluationApplicationStatus, 
+  EvaluationType, 
+  EvaluationRecurrence 
+} from '@/entities/evaluation-application.entity';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsEnum, IsDateString, IsString, IsArray, ValidateNested, IsOptional } from 'class-validator';
+import { 
+  IsNotEmpty, 
+  IsEnum, 
+  IsDateString, 
+  IsString, 
+  IsArray, 
+  ValidateNested, 
+  IsOptional, 
+  IsInt, 
+  Min 
+} from 'class-validator';
 import { EvaluationApplicationItemDto } from './evaluation-application-item.dto';
 
 export class CreateEvaluationApplicationDto {
@@ -16,9 +30,18 @@ export class CreateEvaluationApplicationDto {
   @IsDateString()
   readonly started_date: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString()
-  readonly expiration_date: string;
+  readonly expiration_date: string | null;
+
+  @IsOptional()
+  @IsEnum(EvaluationRecurrence)
+  readonly recurrence: EvaluationRecurrence | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  readonly expiration_days: number | null;
 
   @IsArray()
   @ValidateNested({ each: true })

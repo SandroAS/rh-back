@@ -26,6 +26,14 @@ export enum EvaluationApplicationStatus {
   EXPIRED = 'EXPIRED',
 }
 
+export enum EvaluationRecurrence {
+  MONTHLY = 'MONTHLY',
+  BIMONTHLY = 'BIMONTHLY',
+  TRIMESTRIAL = 'TRIMESTRIAL',
+  SEMESTRIAL = 'SEMESTRIAL',
+  ANNUAL = 'ANNUAL',
+}
+
 @Entity('evaluation_applications')
 export class EvaluationApplication extends BaseEntity {
   @Column({ name: 'account_id', type: 'int' })
@@ -59,11 +67,22 @@ export class EvaluationApplication extends BaseEntity {
   })
   type: EvaluationType;
 
+  @Column({
+    name: 'recurrence',
+    type: 'enum',
+    enum: EvaluationRecurrence,
+    nullable: true,
+  })
+  recurrence: EvaluationRecurrence | null;
+
   @Column({ name: 'started_date', type: 'timestamp' })
   started_date: Date;
 
-  @Column({ name: 'expiration_date', type: 'timestamp' })
-  expiration_date: Date;
+  @Column({ name: 'expiration_date', type: 'timestamp', nullable: true })
+  expiration_date: Date | null;
+
+  @Column({ name: 'expiration_days', type: 'int', nullable: true })
+  expiration_days: number | null;
 
   @Column({ name: 'evaluated_user_id', type: 'int' })
   evaluated_user_id: number;

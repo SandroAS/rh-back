@@ -1,11 +1,21 @@
-import { IsDateString, IsNotEmpty } from 'class-validator';
+import { EvaluationRecurrence } from '@/entities/evaluation-application.entity';
+import { IsDateString, IsOptional, IsEnum, IsInt, Min } from 'class-validator';
 
 export class UpdateEvaluationApplicationDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString()
-  readonly started_date: string;
+  readonly started_date?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString()
-  readonly expiration_date: string;
+  readonly expiration_date?: string | null;
+
+  @IsOptional()
+  @IsEnum(EvaluationRecurrence)
+  readonly recurrence?: EvaluationRecurrence | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  readonly expiration_days?: number | null;
 }
