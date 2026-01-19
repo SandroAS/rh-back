@@ -1,10 +1,10 @@
 import { EvaluationApplicationStatus, EvaluationType } from '@/entities/evaluation-application.entity';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsEnum, IsDateString, IsString, IsArray, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsEnum, IsDateString, IsString, IsArray, ValidateNested, IsOptional } from 'class-validator';
 import { EvaluationApplicationItemDto } from './evaluation-application-item.dto';
 
 export class CreateEvaluationApplicationDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   readonly evaluation_uuid: string;
 

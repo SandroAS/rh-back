@@ -41,19 +41,33 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     await queryRunner.startTransaction();
 
     try {
-      const { evaluation_uuid } = payload;
-
-      const evaluation: Evaluation = await this.evaluationsService.findOneWithRelations(evaluation_uuid, accountId)
-        .catch(error => {
-          if (error instanceof NotFoundException) {
-            throw new NotFoundException(`Evaluation with UUID ${evaluation_uuid} not found for this account.`);
-          }
-          throw error;
-        });
-
       const createdApplications: EvaluationApplication[] = [];
+      
+      // Cache para evitar recarregar o mesmo modelo várias vezes na mesma transação
+      const evaluationCache = new Map<string, Evaluation>();
+
+      // Se houver um uuid global, já o carregamos e colocamos no cache
+      if (payload.evaluation_uuid) {
+        const globalEval = await this.evaluationsService.findOneWithRelations(payload.evaluation_uuid, accountId);
+        evaluationCache.set(payload.evaluation_uuid, globalEval);
+      }
 
       for (const applicationPayload of payload.applications) {
+        // Determina qual UUID usar: o do item ou o global
+        const currentEvalUuid = applicationPayload.evaluation_uuid || payload.evaluation_uuid;
+
+        if (!currentEvalUuid) {
+          throw new ConflictException(`Um modelo de avaliação (evaluation_uuid) deve ser fornecido globalmente ou por aplicação.`);
+        }
+
+        let evaluation = evaluationCache.get(currentEvalUuid);
+        if (!evaluation) {
+          evaluation = await this.evaluationsService.findOneWithRelations(currentEvalUuid, accountId)
+            .catch(() => {
+              throw new NotFoundException(`Modelo de avaliação ${currentEvalUuid} não encontrado.`);
+            });
+          evaluationCache.set(currentEvalUuid, evaluation);
+        }
 
         const formApplicationDataSaved = await this.formApplicationsService.createInTransaction(
           evaluation.form,
@@ -65,10 +79,10 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
         const submittingUser = await queryRunner.manager.findOneBy(User, { uuid: applicationPayload.submitting_user_uuid });
 
         if (!evaluatedUser || !submittingUser) {
-          throw new NotFoundException(`Usuário para aplicação de avaliação não encontrado ao tentar cadastrar.`);
+          throw new NotFoundException(`Usuário para aplicação de avaliação não encontrado ao tentar criar a aplicação (Avaliado: ${applicationPayload.evaluated_user_uuid}, Avaliador: ${applicationPayload.submitting_user_uuid}).`);
         }
 
-        const newEvaluationApplication = this.evaluationApplicationRepository.create({
+        const newEvaluationApplication = queryRunner.manager.create(EvaluationApplication, {
           account_id: accountId,
           evaluation_id: evaluation.id,
           form_application_id: formApplicationDataSaved.id,
@@ -89,6 +103,7 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
         createdApplication.evaluation = evaluation;
         createdApplication.evaluatedUser = evaluatedUser;
         createdApplication.submittingUser = submittingUser;
+
         createdApplications.push(createdApplication);
       }
 

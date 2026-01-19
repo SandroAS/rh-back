@@ -1,7 +1,11 @@
 import { EvaluationType } from '@/entities/evaluation-application.entity';
-import { IsUUID, IsEnum, IsOptional, IsNotEmpty } from 'class-validator';
+import { IsUUID, IsEnum, IsOptional, IsNotEmpty, IsString } from 'class-validator';
 
 export class EvaluationApplicationItemDto {
+    @IsNotEmpty()
+    @IsString()
+    evaluation_uuid: string;
+
     @IsNotEmpty({ message: 'O tipo de avaliação é obrigatório.' })
     @IsEnum(EvaluationType, { message: 'Tipo de avaliação inválido.' })
     type: EvaluationType;
