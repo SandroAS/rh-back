@@ -401,6 +401,8 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
       .leftJoinAndSelect('entity.responses', 'formResponses')
       .leftJoinAndSelect('formResponses.answers', 'answers')
       .leftJoinAndSelect('answers.applicationQuestion', 'question')
+      .leftJoinAndSelect('question.topic', 'applicationTopic')
+      .leftJoinAndSelect('applicationTopic.baseFormTopic', 'topic')
       .leftJoinAndSelect('answers.applicationOption', 'option')
       .leftJoinAndSelect('answers.multiOptions', 'multiOptions')
       .where('entity.account_id = :accountId', { accountId })

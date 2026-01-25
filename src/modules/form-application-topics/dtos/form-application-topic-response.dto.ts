@@ -34,6 +34,7 @@ export class FormApplicationTopicResponseDto {
       this.title = topic.title;
       this.description = topic.description;
       this.order = topic.order;
+      this.base_form_topic_uuid = topic.baseFormTopic.uuid;
       this.questions = [];
 
       if (topic.questions) {
