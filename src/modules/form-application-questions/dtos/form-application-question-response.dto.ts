@@ -8,6 +8,9 @@ export default class FormApplicationQuestionResponseDto {
   uuid: string;
 
   @Expose()
+  base_question_id: number;
+
+  @Expose()
   title: string;
 
   @Expose()
@@ -29,6 +32,7 @@ export default class FormApplicationQuestionResponseDto {
   constructor(question: FormApplicationQuestion) {
     if (!question) return;
     this.uuid = question.uuid;
+    this.base_question_id = question.base_question_id;
     this.title = question.title;
     this.description = question.description;
     this.type = question.type;
