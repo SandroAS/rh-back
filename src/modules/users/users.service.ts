@@ -437,6 +437,11 @@ export class UsersService {
     }
   }
 
+  async saveUser(user: User, manager?: EntityManager): Promise<User> {
+    const userRepository = manager ? manager.getRepository(User) : this.userRepository;
+    return userRepository.save(user);
+  }
+
   async remove(id: number) {
     const user = await this.findOne(id);
     if (!user) {

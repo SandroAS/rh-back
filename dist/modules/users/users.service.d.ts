@@ -31,5 +31,6 @@ export declare class UsersService {
     update(id: number, body: UpdateUserDto, manager?: EntityManager): Promise<User>;
     updateUserPersonalInformations(uuid: string, body: UpdateUserPersonalInformationDto, file?: Express.Multer.File): Promise<UpdateUserPersonalInformationResponseDto>;
     updateUserPassword(uuid: string, body: UpdateUserPasswordDto, user: User): Promise<boolean>;
+    saveUser(user: User, manager?: EntityManager): Promise<User>;
     remove(id: number): Promise<User>;
 }

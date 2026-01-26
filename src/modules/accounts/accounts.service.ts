@@ -20,6 +20,7 @@ import { RolesService } from '../roles/roles.service';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { AccountUsersResponsePaginationDto } from './dtos/account-users-response-pagination.dto';
 import { JobPositionService } from '../job-positions/job-positions.service';
+import { SectorsService } from '../sectors/sectors.service';
 
 const scrypt = promisify(_scrypt);
 
@@ -33,6 +34,7 @@ export class AccountsService {
     private readonly usersService: UsersService,
     private readonly rolesService: RolesService,
     private readonly jobPositionsService: JobPositionService,
+    private readonly sectorsService: SectorsService,
   ) {}
 
   async create(data: CreateAccountDto, manager?: EntityManager): Promise<Account> {
@@ -188,7 +190,10 @@ export class AccountsService {
   }
 
   async updateAccountUser(uuid: string, accountUser: UpdateAccountUserDto, authUser: User) {
-    const user = await this.usersService.findByUuid(uuid);
+    const user = await this.usersService.findOne(
+      (await this.usersService.findByUuid(uuid))?.id,
+      ['sectors']
+    );
     const role = await this.rolesService.findByName(accountUser.role);
 
     if (!role) {
@@ -208,14 +213,41 @@ export class AccountsService {
       jobPositionId = jobPosition.id;
     }
 
-    Object.assign(user, accountUser);
+    // Atualizar relacionamento com setor
+    if (accountUser.sector_uuid) {
+      const sector = await this.sectorsService.findOneWithAccountId(accountUser.sector_uuid, authUser.account_id);
+      if (!sector) {
+        throw new NotFoundException('Setor não encontrado ao tentar atualizar o usuário.');
+      }
+      user.sectors = [sector];
+    } else {
+      // Se não foi fornecido sector_uuid, manter os setores existentes ou limpar se necessário
+      // Por padrão, mantemos os setores existentes
+    }
+
+    // Preparar dados para atualização, removendo campos que não devem ser atualizados diretamente
+    const updateData = { ...accountUser };
+    delete updateData.password; // Senha será tratada separadamente se fornecida
+    delete updateData.confirmPassword; // Campo de confirmação não é salvo
+    delete updateData.sector_uuid; // Relacionamento já foi tratado acima
+    delete updateData.job_position_uuid; // Já foi tratado acima
+
+    Object.assign(user, updateData);
     user.role = role;
+
+    // Tratar atualização de senha se fornecida e não vazia
+    if (accountUser.password && accountUser.password.trim() !== '') {
+      const salt = randomBytes(8).toString('hex');
+      const hashBuffer = (await scrypt(accountUser.password, salt, 32)) as Buffer;
+      user.password = salt + '.' + hashBuffer.toString('hex');
+    }
 
     if (jobPositionId !== undefined) {
       user.job_position_id = jobPositionId;
     }
 
-    await this.usersService.update(user.id, { ...user });
+    // Salvar o usuário com o relacionamento Many-to-Many preservado
+    await this.usersService.saveUser(user);
 
     return { uuid, role: { uuid: role.uuid } };
   }

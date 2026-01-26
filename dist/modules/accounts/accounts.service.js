@@ -29,15 +29,17 @@ const roles_types_dto_1 = require("../roles/dtos/roles-types.dto");
 const roles_service_1 = require("../roles/roles.service");
 const account_users_response_pagination_dto_1 = require("./dtos/account-users-response-pagination.dto");
 const job_positions_service_1 = require("../job-positions/job-positions.service");
+const sectors_service_1 = require("../sectors/sectors.service");
 const scrypt = (0, util_1.promisify)(crypto_1.scrypt);
 let AccountsService = class AccountsService {
-    constructor(accountRepository, systemModuleService, minioService, usersService, rolesService, jobPositionsService) {
+    constructor(accountRepository, systemModuleService, minioService, usersService, rolesService, jobPositionsService, sectorsService) {
         this.accountRepository = accountRepository;
         this.systemModuleService = systemModuleService;
         this.minioService = minioService;
         this.usersService = usersService;
         this.rolesService = rolesService;
         this.jobPositionsService = jobPositionsService;
+        this.sectorsService = sectorsService;
     }
     async create(data, manager) {
         const accountRepository = manager ? manager.getRepository(account_entity_1.Account) : this.accountRepository;
@@ -146,7 +148,7 @@ let AccountsService = class AccountsService {
         return accountRepository.save(account);
     }
     async updateAccountUser(uuid, accountUser, authUser) {
-        const user = await this.usersService.findByUuid(uuid);
+        const user = await this.usersService.findOne((await this.usersService.findByUuid(uuid))?.id, ['sectors']);
         const role = await this.rolesService.findByName(accountUser.role);
         if (!role) {
             throw new common_1.NotFoundException('Tipo de usuário não encontrado');
@@ -162,12 +164,31 @@ let AccountsService = class AccountsService {
             }
             jobPositionId = jobPosition.id;
         }
-        Object.assign(user, accountUser);
+        if (accountUser.sector_uuid) {
+            const sector = await this.sectorsService.findOneWithAccountId(accountUser.sector_uuid, authUser.account_id);
+            if (!sector) {
+                throw new common_1.NotFoundException('Setor não encontrado ao tentar atualizar o usuário.');
+            }
+            user.sectors = [sector];
+        }
+        else {
+        }
+        const updateData = { ...accountUser };
+        delete updateData.password;
+        delete updateData.confirmPassword;
+        delete updateData.sector_uuid;
+        delete updateData.job_position_uuid;
+        Object.assign(user, updateData);
         user.role = role;
+        if (accountUser.password && accountUser.password.trim() !== '') {
+            const salt = (0, crypto_1.randomBytes)(8).toString('hex');
+            const hashBuffer = (await scrypt(accountUser.password, salt, 32));
+            user.password = salt + '.' + hashBuffer.toString('hex');
+        }
         if (jobPositionId !== undefined) {
             user.job_position_id = jobPositionId;
         }
-        await this.usersService.update(user.id, { ...user });
+        await this.usersService.saveUser(user);
         return { uuid, role: { uuid: role.uuid } };
     }
     async updateAccountUserIsActive(uuid) {
@@ -200,6 +221,7 @@ exports.AccountsService = AccountsService = __decorate([
         minio_service_1.MinioService,
         users_service_1.UsersService,
         roles_service_1.RolesService,
-        job_positions_service_1.JobPositionService])
+        job_positions_service_1.JobPositionService,
+        sectors_service_1.SectorsService])
 ], AccountsService);
 //# sourceMappingURL=accounts.service.js.map

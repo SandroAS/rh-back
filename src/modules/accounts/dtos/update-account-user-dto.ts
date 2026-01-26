@@ -51,4 +51,9 @@ export class UpdateAccountUserDto {
   @IsString()
   @IsOptional()
   job_position_uuid?: string;
+
+  @IsUUID()
+  @IsString()
+  @IsOptional()
+  sector_uuid?: string;
 }

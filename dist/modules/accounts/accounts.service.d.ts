@@ -13,6 +13,7 @@ import { RolesService } from '../roles/roles.service';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { AccountUsersResponsePaginationDto } from './dtos/account-users-response-pagination.dto';
 import { JobPositionService } from '../job-positions/job-positions.service';
+import { SectorsService } from '../sectors/sectors.service';
 export declare class AccountsService {
     private readonly accountRepository;
     private readonly systemModuleService;
@@ -20,7 +21,8 @@ export declare class AccountsService {
     private readonly usersService;
     private readonly rolesService;
     private readonly jobPositionsService;
-    constructor(accountRepository: Repository<Account>, systemModuleService: SystemModulesService, minioService: MinioService, usersService: UsersService, rolesService: RolesService, jobPositionsService: JobPositionService);
+    private readonly sectorsService;
+    constructor(accountRepository: Repository<Account>, systemModuleService: SystemModulesService, minioService: MinioService, usersService: UsersService, rolesService: RolesService, jobPositionsService: JobPositionService, sectorsService: SectorsService);
     create(data: CreateAccountDto, manager?: EntityManager): Promise<Account>;
     createAccountUser(accountUser: CreateAccountUserDto, user: User): Promise<{
         uuid: string;

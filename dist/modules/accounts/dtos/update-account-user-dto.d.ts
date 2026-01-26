@@ -8,4 +8,5 @@ export declare class UpdateAccountUserDto {
     confirmPassword?: string;
     role: RolesTypes;
     job_position_uuid?: string;
+    sector_uuid?: string;
 }

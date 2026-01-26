@@ -368,6 +368,10 @@ let UsersService = class UsersService {
             return false;
         }
     }
+    async saveUser(user, manager) {
+        const userRepository = manager ? manager.getRepository(user_entity_1.User) : this.userRepository;
+        return userRepository.save(user);
+    }
     async remove(id) {
         const user = await this.findOne(id);
         if (!user) {

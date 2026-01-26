@@ -73,4 +73,10 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateAccountUserDto.prototype, "job_position_uuid", void 0);
+__decorate([
+    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateAccountUserDto.prototype, "sector_uuid", void 0);
 //# sourceMappingURL=update-account-user-dto.js.map

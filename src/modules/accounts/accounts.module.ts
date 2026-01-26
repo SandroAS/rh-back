@@ -8,6 +8,7 @@ import { MinioModule } from '@/minio/minio.module';
 import { UsersModule } from '../users/users.module';
 import { RolesModule } from '../roles/roles.module';
 import { JobPositionsModule } from '../job-positions/job-positions.module';
+import { SectorsModule } from '../sectors/sectors.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { JobPositionsModule } from '../job-positions/job-positions.module';
     UsersModule,
     RolesModule,
     JobPositionsModule,
+    SectorsModule,
   ],
   providers: [AccountsService],
   controllers: [AccountsController],
