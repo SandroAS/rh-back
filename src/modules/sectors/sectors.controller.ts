@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Get, Query, Param, Patch, HttpCode, HttpStatus, Delete } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Query, Param, HttpCode, HttpStatus, Delete, Put } from '@nestjs/common';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { SectorsService } from './sectors.service';
 import { AccountId } from '@/common/decorators/account-id.decorator';
@@ -46,7 +46,7 @@ export class SectorsController {
     return new SectorResponseDto(sector);
   }
 
-  @Patch(':uuid')
+  @Put(':uuid')
   async update(
     @Param('uuid') uuid: string,
     @Body() dto: UpdateSectorDto,
