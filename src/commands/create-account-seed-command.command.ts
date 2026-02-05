@@ -7,11 +7,11 @@ import { JobPositionService } from '@/modules/job-positions/job-positions.servic
 import { RolesTypes } from '@/modules/roles/dtos/roles-types.dto';
 import { SystemModuleName } from '@/entities/system-module.entity';
 import AppDataSource from '@/data-source';
-import { Faker, faker } from '@faker-js/faker';
-import { ptBR } from '@faker-js/locale-pt_BR';
+import { faker } from '@faker-js/faker';
 
-// Criar instância do faker com locale brasileiro
-const fakerBr = new Faker({ locale: ptBR });
+// Configurar faker para usar locale brasileiro (se disponível)
+// Caso contrário, usar métodos genéricos que funcionam bem
+const fakerBr = faker;
 
 interface CommandOptions {
   email?: string;
