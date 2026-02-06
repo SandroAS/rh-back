@@ -37,7 +37,7 @@ let AuthService = class AuthService {
         this.eventEmitter = eventEmitter;
     }
     async whoami(userId) {
-        const user = await this.usersService.findOne(userId, ['account.lastTrial', 'account.systemModules', 'role.permissions', 'userMetas', 'companies.address']);
+        const user = await this.usersService.findOne(userId, ['account.lastTrial', 'account.systemModules', 'role.permissions', 'userMetas', 'companies.address', 'jobPosition']);
         if (!user) {
             throw new common_1.NotFoundException('Usuário não encontrado.');
         }
@@ -102,7 +102,7 @@ let AuthService = class AuthService {
         }
     }
     async login(email, password, googleProfile) {
-        const user = await this.usersService.findByEmail(email, ['account.lastTrial', 'account.systemModules', 'role.permissions', 'userMetas', 'companies.address']);
+        const user = await this.usersService.findByEmail(email, ['account.lastTrial', 'account.systemModules', 'role.permissions', 'userMetas', 'companies.address', 'jobPosition']);
         if (!user) {
             throw new common_1.NotFoundException('Usuário não encontrado ao tentar logar.');
         }

@@ -5,6 +5,7 @@ import { AccountResponseDto } from '@/modules/accounts/dtos/account-response.dto
 import { UserMetasResponseDto } from '@/modules/user-metas/dtos/user-metas-response.dto';
 import { CompanyResponseDto } from '@/modules/companies/dtos/company-response.dto';
 import { CompanyAuthResponseDto } from '@/modules/companies/dtos/company-auth-response.dto';
+import JobPositionSimpleResponseDto from '@/modules/job-positions/dtos/job-position-simple-response.dto';
 
 export class AuthResponseDto {
   @Expose()
@@ -50,6 +51,10 @@ export class AuthResponseDto {
   @Type(() => CompanyAuthResponseDto)
   companies: CompanyAuthResponseDto[];
 
+  @Expose()
+  @Type(() => JobPositionSimpleResponseDto)
+  jobPosition: JobPositionSimpleResponseDto;
+
   constructor(partial: Partial<User>) {
     this.uuid = partial.uuid;
     this.name = partial.name;
@@ -82,6 +87,10 @@ export class AuthResponseDto {
       this.companies = partial.companies.map(
         (company) => new CompanyAuthResponseDto(company)
       );
+    }
+
+    if (partial.jobPosition) {
+      this.jobPosition = new JobPositionSimpleResponseDto(partial.jobPosition);
     }
   }
 }

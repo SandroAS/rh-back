@@ -16,6 +16,7 @@ const role_response_dto_1 = require("../../roles/dtos/role-response.dto");
 const account_response_dto_1 = require("../../accounts/dtos/account-response.dto");
 const user_metas_response_dto_1 = require("../../user-metas/dtos/user-metas-response.dto");
 const company_auth_response_dto_1 = require("../../companies/dtos/company-auth-response.dto");
+const job_position_simple_response_dto_1 = require("../../job-positions/dtos/job-position-simple-response.dto");
 class AuthResponseDto {
     constructor(partial) {
         this.uuid = partial.uuid;
@@ -41,6 +42,9 @@ class AuthResponseDto {
         }
         if (partial.companies && partial.companies.length > 0) {
             this.companies = partial.companies.map((company) => new company_auth_response_dto_1.CompanyAuthResponseDto(company));
+        }
+        if (partial.jobPosition) {
+            this.jobPosition = new job_position_simple_response_dto_1.default(partial.jobPosition);
         }
     }
 }
@@ -101,4 +105,9 @@ __decorate([
     (0, class_transformer_1.Type)(() => company_auth_response_dto_1.CompanyAuthResponseDto),
     __metadata("design:type", Array)
 ], AuthResponseDto.prototype, "companies", void 0);
+__decorate([
+    (0, class_transformer_1.Expose)(),
+    (0, class_transformer_1.Type)(() => job_position_simple_response_dto_1.default),
+    __metadata("design:type", job_position_simple_response_dto_1.default)
+], AuthResponseDto.prototype, "jobPosition", void 0);
 //# sourceMappingURL=auth-response.dto.js.map
