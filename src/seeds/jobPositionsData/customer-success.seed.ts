@@ -57,7 +57,7 @@ export default {
         { drd_level_order: 5, min_score: 5.0 },
         { drd_level_order: 6, min_score: 7.0 },
         { drd_level_order: 7, min_score: 9.0 },
-        { drd_level_order: 10, min_score: 12.0 },
+        { drd_level_order: 8, min_score: 12.0 },
         { drd_level_order: 9, min_score: 15.0 },
       ],
     },

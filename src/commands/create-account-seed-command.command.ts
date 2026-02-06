@@ -8,6 +8,10 @@ import { RolesTypes } from '@/modules/roles/dtos/roles-types.dto';
 import { SystemModuleName } from '@/entities/system-module.entity';
 import AppDataSource from '@/data-source';
 import { faker } from '@faker-js/faker';
+import { randomBytes, scrypt as _scrypt } from 'crypto';
+import { promisify } from 'util';
+
+const scrypt = promisify(_scrypt);
 
 // Configurar faker para usar locale brasileiro (se disponível)
 // Caso contrário, usar métodos genéricos que funcionam bem
@@ -120,11 +124,15 @@ export class CreateAccountSeedCommand extends CommandRunner {
             ? cargosCriados[fakerBr.number.int({ min: 0, max: cargosCriados.length - 1 })].id
             : undefined;
 
+          const salt = randomBytes(8).toString('hex');
+          const hashBuffer = (await scrypt(password, salt, 32)) as Buffer;
+          const encryptedPassword = salt + '.' + hashBuffer.toString('hex');
+
           const novoUsuario = await this.usersService.createSecondaryUser(
             RolesTypes.MEMBER,
             {
               email: `membro${i}@${domain}`,
-              password: password,
+              password: encryptedPassword,
               name: nome,
               cellphone: cellphone,
               cpf: cpf,
