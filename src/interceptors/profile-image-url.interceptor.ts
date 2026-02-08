@@ -30,6 +30,11 @@ export class ProfileImageUrlInterceptor implements NestInterceptor {
       return data;
     }
 
+    // Preserva objetos Date, não processa
+    if (data instanceof Date) {
+      return data;
+    }
+
     // Se for um array, processa cada item
     if (Array.isArray(data)) {
       return Promise.all(data.map(item => this.processProfileImageUrls(item)));
@@ -37,23 +42,28 @@ export class ProfileImageUrlInterceptor implements NestInterceptor {
 
     // Se for um objeto, processa recursivamente
     if (typeof data === 'object' && data !== null) {
-      const processed: any = Array.isArray(data) ? [...data] : { ...data };
+      const processed: any = {};
 
-      // Processa profile_img_url se existir (pode estar no objeto raiz ou em objetos aninhados)
-      if (processed.profile_img_url && typeof processed.profile_img_url === 'string') {
-        console.log(`[INTERCEPTOR] Processando profile_img_url: ${processed.profile_img_url}`);
-        processed.profile_img_url = await this.processProfileImageUrl(processed.profile_img_url);
-        console.log(`[INTERCEPTOR] Resultado: ${processed.profile_img_url}`);
-      }
-
-      // Processa todos os campos recursivamente
-      for (const key in processed) {
-        if (processed.hasOwnProperty(key)) {
-          const value = processed[key];
+      // Copia todas as propriedades preservando objetos Date
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          const value = data[key];
           
+          // Preserva objetos Date
+          if (value instanceof Date) {
+            processed[key] = value;
+          }
+          // Processa profile_img_url se for string
+          else if (key === 'profile_img_url' && typeof value === 'string') {
+            processed[key] = await this.processProfileImageUrl(value);
+          }
           // Se for um objeto ou array, processa recursivamente
-          if (value && typeof value === 'object') {
+          else if (value && typeof value === 'object') {
             processed[key] = await this.processProfileImageUrls(value);
+          }
+          // Outros valores primitivos
+          else {
+            processed[key] = value;
           }
         }
       }
@@ -81,9 +91,7 @@ export class ProfileImageUrlInterceptor implements NestInterceptor {
     const minioService = MinioContext.getMinioService();
     if (minioService) {
       try {
-        const processedUrl = await minioService.processProfileImageUrl(profileImgUrl);
-        console.log(`[INTERCEPTOR] Processou URL: ${profileImgUrl} -> ${processedUrl}`);
-        return processedUrl;
+        return await minioService.processProfileImageUrl(profileImgUrl);
       } catch (error) {
         console.error(`[INTERCEPTOR] Erro ao processar URL da imagem: ${error.message}`);
         return null;
@@ -91,7 +99,6 @@ export class ProfileImageUrlInterceptor implements NestInterceptor {
     }
 
     // Se não houver MinioService disponível, retorna o valor original
-    console.log(`[INTERCEPTOR] MinioService não disponível, retornando original: ${profileImgUrl}`);
     return profileImgUrl;
   }
 }

@@ -25,10 +25,10 @@ export class EvaluationApplicationResponseDto {
   readonly status: EvaluationApplicationStatus;
 
   @Expose()
-  readonly started_date: Date;
+  readonly started_date: Date | null;
 
   @Expose()
-  readonly expiration_date: Date;
+  readonly expiration_date: Date | null;
 
   @Expose()
   readonly evaluation_uuid: string;
@@ -69,8 +69,17 @@ export class EvaluationApplicationResponseDto {
     this.rate = evaluationApplication.rate;
     this.type = evaluationApplication.type;
     this.status = evaluationApplication.status;
-    this.started_date = evaluationApplication.started_date;
-    this.expiration_date = evaluationApplication.expiration_date;
+    // Garante que as datas sejam objetos Date válidos ou null
+    this.started_date = evaluationApplication.started_date 
+      ? (evaluationApplication.started_date instanceof Date 
+          ? evaluationApplication.started_date 
+          : new Date(evaluationApplication.started_date))
+      : null;
+    this.expiration_date = evaluationApplication.expiration_date 
+      ? (evaluationApplication.expiration_date instanceof Date 
+          ? evaluationApplication.expiration_date 
+          : new Date(evaluationApplication.expiration_date))
+      : null;
     this.evaluation_uuid = evaluationApplication.evaluation?.uuid;
     this.evaluated_user_uuid = evaluationApplication.evaluatedUser?.uuid;
     this.submitting_user_uuid = evaluationApplication.submittingUser?.uuid;

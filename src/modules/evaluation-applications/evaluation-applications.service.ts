@@ -82,6 +82,10 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
           throw new NotFoundException(`Usuário para aplicação de avaliação não encontrado ao tentar criar a aplicação (Avaliado: ${applicationPayload.evaluated_user_uuid}, Avaliador: ${applicationPayload.submitting_user_uuid}).`);
         }
 
+        // Converte as datas para objetos Date (vêm como string do DTO)
+        const startedDate = payload.started_date ? new Date(payload.started_date) : null;
+        const expirationDate = payload.expiration_date ? new Date(payload.expiration_date) : null;
+
         const newEvaluationApplication = queryRunner.manager.create(EvaluationApplication, {
           account_id: accountId,
           evaluation_id: evaluation.id,
@@ -91,8 +95,8 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
           description: evaluation.description,
           rate: evaluation.rate,
           type: applicationPayload.type,
-          started_date: payload.started_date,
-          expiration_date: payload.expiration_date,
+          started_date: startedDate,
+          expiration_date: expirationDate,
           status: EvaluationApplicationStatus.CREATED,
           evaluated_user_id: evaluatedUser.id,
           submitting_user_id: submittingUser.id,
@@ -141,7 +145,17 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
         .leftJoin('entity.submittingUser', 'submittingUser')
         .leftJoin('entity.evaluatedUser', 'evaluatedUser');
       qb.select([
-        'entity',
+        'entity.id',
+        'entity.uuid',
+        'entity.name',
+        'entity.description',
+        'entity.rate',
+        'entity.type',
+        'entity.status',
+        'entity.started_date',
+        'entity.expiration_date',
+        'entity.created_at',
+        'entity.updated_at',
         'evaluation.uuid',
         'evaluation.name',
         'drd.uuid',
