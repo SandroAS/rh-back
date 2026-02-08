@@ -16,6 +16,7 @@ export declare class MinioService implements OnModuleInit {
     private readonly minioExternalEndpoint;
     constructor(configService: ConfigService);
     onModuleInit(): Promise<void>;
+    private testMinioConnectivity;
     private createBucketIfNotExists;
     uploadFile(file: Express.Multer.File, folder?: string): Promise<string>;
     getPresignedUrl(objectName: string, expirySeconds?: number): Promise<string>;

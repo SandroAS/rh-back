@@ -27,9 +27,12 @@ let MinioService = MinioService_1 = class MinioService {
         this.minioRegion = this.configService.get('MINIO_REGION', 'us-east-1');
         this.minioBucketName = this.configService.get('MINIO_BUCKET');
         this.minioInternalEndpoint = this.configService.get('MINIO_ENDPOINT');
-        this.minioExternalEndpoint = this.configService.get('APP_HOST');
+        this.minioExternalEndpoint =
+            this.configService.get('MINIO_EXTERNAL_ENDPOINT') ||
+                this.configService.get('APP_HOST') ||
+                '127.0.0.1';
         if (!this.minioAccessKey || !this.minioSecretKey || !this.minioBucketName ||
-            !this.minioInternalEndpoint || !this.minioExternalEndpoint) {
+            !this.minioInternalEndpoint) {
             this.logger.error('Missing one or more MinIO environment variables. Please check your .env file.');
             throw new Error('MinIO configuration incomplete.');
         }
@@ -48,9 +51,30 @@ let MinioService = MinioService_1 = class MinioService {
             endPoint: this.minioExternalEndpoint,
             ...minioClientConfig
         });
+        this.logger.log(`MinIO Internal Endpoint: ${this.minioInternalEndpoint}:${this.minioPort}`);
+        this.logger.log(`MinIO External Endpoint: ${this.minioExternalEndpoint}:${this.minioPort}`);
+        this.logger.log(`MinIO Bucket: ${this.minioBucketName}`);
     }
     async onModuleInit() {
         await this.createBucketIfNotExists();
+        await this.testMinioConnectivity();
+    }
+    async testMinioConnectivity() {
+        try {
+            const internalBucketExists = await this.minioClient.bucketExists(this.minioBucketName);
+            this.logger.log(`MinIO Internal Connection: ${internalBucketExists ? 'OK' : 'FAILED'}`);
+            try {
+                const externalBucketExists = await this.externalMinioClient.bucketExists(this.minioBucketName);
+                this.logger.log(`MinIO External Connection: ${externalBucketExists ? 'OK' : 'FAILED'}`);
+            }
+            catch (externalErr) {
+                this.logger.warn(`MinIO External Connection failed: ${externalErr.message}`);
+                this.logger.warn(`This is normal if MinIO is only accessible internally. External URLs may not work.`);
+            }
+        }
+        catch (err) {
+            this.logger.error(`MinIO connectivity test failed: ${err.message}`);
+        }
     }
     async createBucketIfNotExists() {
         try {
