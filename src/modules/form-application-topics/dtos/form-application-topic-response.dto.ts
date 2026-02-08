@@ -20,7 +20,7 @@ export class FormApplicationTopicResponseDto {
   readonly form_application_uuid: string;
   
   @Expose()
-  readonly base_form_topic_uuid: string;
+  readonly base_form_topic_uuid: string | null;
 
   @Expose()
   readonly drd_topic_uuid: string | null;
@@ -34,7 +34,7 @@ export class FormApplicationTopicResponseDto {
       this.title = topic.title;
       this.description = topic.description;
       this.order = topic.order;
-      this.base_form_topic_uuid = topic.baseFormTopic.uuid;
+      this.base_form_topic_uuid = topic.baseFormTopic?.uuid || null;
       this.questions = [];
 
       if (topic.questions) {
