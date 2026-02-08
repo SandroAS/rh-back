@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Account } from '@/entities/account.entity';
 import { CreateAccountDto } from './dtos/create-account.dto';
 import { UpdateAccountDto } from './dtos/update-account.dto';
@@ -11,7 +11,6 @@ import { AccountUsersResponseDto } from './dtos/account-users-response.dto';
 import { MinioService } from '@/minio/minio.service';
 import { CreateAccountUserDto } from './dtos/create-account-user.dto';
 import { UsersService } from '../users/users.service';
-import AppDataSource from '@/data-source';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
 import { RolesTypes } from '../roles/dtos/roles-types.dto';
@@ -21,6 +20,8 @@ import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { AccountUsersResponsePaginationDto } from './dtos/account-users-response-pagination.dto';
 import { JobPositionService } from '../job-positions/job-positions.service';
 import { SectorsService } from '../sectors/sectors.service';
+import { EvaluationApplicationsService } from '../evaluation-applications/evaluation-applications.service';
+import { FormResponsesService } from '../form-responses/form-responses.service';
 
 const scrypt = promisify(_scrypt);
 
@@ -29,12 +30,15 @@ export class AccountsService {
   constructor(
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
+    private readonly dataSource: DataSource,
     private readonly systemModuleService: SystemModulesService,
     private readonly minioService: MinioService,
     private readonly usersService: UsersService,
     private readonly rolesService: RolesService,
     private readonly jobPositionsService: JobPositionService,
     private readonly sectorsService: SectorsService,
+    private readonly evaluationApplicationsService: EvaluationApplicationsService,
+    private readonly formResponsesService: FormResponsesService,
   ) {}
 
   async create(data: CreateAccountDto, manager?: EntityManager): Promise<Account> {
@@ -73,7 +77,7 @@ export class AccountsService {
       throw new BadRequestException('Não é possível cadastrar novos usuários SUPER_ADMIN no sistema.');
     }
 
-    const queryRunner = AppDataSource.createQueryRunner();
+    const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
@@ -275,5 +279,34 @@ export class AccountsService {
     }
 
     await this.accountRepository.remove(account);
+  }
+
+  async totalsAccountUsers(accountId: number): Promise<{
+    total: number;
+    pending_job_position_settings: number;
+    pending_evaluation_settings: number;
+    not_evaluated_yet: number;
+  }> {
+    const total = await this.usersService.countByAccountId(accountId);
+
+    const pending_job_position_settings = await this.usersService.countWithoutJobPositionByAccountId(accountId);
+
+    // Usuários sem aplicações agendadas ou realizadas para esse accountId
+    // (usuários que não têm nenhuma evaluation_application como avaliado)
+    const userIdsWithEvaluations = await this.evaluationApplicationsService.findDistinctEvaluatedUserIdsByAccountId(accountId);
+    const pending_evaluation_settings = await this.usersService.findUserIdsNotInListByAccountId(userIdsWithEvaluations, accountId);
+
+    // Usuários que ainda não tiveram nenhuma avaliação por aplicação respondida
+    // (usuários que não têm nenhuma form_response com is_completed = true
+    // relacionada a uma evaluation_application onde evaluated_user_id = user.id)
+    const userIdsWithCompletedResponses = await this.formResponsesService.findDistinctEvaluatedUserIdsWithCompletedResponsesByAccountId(accountId);
+    const not_evaluated_yet = await this.usersService.findUserIdsNotInListByAccountId(userIdsWithCompletedResponses, accountId);
+
+    return {
+      total,
+      pending_job_position_settings,
+      pending_evaluation_settings,
+      not_evaluated_yet,
+    };
   }
 }

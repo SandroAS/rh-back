@@ -1,4 +1,4 @@
-import { EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Account } from '@/entities/account.entity';
 import { CreateAccountDto } from './dtos/create-account.dto';
 import { UpdateAccountDto } from './dtos/update-account.dto';
@@ -14,15 +14,20 @@ import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { AccountUsersResponsePaginationDto } from './dtos/account-users-response-pagination.dto';
 import { JobPositionService } from '../job-positions/job-positions.service';
 import { SectorsService } from '../sectors/sectors.service';
+import { EvaluationApplicationsService } from '../evaluation-applications/evaluation-applications.service';
+import { FormResponsesService } from '../form-responses/form-responses.service';
 export declare class AccountsService {
     private readonly accountRepository;
+    private readonly dataSource;
     private readonly systemModuleService;
     private readonly minioService;
     private readonly usersService;
     private readonly rolesService;
     private readonly jobPositionsService;
     private readonly sectorsService;
-    constructor(accountRepository: Repository<Account>, systemModuleService: SystemModulesService, minioService: MinioService, usersService: UsersService, rolesService: RolesService, jobPositionsService: JobPositionService, sectorsService: SectorsService);
+    private readonly evaluationApplicationsService;
+    private readonly formResponsesService;
+    constructor(accountRepository: Repository<Account>, dataSource: DataSource, systemModuleService: SystemModulesService, minioService: MinioService, usersService: UsersService, rolesService: RolesService, jobPositionsService: JobPositionService, sectorsService: SectorsService, evaluationApplicationsService: EvaluationApplicationsService, formResponsesService: FormResponsesService);
     create(data: CreateAccountDto, manager?: EntityManager): Promise<Account>;
     createAccountUser(accountUser: CreateAccountUserDto, user: User): Promise<{
         uuid: string;
@@ -43,4 +48,10 @@ export declare class AccountsService {
     }>;
     updateAccountUserIsActive(uuid: string): Promise<boolean>;
     remove(id: number): Promise<void>;
+    totalsAccountUsers(accountId: number): Promise<{
+        total: number;
+        pending_job_position_settings: number;
+        pending_evaluation_settings: number;
+        not_evaluated_yet: number;
+    }>;
 }

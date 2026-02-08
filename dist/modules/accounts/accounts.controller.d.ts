@@ -2,6 +2,7 @@ import { AccountsService } from './accounts.service';
 import { CreateAccountUserDto } from './dtos/create-account-user.dto';
 import { UpdateAccountUserDto } from './dtos/update-account-user-dto';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
+import { TotalsAccountUsersResponseDto } from './dtos/totals-account-users-response.dto';
 export declare class AccountsController {
     private readonly accountsService;
     constructor(accountsService: AccountsService);
@@ -19,4 +20,5 @@ export declare class AccountsController {
         };
     }>;
     updateAccountUserIsActive(uuid: string): Promise<boolean>;
+    totalsAccountUsers(account_id: number): Promise<TotalsAccountUsersResponseDto>;
 }

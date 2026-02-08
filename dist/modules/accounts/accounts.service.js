@@ -22,7 +22,6 @@ const system_module_entity_1 = require("../../entities/system-module.entity");
 const account_users_response_dto_1 = require("./dtos/account-users-response.dto");
 const minio_service_1 = require("../../minio/minio.service");
 const users_service_1 = require("../users/users.service");
-const data_source_1 = require("../../data-source");
 const crypto_1 = require("crypto");
 const util_1 = require("util");
 const roles_types_dto_1 = require("../roles/dtos/roles-types.dto");
@@ -30,16 +29,21 @@ const roles_service_1 = require("../roles/roles.service");
 const account_users_response_pagination_dto_1 = require("./dtos/account-users-response-pagination.dto");
 const job_positions_service_1 = require("../job-positions/job-positions.service");
 const sectors_service_1 = require("../sectors/sectors.service");
+const evaluation_applications_service_1 = require("../evaluation-applications/evaluation-applications.service");
+const form_responses_service_1 = require("../form-responses/form-responses.service");
 const scrypt = (0, util_1.promisify)(crypto_1.scrypt);
 let AccountsService = class AccountsService {
-    constructor(accountRepository, systemModuleService, minioService, usersService, rolesService, jobPositionsService, sectorsService) {
+    constructor(accountRepository, dataSource, systemModuleService, minioService, usersService, rolesService, jobPositionsService, sectorsService, evaluationApplicationsService, formResponsesService) {
         this.accountRepository = accountRepository;
+        this.dataSource = dataSource;
         this.systemModuleService = systemModuleService;
         this.minioService = minioService;
         this.usersService = usersService;
         this.rolesService = rolesService;
         this.jobPositionsService = jobPositionsService;
         this.sectorsService = sectorsService;
+        this.evaluationApplicationsService = evaluationApplicationsService;
+        this.formResponsesService = formResponsesService;
     }
     async create(data, manager) {
         const accountRepository = manager ? manager.getRepository(account_entity_1.Account) : this.accountRepository;
@@ -70,7 +74,7 @@ let AccountsService = class AccountsService {
         if (accountUser.role === roles_types_dto_1.RolesTypes.SUPER_ADMIN) {
             throw new common_1.BadRequestException('Não é possível cadastrar novos usuários SUPER_ADMIN no sistema.');
         }
-        const queryRunner = data_source_1.default.createQueryRunner();
+        const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
@@ -211,17 +215,34 @@ let AccountsService = class AccountsService {
         }
         await this.accountRepository.remove(account);
     }
+    async totalsAccountUsers(accountId) {
+        const total = await this.usersService.countByAccountId(accountId);
+        const pending_job_position_settings = await this.usersService.countWithoutJobPositionByAccountId(accountId);
+        const userIdsWithEvaluations = await this.evaluationApplicationsService.findDistinctEvaluatedUserIdsByAccountId(accountId);
+        const pending_evaluation_settings = await this.usersService.findUserIdsNotInListByAccountId(userIdsWithEvaluations, accountId);
+        const userIdsWithCompletedResponses = await this.formResponsesService.findDistinctEvaluatedUserIdsWithCompletedResponsesByAccountId(accountId);
+        const not_evaluated_yet = await this.usersService.findUserIdsNotInListByAccountId(userIdsWithCompletedResponses, accountId);
+        return {
+            total,
+            pending_job_position_settings,
+            pending_evaluation_settings,
+            not_evaluated_yet,
+        };
+    }
 };
 exports.AccountsService = AccountsService;
 exports.AccountsService = AccountsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(account_entity_1.Account)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.DataSource,
         system_modules_service_1.SystemModulesService,
         minio_service_1.MinioService,
         users_service_1.UsersService,
         roles_service_1.RolesService,
         job_positions_service_1.JobPositionService,
-        sectors_service_1.SectorsService])
+        sectors_service_1.SectorsService,
+        evaluation_applications_service_1.EvaluationApplicationsService,
+        form_responses_service_1.FormResponsesService])
 ], AccountsService);
 //# sourceMappingURL=accounts.service.js.map

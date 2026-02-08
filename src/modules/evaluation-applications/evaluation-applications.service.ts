@@ -460,4 +460,14 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
 
     return await query.getMany();
   }
+
+  async findDistinctEvaluatedUserIdsByAccountId(accountId: number): Promise<number[]> {
+    const results = await this.evaluationApplicationRepository
+      .createQueryBuilder('ea')
+      .select('DISTINCT ea.evaluated_user_id', 'user_id')
+      .where('ea.account_id = :accountId', { accountId })
+      .getRawMany();
+    
+    return results.map((row) => row.user_id);
+  }
 }

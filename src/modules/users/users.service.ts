@@ -440,4 +440,29 @@ export class UsersService {
     }
     return this.userRepository.remove(user);
   }
+
+  async countByAccountId(accountId: number): Promise<number> {
+    return this.userRepository.count({
+      where: { account_id: accountId },
+    });
+  }
+
+  async countWithoutJobPositionByAccountId(accountId: number): Promise<number> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.account_id = :accountId', { accountId })
+      .andWhere('user.job_position_id IS NULL')
+      .getCount();
+  }
+
+  async findUserIdsNotInListByAccountId(accountIds: number[], accountId: number): Promise<number> {
+    if (accountIds.length === 0) {
+      return this.countByAccountId(accountId);
+    }
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.account_id = :accountId', { accountId })
+      .andWhere('user.id NOT IN (:...userIds)', { userIds: accountIds })
+      .getCount();
+  }
 }

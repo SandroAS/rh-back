@@ -91,4 +91,17 @@ export class FormResponsesService {
       await queryRunner.release();
     }
   }
+
+  async findDistinctEvaluatedUserIdsWithCompletedResponsesByAccountId(accountId: number): Promise<number[]> {
+    const results = await this.dataSource
+      .getRepository(FormResponse)
+      .createQueryBuilder('fr')
+      .innerJoin('evaluation_applications', 'ea', 'ea.id = fr.evaluation_application_id')
+      .where('ea.account_id = :accountId', { accountId })
+      .andWhere('fr.is_completed = true')
+      .select('DISTINCT ea.evaluated_user_id', 'user_id')
+      .getRawMany();
+    
+    return results.map((row) => row.user_id);
+  }
 }

@@ -19,6 +19,8 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const create_account_user_dto_1 = require("./dtos/create-account-user.dto");
 const update_account_user_dto_1 = require("./dtos/update-account-user-dto");
 const pagination_dto_1 = require("../../common/dtos/pagination.dto");
+const totals_account_users_response_dto_1 = require("./dtos/totals-account-users-response.dto");
+const account_id_decorator_1 = require("../../common/decorators/account-id.decorator");
 let AccountsController = class AccountsController {
     constructor(accountsService) {
         this.accountsService = accountsService;
@@ -38,11 +40,14 @@ let AccountsController = class AccountsController {
     updateAccountUserIsActive(uuid) {
         return this.accountsService.updateAccountUserIsActive(uuid);
     }
+    async totalsAccountUsers(account_id) {
+        const { total, pending_job_position_settings, pending_evaluation_settings, not_evaluated_yet } = await this.accountsService.totalsAccountUsers(account_id);
+        return new totals_account_users_response_dto_1.TotalsAccountUsersResponseDto(total, pending_job_position_settings, pending_evaluation_settings, not_evaluated_yet);
+    }
 };
 exports.AccountsController = AccountsController;
 __decorate([
     (0, common_1.Post)('users'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -51,7 +56,6 @@ __decorate([
 ], AccountsController.prototype, "createAccountUser", null);
 __decorate([
     (0, common_1.Get)('pagination'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
@@ -60,7 +64,6 @@ __decorate([
 ], AccountsController.prototype, "findAllAccountUsers", null);
 __decorate([
     (0, common_1.Put)('users/:uuid'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('uuid')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Request)()),
@@ -70,14 +73,21 @@ __decorate([
 ], AccountsController.prototype, "updateAccountUser", null);
 __decorate([
     (0, common_1.Patch)('users/is-active/:uuid'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('uuid')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "updateAccountUserIsActive", null);
+__decorate([
+    (0, common_1.Get)('users/totals'),
+    __param(0, (0, account_id_decorator_1.AccountId)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], AccountsController.prototype, "totalsAccountUsers", null);
 exports.AccountsController = AccountsController = __decorate([
     (0, common_1.Controller)('account'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [accounts_service_1.AccountsService])
 ], AccountsController);
 //# sourceMappingURL=accounts.controller.js.map

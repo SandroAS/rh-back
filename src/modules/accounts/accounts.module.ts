@@ -9,6 +9,8 @@ import { UsersModule } from '../users/users.module';
 import { RolesModule } from '../roles/roles.module';
 import { JobPositionsModule } from '../job-positions/job-positions.module';
 import { SectorsModule } from '../sectors/sectors.module';
+import { EvaluationApplicationsModule } from '../evaluation-applications/evaluation-applications.module';
+import { FormResponsesModule } from '../form-responses/form-responses.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { SectorsModule } from '../sectors/sectors.module';
     RolesModule,
     JobPositionsModule,
     SectorsModule,
+    EvaluationApplicationsModule,
+    FormResponsesModule,
   ],
   providers: [AccountsService],
   controllers: [AccountsController],

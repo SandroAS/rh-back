@@ -33,4 +33,7 @@ export declare class UsersService {
     updateUserPassword(uuid: string, body: UpdateUserPasswordDto, user: User): Promise<boolean>;
     saveUser(user: User, manager?: EntityManager): Promise<User>;
     remove(id: number): Promise<User>;
+    countByAccountId(accountId: number): Promise<number>;
+    countWithoutJobPositionByAccountId(accountId: number): Promise<number>;
+    findUserIdsNotInListByAccountId(accountIds: number[], accountId: number): Promise<number>;
 }
