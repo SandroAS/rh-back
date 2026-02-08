@@ -9,6 +9,7 @@ import { UpdateTeamDto } from './dtos/update-team.dto';
 import { TeamResponseDto } from './dtos/team-response.dto';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { TeamPaginationResponseDto } from './dtos/team-pagination-response.dto';
+import { TotalsTeamsResponseDto } from './dtos/totals-teams-response.dto';
 
 @Controller('teams')
 @UseGuards(JwtAuthGuard)
@@ -23,6 +24,16 @@ export class TeamsController {
   ): Promise<TeamResponseDto> {
     const team = await this.service.createWithAccountId(dto, user);
     return new TeamResponseDto(team);
+  }
+
+  @Get('totals')
+  async getTotals(@AccountId() account_id: number): Promise<TotalsTeamsResponseDto> {
+    const totals = await this.service.totalsTeams(account_id);
+    return new TotalsTeamsResponseDto(
+      totals.total,
+      totals.pending_sector_settings,
+      totals.exceeded_team_members
+    );
   }
 
   @Get('pagination')

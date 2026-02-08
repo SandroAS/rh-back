@@ -180,4 +180,41 @@ export class TeamsService extends BaseService<Team> {
   async removeWithAccountId(uuid: string, accountId: number): Promise<void> {
     await super.removeByUuid(uuid, accountId);
   }
+
+  async totalsTeams(accountId: number): Promise<{
+    total: number;
+    pending_sector_settings: number;
+    exceeded_team_members: number;
+  }> {
+    // Total de times para essa accountId
+    const total = await this.repository.count({
+      where: { account_id: accountId },
+    });
+
+    // Times sem setor vinculado (sector_id IS NULL)
+    const pending_sector_settings = await this.repository
+      .createQueryBuilder('team')
+      .where('team.account_id = :accountId', { accountId })
+      .andWhere('team.sector_id IS NULL')
+      .getCount();
+
+    // Times que passam de 10 colaboradores
+    // Buscar times com mais de 10 teamMembers
+    const teamsWithExceededMembersResult = await this.repository
+      .createQueryBuilder('team')
+      .leftJoin('team.teamMembers', 'teamMember')
+      .where('team.account_id = :accountId', { accountId })
+      .groupBy('team.id')
+      .having('COUNT(teamMember.id) > :maxMembers', { maxMembers: 10 })
+      .select('team.id')
+      .getRawMany();
+    
+    const teamsWithExceededMembers = teamsWithExceededMembersResult.length;
+
+    return {
+      total,
+      pending_sector_settings,
+      exceeded_team_members: teamsWithExceededMembers,
+    };
+  }
 }
