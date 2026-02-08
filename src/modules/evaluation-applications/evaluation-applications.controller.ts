@@ -11,6 +11,7 @@ import { CreateEvaluationApplicationDto } from './dtos/create-evaluation-applica
 import { UpdateEvaluationApplicationDto } from './dtos/update-evaluation-application.dto';
 import { SendEvaluationApplicationDto } from './dtos/send-evaluation-application.dto';
 import { EvaluationApplicationFilterDto } from './dtos/metrics-evaluation-application.dto';
+import { TotalsEvaluationApplicationsResponseDto } from './dtos/totals-evaluation-applications-response.dto';
 
 @Controller('evaluation-applications')
 @UseGuards(JwtAuthGuard)
@@ -59,6 +60,17 @@ export class EvaluationApplicationsController {
     @AccountId() accountId: number,
   ): Promise<EvaluationApplicationResponseDto> {
     return new EvaluationApplicationResponseDto(await this.evaluationApplicationsService.send(uuid, payloadDto, accountId));
+  }
+
+  @Get('totals')
+  async getTotals(@AccountId() accountId: number): Promise<TotalsEvaluationApplicationsResponseDto> {
+    const totals = await this.evaluationApplicationsService.totalsEvaluationApplications(accountId);
+    return new TotalsEvaluationApplicationsResponseDto(
+      totals.total,
+      totals.completed,
+      totals.pending,
+      totals.expired
+    );
   }
 
   @Get('metrics')

@@ -470,4 +470,53 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     
     return results.map((row) => row.user_id);
   }
+
+  async totalsEvaluationApplications(accountId: number): Promise<{
+    total: number;
+    completed: number;
+    pending: number;
+    expired: number;
+  }> {
+    // Total de todas as aplicações de avaliação para essa conta
+    const total = await this.evaluationApplicationRepository.count({
+      where: { account_id: accountId },
+    });
+
+    // Aplicações com status FINISHED
+    const completed = await this.evaluationApplicationRepository.count({
+      where: {
+        account_id: accountId,
+        status: EvaluationApplicationStatus.FINISHED,
+      },
+    });
+
+    // Aplicações com status EXPIRED
+    const expired = await this.evaluationApplicationRepository.count({
+      where: {
+        account_id: accountId,
+        status: EvaluationApplicationStatus.EXPIRED,
+      },
+    });
+
+    // Aplicações com status diferente de CANCELED, EXPIRED, FINISHED
+    // (ou seja, CREATED, SENDED, ACCESSED, IN_PROGRESS)
+    const pending = await this.evaluationApplicationRepository
+      .createQueryBuilder('ea')
+      .where('ea.account_id = :accountId', { accountId })
+      .andWhere('ea.status NOT IN (:...statuses)', {
+        statuses: [
+          EvaluationApplicationStatus.CANCELED,
+          EvaluationApplicationStatus.EXPIRED,
+          EvaluationApplicationStatus.FINISHED,
+        ],
+      })
+      .getCount();
+
+    return {
+      total,
+      completed,
+      pending,
+      expired,
+    };
+  }
 }
