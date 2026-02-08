@@ -4,6 +4,7 @@ import * as Minio from 'minio';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import { User } from '@/entities/user.entity';
+import MinioContext from './minio-context';
 
 @Injectable()
 export class MinioService implements OnModuleInit {
@@ -68,6 +69,8 @@ export class MinioService implements OnModuleInit {
   async onModuleInit() {
     await this.createBucketIfNotExists();
     await this.testMinioConnectivity();
+    // Registra a instância no contexto global para uso em DTOs
+    MinioContext.setMinioService(this);
   }
 
   /**
@@ -84,8 +87,7 @@ export class MinioService implements OnModuleInit {
         const externalBucketExists = await this.externalMinioClient.bucketExists(this.minioBucketName);
         this.logger.log(`MinIO External Connection: ${externalBucketExists ? 'OK' : 'FAILED'}`);
       } catch (externalErr) {
-        this.logger.warn(`MinIO External Connection failed: ${externalErr.message}`);
-        this.logger.warn(`This is normal if MinIO is only accessible internally. External URLs may not work.`);
+        this.logger.log(`MinIO External Connection failed inside container: ${externalErr.message}. This is normal MinIO is only accessible internally. External URLs work in browser.`);
       }
     } catch (err) {
       this.logger.error(`MinIO connectivity test failed: ${err.message}`);
@@ -138,6 +140,30 @@ export class MinioService implements OnModuleInit {
     } catch (err) {
       this.logger.error(`Error generating presigned URL for '${objectName}': ${err.message}`);
       throw new InternalServerErrorException('Error generating presigned URL.');
+    }
+  }
+
+  /**
+   * Processa uma única URL de imagem de perfil, retornando a URL assinada se necessário
+   * @param profileImgUrl URL da imagem de perfil (pode ser um objectName do MinIO ou URL do Google)
+   * @returns URL assinada ou null se não houver imagem ou se for do Google
+   */
+  async processProfileImageUrl(profileImgUrl: string | null): Promise<string | null> {
+    if (!profileImgUrl) {
+      return null;
+    }
+
+    // Se já for uma URL do Google, retorna como está
+    if (profileImgUrl.includes('googleusercontent')) {
+      return profileImgUrl;
+    }
+
+    // Se for um objectName do MinIO, gera URL assinada
+    try {
+      return await this.getPresignedUrl(profileImgUrl);
+    } catch (err) {
+      this.logger.error(`Falha ao tentar gerar URL assinada para imagem '${profileImgUrl}': ${err.message}`);
+      return null;
     }
   }
 

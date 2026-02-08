@@ -16,6 +16,7 @@ const config_1 = require("@nestjs/config");
 const Minio = require("minio");
 const path = require("path");
 const crypto = require("crypto");
+const minio_context_1 = require("./minio-context");
 let MinioService = MinioService_1 = class MinioService {
     constructor(configService) {
         this.configService = configService;
@@ -58,6 +59,7 @@ let MinioService = MinioService_1 = class MinioService {
     async onModuleInit() {
         await this.createBucketIfNotExists();
         await this.testMinioConnectivity();
+        minio_context_1.default.setMinioService(this);
     }
     async testMinioConnectivity() {
         try {
@@ -68,8 +70,7 @@ let MinioService = MinioService_1 = class MinioService {
                 this.logger.log(`MinIO External Connection: ${externalBucketExists ? 'OK' : 'FAILED'}`);
             }
             catch (externalErr) {
-                this.logger.warn(`MinIO External Connection failed: ${externalErr.message}`);
-                this.logger.warn(`This is normal if MinIO is only accessible internally. External URLs may not work.`);
+                this.logger.log(`MinIO External Connection failed inside container: ${externalErr.message}. This is normal MinIO is only accessible internally. External URLs work in browser.`);
             }
         }
         catch (err) {
@@ -119,6 +120,21 @@ let MinioService = MinioService_1 = class MinioService {
         catch (err) {
             this.logger.error(`Error generating presigned URL for '${objectName}': ${err.message}`);
             throw new common_1.InternalServerErrorException('Error generating presigned URL.');
+        }
+    }
+    async processProfileImageUrl(profileImgUrl) {
+        if (!profileImgUrl) {
+            return null;
+        }
+        if (profileImgUrl.includes('googleusercontent')) {
+            return profileImgUrl;
+        }
+        try {
+            return await this.getPresignedUrl(profileImgUrl);
+        }
+        catch (err) {
+            this.logger.error(`Falha ao tentar gerar URL assinada para imagem '${profileImgUrl}': ${err.message}`);
+            return null;
         }
     }
     async processUsersWithPresignedUrls(users) {

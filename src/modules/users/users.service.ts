@@ -224,18 +224,9 @@ export class UsersService {
   async findAllAccountUsers(account_id: number): Promise<UserAvatarResponseDto[]> {
     const users = await this.userRepository.find({ where: { account_id }, select: ['uuid', 'name', 'profile_img_url'], loadEagerRelations: false });
 
-    const usersMapped = await Promise.all(users.map(async (user) => {
-      if (user?.profile_img_url && !user.profile_img_url.includes('googleusercontent')) {
-        try {
-          user.profile_img_url = await this.minioService.getPresignedUrl(user.profile_img_url);
-        } catch (err) {
-          this.minioService['logger'].error(`Falha ao tentar gerar url assinada para usuário, image '${user.profile_img_url}': ${err.message}`);
-          user.profile_img_url = null;
-        }
-      }
-
+    const usersMapped = users.map((user) => {
       return new UserAvatarResponseDto(user);
-    }));
+    });
 
     return usersMapped;
   }

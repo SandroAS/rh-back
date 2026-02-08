@@ -13,7 +13,9 @@ import { UpdateEvaluationDto } from './dtos/update-evaluation.dto';
 @Controller('evaluations')
 @UseGuards(JwtAuthGuard)
 export class EvaluationsController {
-  constructor(private readonly evaluationsService: EvaluationsService) {}
+  constructor(
+    private readonly evaluationsService: EvaluationsService,
+  ) {}
 
   @Post()
   async create(

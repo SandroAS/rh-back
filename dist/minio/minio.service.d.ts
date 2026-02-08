@@ -20,6 +20,7 @@ export declare class MinioService implements OnModuleInit {
     private createBucketIfNotExists;
     uploadFile(file: Express.Multer.File, folder?: string): Promise<string>;
     getPresignedUrl(objectName: string, expirySeconds?: number): Promise<string>;
+    processProfileImageUrl(profileImgUrl: string | null): Promise<string | null>;
     processUsersWithPresignedUrls(users: User[]): Promise<User[]>;
     removeFile(objectName: string): Promise<void>;
 }

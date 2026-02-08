@@ -5,6 +5,7 @@ const app_module_1 = require("./app.module");
 const common_1 = require("@nestjs/common");
 const data_source_1 = require("./data-source");
 const run_seeders_1 = require("./seeds/run-seeders");
+const profile_image_url_interceptor_1 = require("./interceptors/profile-image-url.interceptor");
 async function bootstrap() {
     console.log('Envirement: ', process.env.NODE_ENV);
     await data_source_1.default.initialize();
@@ -20,6 +21,7 @@ async function bootstrap() {
     app.useGlobalPipes(new common_1.ValidationPipe({ transform: true, whitelist: true }));
     app.setGlobalPrefix('api');
     app.useGlobalInterceptors(new common_1.ClassSerializerInterceptor(app.get(core_1.Reflector)));
+    app.useGlobalInterceptors(new profile_image_url_interceptor_1.ProfileImageUrlInterceptor());
     await app.listen(3000);
     console.log('Application is running on http://localhost:3000');
 }
