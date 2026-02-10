@@ -73,6 +73,7 @@ export class FormResponsesService {
 
       await queryRunner.manager.update(EvaluationApplication, evaluationApp.id, {
         status: EvaluationApplicationStatus.FINISHED,
+        finished_at: new Date(),
       });
 
       await queryRunner.commitTransaction();

@@ -519,4 +519,63 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
       expired,
     };
   }
+
+  async getChartData(accountId: number): Promise<Array<{
+    month: string;
+    completed_evaluations_count: number;
+    average_rate_percentage: number;
+  }>> {
+    // Calcular data de 12 meses atrás
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+    twelveMonthsAgo.setDate(1);
+    twelveMonthsAgo.setHours(0, 0, 0, 0);
+
+    // Buscar avaliações finalizadas dos últimos 12 meses
+    const results = await this.evaluationApplicationRepository
+      .createQueryBuilder('ea')
+      .select('DATE_FORMAT(ea.finished_at, "%Y-%m")', 'month')
+      .addSelect('COUNT(ea.id)', 'completed_evaluations_count')
+      .addSelect('AVG(ea.rate)', 'average_rate')
+      .where('ea.account_id = :accountId', { accountId })
+      .andWhere('ea.status = :status', { status: EvaluationApplicationStatus.FINISHED })
+      .andWhere('ea.finished_at IS NOT NULL')
+      .andWhere('ea.finished_at >= :twelveMonthsAgo', { twelveMonthsAgo })
+      .groupBy('month')
+      .orderBy('month', 'ASC')
+      .getRawMany();
+
+    // Criar mapa com os resultados
+    const dataMap = new Map<string, { count: number; rate: number }>();
+    results.forEach((row) => {
+      dataMap.set(row.month, {
+        count: parseInt(row.completed_evaluations_count, 10),
+        rate: parseFloat(row.average_rate) || 0,
+      });
+    });
+
+    // Gerar array com todos os meses dos últimos 12 meses
+    const chartData: Array<{
+      month: string;
+      completed_evaluations_count: number;
+      average_rate_percentage: number;
+    }> = [];
+
+    const currentDate = new Date();
+    for (let i = 11; i >= 0; i--) {
+      const date = new Date(currentDate);
+      date.setMonth(date.getMonth() - i);
+      date.setDate(1);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      
+      const monthData = dataMap.get(monthKey);
+      chartData.push({
+        month: monthKey,
+        completed_evaluations_count: monthData?.count || 0,
+        average_rate_percentage: monthData?.rate || 0,
+      });
+    }
+
+    return chartData;
+  }
 }

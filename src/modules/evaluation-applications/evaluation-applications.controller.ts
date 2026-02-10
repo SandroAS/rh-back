@@ -12,6 +12,7 @@ import { UpdateEvaluationApplicationDto } from './dtos/update-evaluation-applica
 import { SendEvaluationApplicationDto } from './dtos/send-evaluation-application.dto';
 import { EvaluationApplicationFilterDto } from './dtos/metrics-evaluation-application.dto';
 import { TotalsEvaluationApplicationsResponseDto } from './dtos/totals-evaluation-applications-response.dto';
+import { EvaluationApplicationsChartResponseDto, EvaluationApplicationsChartItemDto } from './dtos/evaluation-applications-chart-response.dto';
 
 @Controller('evaluation-applications')
 @UseGuards(JwtAuthGuard)
@@ -71,6 +72,19 @@ export class EvaluationApplicationsController {
       totals.pending,
       totals.expired
     );
+  }
+
+  @Get('chart')
+  async getChartData(@AccountId() accountId: number): Promise<EvaluationApplicationsChartResponseDto> {
+    const chartData = await this.evaluationApplicationsService.getChartData(accountId);
+    const items = chartData.map(
+      (item) => new EvaluationApplicationsChartItemDto(
+        item.month,
+        item.completed_evaluations_count,
+        item.average_rate_percentage
+      )
+    );
+    return new EvaluationApplicationsChartResponseDto(items);
   }
 
   @Get('metrics')

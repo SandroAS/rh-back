@@ -93,6 +93,9 @@ export class EvaluationApplication extends BaseEntity {
   @Column({ type: 'enum', enum: EvaluationApplicationStatus, default: EvaluationApplicationStatus.CREATED })
   status: EvaluationApplicationStatus;
 
+  @Column({ name: 'finished_at', type: 'timestamp', nullable: true })
+  finished_at: Date | null;
+
   @ManyToOne(() => User, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'evaluated_user_id' })
   evaluatedUser: User;
