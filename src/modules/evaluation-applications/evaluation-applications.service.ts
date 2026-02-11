@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, InternalServerErrorException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, EntityManager } from 'typeorm';
+import { Repository, DataSource, EntityManager, In } from 'typeorm';
 import { EvaluationApplication, EvaluationApplicationStatus, EvaluationType } from '@/entities/evaluation-application.entity';
 import { QuestionType } from '@/common/enums/question-type.enum';
 import { User } from '@/entities/user.entity';
@@ -470,6 +470,50 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
       .getRawMany();
     
     return results.map((row) => row.user_id);
+  }
+
+  /**
+   * Retorna aplicações já enviadas (SENDED, ACCESSED, IN_PROGRESS) agrupadas por avaliador (submitting_user),
+   * com as aplicações pendentes de resposta e a data limite de cada uma.
+   */
+  async findPendingByEvaluator(
+    accountId: number,
+  ): Promise<Array<{ evaluator: User; pending_applications: EvaluationApplication[] }>> {
+    const pendingStatuses = [
+      EvaluationApplicationStatus.SENDED,
+      EvaluationApplicationStatus.ACCESSED,
+      EvaluationApplicationStatus.IN_PROGRESS,
+    ];
+
+    const applications = await this.evaluationApplicationRepository.find({
+      where: {
+        account_id: accountId,
+        status: In(pendingStatuses),
+      },
+      relations: [
+        'submittingUser',
+        'submittingUser.jobPosition',
+        'evaluatedUser',
+        'evaluatedUser.jobPosition',
+      ],
+      order: {
+        expiration_date: 'ASC',
+      },
+    });
+
+    const byEvaluatorId = new Map<number, { evaluator: User; pending_applications: EvaluationApplication[] }>();
+    for (const app of applications) {
+      const evaluator = app.submittingUser;
+      if (!evaluator) continue;
+      if (!byEvaluatorId.has(evaluator.id)) {
+        byEvaluatorId.set(evaluator.id, { evaluator, pending_applications: [] });
+      }
+      byEvaluatorId.get(evaluator.id).pending_applications.push(app);
+    }
+
+    return Array.from(byEvaluatorId.values()).sort((a, b) =>
+      (a.evaluator.name || '').localeCompare(b.evaluator.name || ''),
+    );
   }
 
   async totalsEvaluationApplications(accountId: number): Promise<{

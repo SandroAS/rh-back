@@ -12,7 +12,11 @@ import { UpdateEvaluationApplicationDto } from './dtos/update-evaluation-applica
 import { SendEvaluationApplicationDto } from './dtos/send-evaluation-application.dto';
 import { EvaluationApplicationFilterDto } from './dtos/metrics-evaluation-application.dto';
 import { TotalsEvaluationApplicationsResponseDto } from './dtos/totals-evaluation-applications-response.dto';
-import { EvaluationApplicationsChartResponseDto, EvaluationApplicationsChartItemDto } from './dtos/evaluation-applications-chart-response.dto';
+import { EvaluationApplicationsChartResponseDto } from './dtos/evaluation-applications-chart-response.dto';
+import { UserAvatarResponseDto } from '@/modules/users/dtos/user-avatar-response.dto';
+import { PendingByEvaluatorResponseDto } from './dtos/pending-by-evaluator-response.dto';
+import { PendingEvaluationApplicationItemDto } from './dtos/pending-evaluation-application-item.dto';
+import { EvaluationApplicationsChartItemDto } from './dtos/evaluation-applications-chart-item.dto';
 
 @Controller('evaluation-applications')
 @UseGuards(JwtAuthGuard)
@@ -85,6 +89,20 @@ export class EvaluationApplicationsController {
       )
     );
     return new EvaluationApplicationsChartResponseDto(items);
+  }
+
+  @Get('pending-by-evaluator')
+  async getPendingByEvaluator(
+    @AccountId() accountId: number,
+  ): Promise<PendingByEvaluatorResponseDto[]> {
+    const grouped = await this.evaluationApplicationsService.findPendingByEvaluator(accountId);
+    return grouped.map(
+      (item) =>
+        new PendingByEvaluatorResponseDto(
+          new UserAvatarResponseDto(item.evaluator),
+          item.pending_applications.map((app) => new PendingEvaluationApplicationItemDto(app)),
+        ),
+    );
   }
 
   @Get('metrics')
