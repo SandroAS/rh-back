@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, InternalServerErrorException, ConflictEx
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, EntityManager } from 'typeorm';
 import { EvaluationApplication, EvaluationApplicationStatus, EvaluationType } from '@/entities/evaluation-application.entity';
+import { QuestionType } from '@/common/enums/question-type.enum';
 import { User } from '@/entities/user.entity';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { BaseService, PaginationResult } from '@/common/services/base.service';
@@ -532,25 +533,34 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     twelveMonthsAgo.setHours(0, 0, 0, 0);
 
     // Buscar avaliações finalizadas dos últimos 12 meses
+    // Calcular média das respostas do tipo RATE convertidas para porcentagem
+    // JOIN: EvaluationApplication -> FormResponse -> FormAnswer -> FormApplicationQuestion
     const results = await this.evaluationApplicationRepository
       .createQueryBuilder('ea')
+      .innerJoin('ea.evaluation', 'evaluation')
+      .innerJoin('ea.responses', 'fr')
+      .innerJoin('fr.answers', 'fa')
+      .innerJoin('fa.applicationQuestion', 'faq')
       .select('DATE_FORMAT(ea.finished_at, "%Y-%m")', 'month')
-      .addSelect('COUNT(ea.id)', 'completed_evaluations_count')
-      .addSelect('AVG(ea.rate)', 'average_rate')
+      .addSelect('COUNT(DISTINCT ea.id)', 'completed_evaluations_count')
+      .addSelect('AVG((fa.number_value / evaluation.rate) * 100)', 'average_rate_percentage')
       .where('ea.account_id = :accountId', { accountId })
       .andWhere('ea.status = :status', { status: EvaluationApplicationStatus.FINISHED })
       .andWhere('ea.finished_at IS NOT NULL')
       .andWhere('ea.finished_at >= :twelveMonthsAgo', { twelveMonthsAgo })
+      .andWhere('faq.type = :rateType', { rateType: QuestionType.RATE })
+      .andWhere('fa.number_value IS NOT NULL')
+      .andWhere('evaluation.rate > 0') // Evitar divisão por zero
       .groupBy('month')
       .orderBy('month', 'ASC')
       .getRawMany();
 
     // Criar mapa com os resultados
-    const dataMap = new Map<string, { count: number; rate: number }>();
+    const dataMap = new Map<string, { count: number; ratePercentage: number }>();
     results.forEach((row) => {
       dataMap.set(row.month, {
         count: parseInt(row.completed_evaluations_count, 10),
-        rate: parseFloat(row.average_rate) || 0,
+        ratePercentage: parseFloat(row.average_rate_percentage) || 0,
       });
     });
 
@@ -572,7 +582,7 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
       chartData.push({
         month: monthKey,
         completed_evaluations_count: monthData?.count || 0,
-        average_rate_percentage: monthData?.rate || 0,
+        average_rate_percentage: monthData?.ratePercentage || 0,
       });
     }
 
