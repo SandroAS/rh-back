@@ -6,6 +6,7 @@ import { FormApplicationsModule } from '../form-applications/form-applications.m
 import { EvaluationApplicationsController } from './evaluation-applications.controller';
 import { EvaluationApplicationsService } from './evaluation-applications.service';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
     EvaluationsModule,
     FormApplicationsModule,
     NotificationsModule,
+    UsersModule,
   ],
   controllers: [EvaluationApplicationsController],
   providers: [EvaluationApplicationsService],

@@ -148,6 +148,14 @@ let UsersService = class UsersService {
         });
         return user;
     }
+    async findByIdsAndAccountId(ids, account_id) {
+        if (ids.length === 0)
+            return [];
+        return this.userRepository.find({
+            where: { id: (0, typeorm_1.In)(ids), account_id },
+            relations: ['jobPosition'],
+        });
+    }
     async findAndPaginateByAccountId(accountId, page, limit, sortColumn, sortOrder, searchTerm) {
         const queryBuilder = this.userRepository
             .createQueryBuilder('user')

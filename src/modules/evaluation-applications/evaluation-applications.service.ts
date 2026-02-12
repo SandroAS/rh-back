@@ -15,6 +15,8 @@ import { SendEvaluationApplicationDto } from './dtos/send-evaluation-application
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationCategory, NotificationTemplateKey } from '@/entities/notification.entity';
 import { EvaluationApplicationFilterDto } from './dtos/metrics-evaluation-application.dto';
+import { UsersService } from '../users/users.service';
+import { QuartileLabel } from './dtos/ranking-by-quartiles-response.dto';
 
 @Injectable()
 export class EvaluationApplicationsService extends BaseService<EvaluationApplication> {
@@ -25,6 +27,7 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     private readonly formApplicationsService: FormApplicationsService,
     private readonly evaluationsService: EvaluationsService,
     private readonly notificationsService: NotificationsService,
+    private readonly usersService: UsersService,
   ) {
     super(evaluationApplicationRepository);
   }
@@ -631,5 +634,67 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
     }
 
     return chartData;
+  }
+
+  /**
+   * Ranking dos usuários mais bem avaliados: média das respostas RATE em porcentagem (0-100),
+   * agrupados em quartis (top 25%, segundo 25%, terceiro 25%, último 25%).
+   */
+  async getRankingByQuartiles(
+    accountId: number,
+  ): Promise<Array<{ quartile: QuartileLabel; users: Array<{ user: User; average_rate_percentage: number }> }>> {
+    const raw = await this.evaluationApplicationRepository
+      .createQueryBuilder('ea')
+      .innerJoin('ea.evaluation', 'e')
+      .innerJoin('ea.responses', 'fr')
+      .innerJoin('fr.answers', 'fa')
+      .innerJoin('fa.applicationQuestion', 'faq')
+      .select('ea.evaluated_user_id', 'evaluated_user_id')
+      .addSelect('AVG((fa.number_value / e.rate) * 100)', 'avg_percentage')
+      .where('ea.account_id = :accountId', { accountId })
+      .andWhere('ea.status = :status', { status: EvaluationApplicationStatus.FINISHED })
+      .andWhere('fr.is_completed = true')
+      .andWhere('faq.type = :rateType', { rateType: QuestionType.RATE })
+      .andWhere('fa.number_value IS NOT NULL')
+      .andWhere('e.rate > 0')
+      .groupBy('ea.evaluated_user_id')
+      .orderBy('avg_percentage', 'DESC')
+      .getRawMany<{ evaluated_user_id: number; avg_percentage: string }>();
+
+    if (raw.length === 0) {
+      return [
+        { quartile: 'top_25', users: [] },
+        { quartile: 'second_25', users: [] },
+        { quartile: 'third_25', users: [] },
+        { quartile: 'bottom_25', users: [] },
+      ];
+    }
+
+    const userIds = raw.map((r) => r.evaluated_user_id);
+    const users = await this.usersService.findByIdsAndAccountId(userIds, accountId);
+    const userMap = new Map(users.map((u) => [u.id, u]));
+
+    const sorted: Array<{ user: User; average_rate_percentage: number }> = [];
+    for (const row of raw) {
+      const user = userMap.get(row.evaluated_user_id);
+      if (user) {
+        sorted.push({
+          user,
+          average_rate_percentage: parseFloat(row.avg_percentage) || 0,
+        });
+      }
+    }
+
+    const n = sorted.length;
+    const q1 = Math.ceil(n * 0.25);
+    const q2 = Math.ceil(n * 0.5);
+    const q3 = Math.ceil(n * 0.75);
+    const quartiles: QuartileLabel[] = ['top_25', 'second_25', 'third_25', 'bottom_25'];
+    const ranges: [number, number][] = [[0, q1], [q1, q2], [q2, q3], [q3, n]];
+
+    return ranges.map(([start, end], i) => ({
+      quartile: quartiles[i],
+      users: sorted.slice(start, end),
+    }));
   }
 }

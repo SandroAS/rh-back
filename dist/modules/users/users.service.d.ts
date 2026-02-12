@@ -25,6 +25,7 @@ export declare class UsersService {
     findByUuid(uuid: string, select?: string[]): Promise<User>;
     findByUuidsAndAccountId(uuids: string[], account_id: number): Promise<User[]>;
     findOneByUuidAndAccountId(uuid: string, account_id: number): Promise<User>;
+    findByIdsAndAccountId(ids: number[], account_id: number): Promise<User[]>;
     findAndPaginateByAccountId(accountId: number, page: number, limit: number, sortColumn?: string, sortOrder?: 'asc' | 'desc', searchTerm?: string): Promise<[User[], number]>;
     findAllAccountUsers(account_id: number): Promise<UserAvatarResponseDto[]>;
     findAllAccountUsersWithTeams(account_id: number): Promise<User[]>;

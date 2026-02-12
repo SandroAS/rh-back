@@ -17,6 +17,11 @@ import { UserAvatarResponseDto } from '@/modules/users/dtos/user-avatar-response
 import { PendingByEvaluatorResponseDto } from './dtos/pending-by-evaluator-response.dto';
 import { PendingEvaluationApplicationItemDto } from './dtos/pending-evaluation-application-item.dto';
 import { EvaluationApplicationsChartItemDto } from './dtos/evaluation-applications-chart-item.dto';
+import {
+  RankingByQuartilesResponseDto,
+  RankingQuartileGroupDto,
+  RankingUserDto,
+} from './dtos/ranking-by-quartiles-response.dto';
 
 @Controller('evaluation-applications')
 @UseGuards(JwtAuthGuard)
@@ -89,6 +94,23 @@ export class EvaluationApplicationsController {
       )
     );
     return new EvaluationApplicationsChartResponseDto(items);
+  }
+
+  @Get('ranking-by-quartiles')
+  async getRankingByQuartiles(
+    @AccountId() accountId: number,
+  ): Promise<RankingByQuartilesResponseDto> {
+    const quartiles = await this.evaluationApplicationsService.getRankingByQuartiles(accountId);
+    const data = quartiles.map(
+      (q) =>
+        new RankingQuartileGroupDto(
+          q.quartile,
+          q.users.map(
+            (u) => new RankingUserDto(new UserAvatarResponseDto(u.user), u.average_rate_percentage),
+          ),
+        ),
+    );
+    return new RankingByQuartilesResponseDto(data);
   }
 
   @Get('pending-by-evaluator')

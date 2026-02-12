@@ -171,6 +171,14 @@ export class UsersService {
     return user;
   }
 
+  async findByIdsAndAccountId(ids: number[], account_id: number): Promise<User[]> {
+    if (ids.length === 0) return [];
+    return this.userRepository.find({
+      where: { id: In(ids), account_id },
+      relations: ['jobPosition'],
+    });
+  }
+
   async findAndPaginateByAccountId(accountId: number, page: number, limit: number, sortColumn?: string, sortOrder?: 'asc' | 'desc', searchTerm?: string): Promise<[User[], number]> {
     const queryBuilder = this.userRepository
       .createQueryBuilder('user')
