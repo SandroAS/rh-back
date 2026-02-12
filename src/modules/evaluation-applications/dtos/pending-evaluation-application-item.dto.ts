@@ -1,6 +1,6 @@
 import { Expose, Type } from 'class-transformer';
 import { UserAvatarResponseDto } from '@/modules/users/dtos/user-avatar-response.dto';
-import { EvaluationApplication } from '@/entities/evaluation-application.entity';
+import { EvaluationApplication, EvaluationType } from '@/entities/evaluation-application.entity';
 
 /**
  * Item de aplicação pendente (para o avaliador responder), com data limite.
@@ -13,6 +13,9 @@ export class PendingEvaluationApplicationItemDto {
   name: string;
 
   @Expose()
+  type: EvaluationType;
+
+  @Expose()
   expiration_date: Date | null;
 
   @Expose()
@@ -22,6 +25,7 @@ export class PendingEvaluationApplicationItemDto {
   constructor(app: EvaluationApplication) {
     this.uuid = app.uuid;
     this.name = app.name;
+    this.type = app.type;
     this.expiration_date = app.expiration_date
       ? (app.expiration_date instanceof Date
           ? app.expiration_date
