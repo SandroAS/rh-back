@@ -2,7 +2,7 @@ import { Expose, Type } from 'class-transformer';
 import { Team } from '@/entities/team.entity';
 import { UserAvatarResponseDto } from '@/modules/users/dtos/user-avatar-response.dto';
 import { TeamMemberResponseDto } from '../../team-members/dtos/team-member-response.dto';
-import { SectorResponseDto } from '@/modules/sectors/dtos/sector-response.dto';
+import { SectorNameUuidResponseDto } from '@/modules/sectors/dtos/sector-name-uuid-response.dto';
 
 export class TeamResponseDto {
   @Expose()
@@ -20,8 +20,8 @@ export class TeamResponseDto {
   leader: UserAvatarResponseDto;
 
   @Expose()
-  @Type(() => SectorResponseDto)
-  sector: SectorResponseDto;
+  @Type(() => SectorNameUuidResponseDto)
+  sector: SectorNameUuidResponseDto;
 
   @Expose()
   @Type(() => TeamMemberResponseDto)
@@ -40,7 +40,7 @@ export class TeamResponseDto {
     }
 
     if (team.sector) {
-      this.sector = new SectorResponseDto(team.sector);
+      this.sector = new SectorNameUuidResponseDto(team.sector);
     }
 
     if (team.teamMembers && team.teamMembers.length > 0) {

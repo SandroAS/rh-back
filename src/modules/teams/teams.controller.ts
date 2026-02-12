@@ -42,6 +42,12 @@ export class TeamsController {
     return new TeamPaginationResponseDto(result);
   }
 
+  @Get('user-logged-members')
+  async getUserLoggedTeam(@AuthUser() user: User): Promise<TeamResponseDto> {
+    const team = await this.service.findTeamByUserLogged(user.id, user.account_id);
+    return new TeamResponseDto(team);
+  }
+
   @Get(':uuid')
   async findOne(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<TeamResponseDto> {
     const team = await this.service.findOneWithAccountId(uuid, account_id);

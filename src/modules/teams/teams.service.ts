@@ -130,6 +130,28 @@ export class TeamsService extends BaseService<Team> {
     return team;
   }
 
+  /**
+   * Retorna o time em que o usuário logado é membro, com todos os relacionamentos.
+   */
+  async findTeamByUserLogged(userId: number, accountId: number): Promise<Team> {
+    const team = await this.repository
+      .createQueryBuilder('team')
+      .innerJoin('team.teamMembers', 'tm', 'tm.user_id = :userId AND tm.account_id = :accountId', { userId, accountId })
+      .leftJoinAndSelect('team.teamMembers', 'teamMembers')
+      .leftJoinAndSelect('teamMembers.user', 'teamMemberUser')
+      .leftJoinAndSelect('teamMemberUser.jobPosition', 'teamMemberUserJobPosition')
+      .leftJoinAndSelect('team.leader', 'leader')
+      .leftJoinAndSelect('leader.jobPosition', 'leaderJobPosition')
+      .leftJoinAndSelect('team.sector', 'sector')
+      .where('team.account_id = :accountId', { accountId })
+      .getOne();
+
+    if (!team) {
+      throw new NotFoundException('Você não está vinculado a nenhum time.');
+    }
+    return team;
+  }
+
   async updateWithAccountId(uuid: string, dto: UpdateTeamDto, accountId: number): Promise<Team> {
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
