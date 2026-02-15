@@ -21,6 +21,7 @@ const user_meta_entity_1 = require("./user-meta.entity");
 const company_entity_1 = require("./company.entity");
 const address_entity_1 = require("./address.entity");
 const job_position_entity_1 = require("./job-position.entity");
+const job_position_level_entity_1 = require("./job-position-level.entity");
 const job_positions_levels_group_entity_1 = require("./job-positions-levels-group.entity");
 const team_entity_1 = require("./team.entity");
 const team_member_entity_1 = require("./team-member.entity");
@@ -143,6 +144,11 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'job_position_id' }),
     __metadata("design:type", job_position_entity_1.JobPosition)
 ], User.prototype, "jobPosition", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => job_position_level_entity_1.JobPositionsLevel, { onDelete: 'SET NULL', nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: 'job_positions_current_level_id' }),
+    __metadata("design:type", job_position_level_entity_1.JobPositionsLevel)
+], User.prototype, "jobPositionCurrentLevel", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => job_positions_levels_group_entity_1.JobPositionsLevelsGroup, (jobPositionsLevelsGroup) => jobPositionsLevelsGroup.createdBy),
     __metadata("design:type", Array)

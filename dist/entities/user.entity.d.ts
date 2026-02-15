@@ -6,6 +6,7 @@ import { UserMeta } from './user-meta.entity';
 import { Company } from './company.entity';
 import { Address } from './address.entity';
 import { JobPosition } from './job-position.entity';
+import { JobPositionsLevel } from './job-position-level.entity';
 import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 import { Team } from './team.entity';
 import { TeamMember } from './team-member.entity';
@@ -43,6 +44,7 @@ export declare class User {
     address: Address;
     job_position_id: number;
     jobPosition: JobPosition;
+    jobPositionCurrentLevel: JobPositionsLevel | null;
     jobPositionsLevelsGroups: JobPositionsLevelsGroup[];
     teams: Team[];
     teamMembers: TeamMember[];

@@ -1,6 +1,7 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Account } from './account.entity';
 import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
+import { User } from './user.entity';
 import { BaseEntity } from '../common/entities/base.entity';
 
 @Entity('job_positions_levels')
@@ -31,4 +32,7 @@ export class JobPositionsLevel extends BaseEntity {
 
   @Column({ name: 'job_positions_levels_group_id', nullable: true })
   job_positions_levels_group_id: number;
+
+  @OneToMany(() => User, (user) => user.jobPositionCurrentLevel)
+  users: User[];
 }

@@ -9,6 +9,7 @@ import { UserMeta } from './user-meta.entity';
 import { Company } from './company.entity';
 import { Address } from './address.entity';
 import { JobPosition } from './job-position.entity';
+import { JobPositionsLevel } from './job-position-level.entity';
 import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 import { Team } from './team.entity';
 import { TeamMember } from './team-member.entity';
@@ -103,6 +104,10 @@ export class User {
   @ManyToOne(() => JobPosition, (jobPosition) => jobPosition.users, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'job_position_id' })
   jobPosition: JobPosition;
+
+  @ManyToOne(() => JobPositionsLevel, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'job_positions_current_level_id' })
+  jobPositionCurrentLevel: JobPositionsLevel | null;
 
   @OneToMany(() => JobPositionsLevelsGroup, (jobPositionsLevelsGroup) => jobPositionsLevelsGroup.createdBy)
   jobPositionsLevelsGroups: JobPositionsLevelsGroup[];
