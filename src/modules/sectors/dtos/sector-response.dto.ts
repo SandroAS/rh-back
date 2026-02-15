@@ -14,7 +14,9 @@ export class SectorResponseDto {
   users: UserAvatarResponseDto[];
 
   constructor(partial: Partial<Sector>) {
-    Object.assign(this, partial);
+    this.uuid = partial.uuid;
+    this.name = partial.name;
+
     if (partial.users) {
       this.users = partial.users.map(user => new UserAvatarResponseDto(user));
     }
