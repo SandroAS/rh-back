@@ -21,6 +21,16 @@ let TrialsService = class TrialsService {
     constructor(trialRepository) {
         this.trialRepository = trialRepository;
     }
+    async findMyTrial(account_id) {
+        const trial = await this.trialRepository.findOne({
+            where: { account_id },
+            relations: ['account'],
+        });
+        if (!trial) {
+            throw new common_1.NotFoundException(`Período gratuito para conta ${account_id} não encontrado`);
+        }
+        return trial;
+    }
     async findAll() {
         return this.trialRepository.find({ relations: ['account'] });
     }

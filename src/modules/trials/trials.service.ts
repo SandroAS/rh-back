@@ -11,6 +11,19 @@ export class TrialsService {
     private readonly trialRepository: Repository<Trial>,
   ) {}
 
+  async findMyTrial(account_id: number): Promise<Trial> {
+    const trial = await this.trialRepository.findOne({
+      where: { account_id },
+      relations: ['account'],
+    });
+
+    if (!trial) {
+      throw new NotFoundException(`Período gratuito para conta ${account_id} não encontrado`);
+    }
+
+    return trial;
+  }
+
   async findAll(): Promise<Trial[]> {
     return this.trialRepository.find({ relations: ['account'] });
   }

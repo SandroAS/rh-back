@@ -1,34 +1,16 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { TrialsService } from './trials.service';
-import { Trial } from '@/entities/trial.entity';
-import { CreateTrialDto } from './dtos/create-trial.dto';
+import { AccountId } from '@/common/decorators/account-id.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { TrialResponseDto } from './dtos/trial-response.dto';
 
 @Controller('trials')
+@UseGuards(JwtAuthGuard)
 export class TrialsController {
   constructor(private readonly trialsService: TrialsService) {}
 
-  @Get()
-  findAll() {
-    return this.trialsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.trialsService.findOne(+id);
-  }
-
-  @Post()
-  create(@Body() data: CreateTrialDto) {
-    return this.trialsService.create(data);
-  }
-
-  @Put(':id')
-  update(@Param('id') id: number, @Body() data: Partial<Trial>) {
-    return this.trialsService.update(+id, data);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.trialsService.remove(+id);
+  @Get('/my-trial')
+  async findMyTrial(@AccountId() account_id: number): Promise<TrialResponseDto> {
+    return new TrialResponseDto(await this.trialsService.findMyTrial(account_id));
   }
 }

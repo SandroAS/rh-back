@@ -15,65 +15,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TrialsController = void 0;
 const common_1 = require("@nestjs/common");
 const trials_service_1 = require("./trials.service");
-const create_trial_dto_1 = require("./dtos/create-trial.dto");
+const account_id_decorator_1 = require("../../common/decorators/account-id.decorator");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const trial_response_dto_1 = require("./dtos/trial-response.dto");
 let TrialsController = class TrialsController {
     constructor(trialsService) {
         this.trialsService = trialsService;
     }
-    findAll() {
-        return this.trialsService.findAll();
-    }
-    findOne(id) {
-        return this.trialsService.findOne(+id);
-    }
-    create(data) {
-        return this.trialsService.create(data);
-    }
-    update(id, data) {
-        return this.trialsService.update(+id, data);
-    }
-    remove(id) {
-        return this.trialsService.remove(+id);
+    async findMyTrial(account_id) {
+        return new trial_response_dto_1.TrialResponseDto(await this.trialsService.findMyTrial(account_id));
     }
 };
 exports.TrialsController = TrialsController;
 __decorate([
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], TrialsController.prototype, "findAll", null);
-__decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Get)('/my-trial'),
+    __param(0, (0, account_id_decorator_1.AccountId)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
-], TrialsController.prototype, "findOne", null);
-__decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_trial_dto_1.CreateTrialDto]),
-    __metadata("design:returntype", void 0)
-], TrialsController.prototype, "create", null);
-__decorate([
-    (0, common_1.Put)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
-    __metadata("design:returntype", void 0)
-], TrialsController.prototype, "update", null);
-__decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
-], TrialsController.prototype, "remove", null);
+    __metadata("design:returntype", Promise)
+], TrialsController.prototype, "findMyTrial", null);
 exports.TrialsController = TrialsController = __decorate([
     (0, common_1.Controller)('trials'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [trials_service_1.TrialsService])
 ], TrialsController);
 //# sourceMappingURL=trials.controller.js.map

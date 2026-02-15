@@ -4,6 +4,7 @@ import { CreateTrialDto } from './dtos/create-trial.dto';
 export declare class TrialsService {
     private readonly trialRepository;
     constructor(trialRepository: Repository<Trial>);
+    findMyTrial(account_id: number): Promise<Trial>;
     findAll(): Promise<Trial[]>;
     findOne(id: number): Promise<Trial>;
     create(data: CreateTrialDto, manager?: EntityManager): Promise<Trial>;
