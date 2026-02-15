@@ -8,6 +8,7 @@ import { MinioModule } from '@/minio/minio.module';
 import { UsersModule } from '../users/users.module';
 import { RolesModule } from '../roles/roles.module';
 import { JobPositionsModule } from '../job-positions/job-positions.module';
+import { JobPositionsLevelsModule } from '../job-positions-levels/job-positions-levels.module';
 import { SectorsModule } from '../sectors/sectors.module';
 import { EvaluationApplicationsModule } from '../evaluation-applications/evaluation-applications.module';
 import { FormResponsesModule } from '../form-responses/form-responses.module';
@@ -20,6 +21,7 @@ import { FormResponsesModule } from '../form-responses/form-responses.module';
     UsersModule,
     RolesModule,
     JobPositionsModule,
+    JobPositionsLevelsModule,
     SectorsModule,
     EvaluationApplicationsModule,
     FormResponsesModule,

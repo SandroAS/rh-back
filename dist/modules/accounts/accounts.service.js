@@ -28,12 +28,13 @@ const roles_types_dto_1 = require("../roles/dtos/roles-types.dto");
 const roles_service_1 = require("../roles/roles.service");
 const account_users_response_pagination_dto_1 = require("./dtos/account-users-response-pagination.dto");
 const job_positions_service_1 = require("../job-positions/job-positions.service");
+const job_positions_levels_service_1 = require("../job-positions-levels/job-positions-levels.service");
 const sectors_service_1 = require("../sectors/sectors.service");
 const evaluation_applications_service_1 = require("../evaluation-applications/evaluation-applications.service");
 const form_responses_service_1 = require("../form-responses/form-responses.service");
 const scrypt = (0, util_1.promisify)(crypto_1.scrypt);
 let AccountsService = class AccountsService {
-    constructor(accountRepository, dataSource, systemModuleService, minioService, usersService, rolesService, jobPositionsService, sectorsService, evaluationApplicationsService, formResponsesService) {
+    constructor(accountRepository, dataSource, systemModuleService, minioService, usersService, rolesService, jobPositionsService, jobPositionsLevelsService, sectorsService, evaluationApplicationsService, formResponsesService) {
         this.accountRepository = accountRepository;
         this.dataSource = dataSource;
         this.systemModuleService = systemModuleService;
@@ -41,6 +42,7 @@ let AccountsService = class AccountsService {
         this.usersService = usersService;
         this.rolesService = rolesService;
         this.jobPositionsService = jobPositionsService;
+        this.jobPositionsLevelsService = jobPositionsLevelsService;
         this.sectorsService = sectorsService;
         this.evaluationApplicationsService = evaluationApplicationsService;
         this.formResponsesService = formResponsesService;
@@ -193,6 +195,15 @@ let AccountsService = class AccountsService {
         if (jobPositionId !== undefined) {
             user.job_position_id = jobPositionId;
         }
+        if (accountUser.job_position_current_level_uuid !== undefined) {
+            if (accountUser.job_position_current_level_uuid == null || accountUser.job_position_current_level_uuid === '') {
+                user.jobPositionCurrentLevel = null;
+            }
+            else {
+                const level = await this.jobPositionsLevelsService.findOneWithAccountId(accountUser.job_position_current_level_uuid, authUser.account_id);
+                user.jobPositionCurrentLevel = level;
+            }
+        }
         await this.usersService.saveUser(user);
         return { uuid, role: { uuid: role.uuid } };
     }
@@ -242,6 +253,7 @@ exports.AccountsService = AccountsService = __decorate([
         users_service_1.UsersService,
         roles_service_1.RolesService,
         job_positions_service_1.JobPositionService,
+        job_positions_levels_service_1.JobPositionsLevelsService,
         sectors_service_1.SectorsService,
         evaluation_applications_service_1.EvaluationApplicationsService,
         form_responses_service_1.FormResponsesService])

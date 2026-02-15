@@ -19,6 +19,7 @@ import { RolesService } from '../roles/roles.service';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { AccountUsersResponsePaginationDto } from './dtos/account-users-response-pagination.dto';
 import { JobPositionService } from '../job-positions/job-positions.service';
+import { JobPositionsLevelsService } from '../job-positions-levels/job-positions-levels.service';
 import { SectorsService } from '../sectors/sectors.service';
 import { EvaluationApplicationsService } from '../evaluation-applications/evaluation-applications.service';
 import { FormResponsesService } from '../form-responses/form-responses.service';
@@ -36,6 +37,7 @@ export class AccountsService {
     private readonly usersService: UsersService,
     private readonly rolesService: RolesService,
     private readonly jobPositionsService: JobPositionService,
+    private readonly jobPositionsLevelsService: JobPositionsLevelsService,
     private readonly sectorsService: SectorsService,
     private readonly evaluationApplicationsService: EvaluationApplicationsService,
     private readonly formResponsesService: FormResponsesService,
@@ -249,6 +251,19 @@ export class AccountsService {
 
     if (jobPositionId !== undefined) {
       user.job_position_id = jobPositionId;
+    }
+
+    // Atualizar nível atual do cargo (job_position_current_level_id)
+    if (accountUser.job_position_current_level_uuid !== undefined) {
+      if (accountUser.job_position_current_level_uuid == null || accountUser.job_position_current_level_uuid === '') {
+        user.jobPositionCurrentLevel = null;
+      } else {
+        const level = await this.jobPositionsLevelsService.findOneWithAccountId(
+          accountUser.job_position_current_level_uuid,
+          authUser.account_id,
+        );
+        user.jobPositionCurrentLevel = level;
+      }
     }
 
     // Salvar o usuário com o relacionamento Many-to-Many preservado

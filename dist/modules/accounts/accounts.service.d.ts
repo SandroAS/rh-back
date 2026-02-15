@@ -13,6 +13,7 @@ import { RolesService } from '../roles/roles.service';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { AccountUsersResponsePaginationDto } from './dtos/account-users-response-pagination.dto';
 import { JobPositionService } from '../job-positions/job-positions.service';
+import { JobPositionsLevelsService } from '../job-positions-levels/job-positions-levels.service';
 import { SectorsService } from '../sectors/sectors.service';
 import { EvaluationApplicationsService } from '../evaluation-applications/evaluation-applications.service';
 import { FormResponsesService } from '../form-responses/form-responses.service';
@@ -24,10 +25,11 @@ export declare class AccountsService {
     private readonly usersService;
     private readonly rolesService;
     private readonly jobPositionsService;
+    private readonly jobPositionsLevelsService;
     private readonly sectorsService;
     private readonly evaluationApplicationsService;
     private readonly formResponsesService;
-    constructor(accountRepository: Repository<Account>, dataSource: DataSource, systemModuleService: SystemModulesService, minioService: MinioService, usersService: UsersService, rolesService: RolesService, jobPositionsService: JobPositionService, sectorsService: SectorsService, evaluationApplicationsService: EvaluationApplicationsService, formResponsesService: FormResponsesService);
+    constructor(accountRepository: Repository<Account>, dataSource: DataSource, systemModuleService: SystemModulesService, minioService: MinioService, usersService: UsersService, rolesService: RolesService, jobPositionsService: JobPositionService, jobPositionsLevelsService: JobPositionsLevelsService, sectorsService: SectorsService, evaluationApplicationsService: EvaluationApplicationsService, formResponsesService: FormResponsesService);
     create(data: CreateAccountDto, manager?: EntityManager): Promise<Account>;
     createAccountUser(accountUser: CreateAccountUserDto, user: User): Promise<{
         uuid: string;

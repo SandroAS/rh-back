@@ -9,4 +9,5 @@ export declare class UpdateAccountUserDto {
     role: RolesTypes;
     job_position_uuid?: string;
     sector_uuid?: string;
+    job_position_current_level_uuid?: string | null;
 }

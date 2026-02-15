@@ -17,6 +17,7 @@ const minio_module_1 = require("../../minio/minio.module");
 const users_module_1 = require("../users/users.module");
 const roles_module_1 = require("../roles/roles.module");
 const job_positions_module_1 = require("../job-positions/job-positions.module");
+const job_positions_levels_module_1 = require("../job-positions-levels/job-positions-levels.module");
 const sectors_module_1 = require("../sectors/sectors.module");
 const evaluation_applications_module_1 = require("../evaluation-applications/evaluation-applications.module");
 const form_responses_module_1 = require("../form-responses/form-responses.module");
@@ -32,6 +33,7 @@ exports.AccountsModule = AccountsModule = __decorate([
             users_module_1.UsersModule,
             roles_module_1.RolesModule,
             job_positions_module_1.JobPositionsModule,
+            job_positions_levels_module_1.JobPositionsLevelsModule,
             sectors_module_1.SectorsModule,
             evaluation_applications_module_1.EvaluationApplicationsModule,
             form_responses_module_1.FormResponsesModule,
