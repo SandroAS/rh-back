@@ -8,6 +8,7 @@ import { UpdateUserPasswordDto } from './dtos/update-user-password.dto';
 import { User } from '@/entities/user.entity';
 import { AccountId } from '@/common/decorators/account-id.decorator';
 import { UserTeamResponseDto } from './dtos/user-team-response.dto';
+import { UserResponseDto } from './dtos/user-response.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -17,6 +18,11 @@ export class UsersController {
   @Get()
   findAllAccountUsers(@AccountId() account_id: number) {
     return this.usersService.findAllAccountUsers(account_id);
+  }
+
+  @Get('/:uuid/user-panel')
+  async findOneUserPanel(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<UserResponseDto> {
+    return new UserResponseDto(await this.usersService.findOneUserPanel(uuid, account_id));
   }
 
   @Get('/with-teams')
@@ -55,10 +61,5 @@ export class UsersController {
   ): Promise<boolean> {
     const user: User = req.user;
     return await this.usersService.updateUserPassword(uuid, body, user);
-  }
-
-  @Delete('/:id')
-  async removeUser(@Param('id') id: string) {
-    return this.usersService.remove(parseInt(id));
   }
 }

@@ -141,6 +141,31 @@ let UsersService = class UsersService {
         }
         return users;
     }
+    async findOneUserPanel(uuid, account_id) {
+        const user = await this.userRepository
+            .createQueryBuilder('user')
+            .select([
+            'user.id',
+            'user.uuid',
+            'user.name',
+            'user.profile_img_url',
+        ])
+            .leftJoinAndSelect('user.jobPosition', 'jobPosition')
+            .leftJoinAndSelect('jobPosition.levelsGroup', 'levelsGroup')
+            .leftJoinAndSelect('jobPosition.drd', 'drd')
+            .leftJoinAndSelect('drd.topics', 'topics')
+            .leftJoinAndSelect('drd.levels', 'levels')
+            .leftJoinAndSelect('drd.metrics', 'metrics')
+            .leftJoinAndSelect('user.evaluationsReceived', 'evaluationsReceived')
+            .leftJoinAndSelect('evaluationsReceived.submittingUser', 'submittingUser')
+            .leftJoinAndSelect('evaluationsReceived.responses', 'responses')
+            .leftJoinAndSelect('responses.answers', 'answers')
+            .leftJoinAndSelect('answers.applicationQuestion', 'question')
+            .where('user.uuid = :uuid', { uuid })
+            .andWhere('user.account_id = :account_id', { account_id })
+            .getOne();
+        return user;
+    }
     async findOneByUuidAndAccountId(uuid, account_id) {
         const user = await this.userRepository.findOne({
             where: { uuid, account_id },

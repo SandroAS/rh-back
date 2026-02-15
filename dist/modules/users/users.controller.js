@@ -21,12 +21,16 @@ const platform_express_1 = require("@nestjs/platform-express");
 const update_user_password_dto_1 = require("./dtos/update-user-password.dto");
 const account_id_decorator_1 = require("../../common/decorators/account-id.decorator");
 const user_team_response_dto_1 = require("./dtos/user-team-response.dto");
+const user_response_dto_1 = require("./dtos/user-response.dto");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
     findAllAccountUsers(account_id) {
         return this.usersService.findAllAccountUsers(account_id);
+    }
+    async findOneUserPanel(uuid, account_id) {
+        return new user_response_dto_1.UserResponseDto(await this.usersService.findOneUserPanel(uuid, account_id));
     }
     async findAllAccountUsersWithTeams(account_id) {
         const users = await this.usersService.findAllAccountUsersWithTeams(account_id);
@@ -42,9 +46,6 @@ let UsersController = class UsersController {
         const user = req.user;
         return await this.usersService.updateUserPassword(uuid, body, user);
     }
-    async removeUser(id) {
-        return this.usersService.remove(parseInt(id));
-    }
 };
 exports.UsersController = UsersController;
 __decorate([
@@ -54,6 +55,14 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findAllAccountUsers", null);
+__decorate([
+    (0, common_1.Get)('/:uuid/user-panel'),
+    __param(0, (0, common_1.Param)('uuid')),
+    __param(1, (0, account_id_decorator_1.AccountId)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findOneUserPanel", null);
 __decorate([
     (0, common_1.Get)('/with-teams'),
     __param(0, (0, account_id_decorator_1.AccountId)()),
@@ -88,13 +97,6 @@ __decorate([
     __metadata("design:paramtypes", [String, update_user_password_dto_1.UpdateUserPasswordDto, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateUserPassword", null);
-__decorate([
-    (0, common_1.Delete)('/:id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "removeUser", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('users'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
