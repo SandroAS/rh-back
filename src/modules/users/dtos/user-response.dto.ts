@@ -58,7 +58,6 @@ export class UserResponseDto {
 
     if (partial.sectors) {
       const sectors = partial.sectors.map(sector => new SectorResponseDto(sector));
-      console.log(sectors);
       this.sectors = sectors;
     }
   }

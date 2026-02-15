@@ -235,10 +235,11 @@ export class AccountsService {
     delete updateData.confirmPassword; // Campo de confirmação não é salvo
     delete updateData.sector_uuid; // Relacionamento já foi tratado acima
     delete updateData.job_position_uuid; // Já foi tratado acima
+    delete user.profile_img_url // Já foi tratado acima
 
     Object.assign(user, updateData);
     user.role = role;
-
+    
     // Tratar atualização de senha se fornecida e não vazia
     if (accountUser.password && accountUser.password.trim() !== '') {
       const salt = randomBytes(8).toString('hex');

@@ -182,6 +182,7 @@ let AccountsService = class AccountsService {
         delete updateData.confirmPassword;
         delete updateData.sector_uuid;
         delete updateData.job_position_uuid;
+        delete user.profile_img_url;
         Object.assign(user, updateData);
         user.role = role;
         if (accountUser.password && accountUser.password.trim() !== '') {
