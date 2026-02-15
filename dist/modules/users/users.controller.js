@@ -21,7 +21,7 @@ const platform_express_1 = require("@nestjs/platform-express");
 const update_user_password_dto_1 = require("./dtos/update-user-password.dto");
 const account_id_decorator_1 = require("../../common/decorators/account-id.decorator");
 const user_team_response_dto_1 = require("./dtos/user-team-response.dto");
-const user_response_dto_1 = require("./dtos/user-response.dto");
+const user_panel_response_dto_1 = require("./dtos/user-panel-response.dto");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -30,7 +30,8 @@ let UsersController = class UsersController {
         return this.usersService.findAllAccountUsers(account_id);
     }
     async findOneUserPanel(uuid, account_id) {
-        return new user_response_dto_1.UserResponseDto(await this.usersService.findOneUserPanel(uuid, account_id));
+        const user = await this.usersService.findOneUserPanel(uuid, account_id);
+        return new user_panel_response_dto_1.UserPanelResponseDto(user);
     }
     async findAllAccountUsersWithTeams(account_id) {
         const users = await this.usersService.findAllAccountUsersWithTeams(account_id);

@@ -164,6 +164,9 @@ let UsersService = class UsersService {
             .where('user.uuid = :uuid', { uuid })
             .andWhere('user.account_id = :account_id', { account_id })
             .getOne();
+        if (!user) {
+            throw new common_1.NotFoundException(`Usuário com UUID "${uuid}" não encontrado ao buscar o painel do usuário.`);
+        }
         return user;
     }
     async findOneByUuidAndAccountId(uuid, account_id) {

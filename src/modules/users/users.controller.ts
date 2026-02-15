@@ -9,6 +9,8 @@ import { User } from '@/entities/user.entity';
 import { AccountId } from '@/common/decorators/account-id.decorator';
 import { UserTeamResponseDto } from './dtos/user-team-response.dto';
 import { UserResponseDto } from './dtos/user-response.dto';
+import { UserPanelResponseDto } from './dtos/user-panel-response.dto';
+import { NotFoundException } from '@nestjs/common';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -21,8 +23,9 @@ export class UsersController {
   }
 
   @Get('/:uuid/user-panel')
-  async findOneUserPanel(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<UserResponseDto> {
-    return new UserResponseDto(await this.usersService.findOneUserPanel(uuid, account_id));
+  async findOneUserPanel(@Param('uuid') uuid: string, @AccountId() account_id: number): Promise<UserPanelResponseDto> {
+    const user = await this.usersService.findOneUserPanel(uuid, account_id);
+    return new UserPanelResponseDto(user);
   }
 
   @Get('/with-teams')

@@ -186,6 +186,10 @@ export class UsersService {
       .andWhere('user.account_id = :account_id', { account_id })
       .getOne();
 
+    if (!user) {
+      throw new NotFoundException(`Usuário com UUID "${uuid}" não encontrado ao buscar o painel do usuário.`);
+    }
+
     return user;
   }
 
