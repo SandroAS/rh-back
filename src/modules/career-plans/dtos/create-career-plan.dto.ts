@@ -11,5 +11,5 @@ export class CreateCareerPlanDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CareerPlanJobPositionItemDto)
-  job_positions: CareerPlanJobPositionItemDto[];
+  careerPlanJobPositions: CareerPlanJobPositionItemDto[];
 }

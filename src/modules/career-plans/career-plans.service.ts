@@ -58,7 +58,7 @@ export class CareerPlansService extends BaseService<CareerPlan> {
 
       await this.syncCareerPlanJobPositions(
         savedPlan.id,
-        dto.job_positions,
+        dto.careerPlanJobPositions,
         accountId,
         queryRunner.manager,
       );
@@ -139,10 +139,10 @@ export class CareerPlansService extends BaseService<CareerPlan> {
         await queryRunner.manager.save(CareerPlan, plan);
       }
 
-      if (dto.job_positions !== undefined) {
+      if (dto.careerPlanJobPositions !== undefined) {
         await this.syncCareerPlanJobPositions(
           plan.id,
-          dto.job_positions,
+          dto.careerPlanJobPositions,
           accountId,
           queryRunner.manager,
         );
