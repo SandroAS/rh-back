@@ -26,9 +26,13 @@ export class CareerPlanJobPosition extends BaseEntity {
   @Column({ type: 'int', default: 0 })
   order: number;
 
-  @Column({ name: 'career_in_ypsilon', type: 'boolean', default: false })
-  career_in_ypsilon: boolean;
+  @Column({ name: 'career_plan_y_id', nullable: true })
+  career_plan_y_id: number | null;
 
-  @Column({ name: 'ypsilon_after_order', type: 'int', nullable: true })
-  ypsilon_after_order: number | null;
+  @ManyToOne(() => CareerPlan, (careerPlan) => careerPlan.careerPlanJobPositionsAsY, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'career_plan_y_id' })
+  careerPlanY: CareerPlan | null;
 }

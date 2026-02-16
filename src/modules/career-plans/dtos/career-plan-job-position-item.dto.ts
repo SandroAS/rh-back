@@ -1,4 +1,4 @@
-import { IsUUID, IsInt, IsBoolean, IsOptional, Min } from 'class-validator';
+import { IsUUID, IsInt, IsOptional, Min } from 'class-validator';
 
 export class CareerPlanJobPositionItemDto {
   @IsUUID('4', { message: 'O UUID do cargo é inválido.' })
@@ -8,11 +8,7 @@ export class CareerPlanJobPositionItemDto {
   @Min(0)
   order: number;
 
-  @IsBoolean()
-  career_in_ypsilon: boolean;
-
   @IsOptional()
-  @IsInt()
-  @Min(0)
-  ypsilon_after_order?: number | null;
+  @IsUUID('4', { message: 'O UUID do plano de carreira Y é inválido.' })
+  career_plan_y_uuid?: string | null;
 }

@@ -21,4 +21,10 @@ export class CareerPlan extends BaseEntity {
     { cascade: true },
   )
   careerPlanJobPositions: CareerPlanJobPosition[];
+
+  @OneToMany(
+    () => CareerPlanJobPosition,
+    (careerPlanJobPosition) => careerPlanJobPosition.careerPlanY,
+  )
+  careerPlanJobPositionsAsY: CareerPlanJobPosition[];
 }

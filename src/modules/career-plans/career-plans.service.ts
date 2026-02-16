@@ -18,6 +18,7 @@ import { PaginationResult } from '@/common/services/base.service';
 const CAREER_PLAN_JOB_POSITIONS_RELATIONS = [
   'careerPlanJobPositions',
   'careerPlanJobPositions.jobPosition',
+  'careerPlanJobPositions.careerPlanY',
 ];
 
 @Injectable()
@@ -94,6 +95,7 @@ export class CareerPlansService extends BaseService<CareerPlan> {
       qb.andWhere('entity.account_id = :accountId', { accountId });
       qb.leftJoinAndSelect('entity.careerPlanJobPositions', 'careerPlanJobPositions');
       qb.leftJoinAndSelect('careerPlanJobPositions.jobPosition', 'jobPosition');
+      qb.leftJoinAndSelect('careerPlanJobPositions.careerPlanY', 'careerPlanY');
       qb.orderBy('entity.created_at', 'DESC');
     });
   }
@@ -195,9 +197,43 @@ export class CareerPlansService extends BaseService<CareerPlan> {
     return map;
   }
 
+  private async resolveCareerPlanYIds(
+    items: { career_plan_y_uuid?: string | null }[],
+    accountId: number,
+    manager?: EntityManager,
+  ): Promise<Map<string, number>> {
+    const uuids = [
+      ...new Set(
+        items
+          .map((i) => i.career_plan_y_uuid)
+          .filter((u): u is string => u != null && u !== ''),
+      ),
+    ];
+    if (uuids.length === 0) return new Map();
+    const repo = manager ? manager.getRepository(CareerPlan) : this.repository;
+    const plans = await repo.find({
+      where: uuids.map((uuid) => ({ uuid, account_id: accountId })),
+    });
+    const map = new Map<string, number>();
+    for (const p of plans) {
+      map.set(p.uuid, p.id);
+    }
+    const notFound = uuids.filter((uuid) => !map.has(uuid));
+    if (notFound.length > 0) {
+      throw new NotFoundException(
+        `Plano(s) de carreira Y com UUID(s) não encontrado(s): ${notFound.join(', ')}`,
+      );
+    }
+    return map;
+  }
+
   private async syncCareerPlanJobPositions(
     careerPlanId: number,
-    items: { job_position_uuid: string; order: number; career_in_ypsilon: boolean; ypsilon_after_order?: number | null }[],
+    items: {
+      job_position_uuid: string;
+      order: number;
+      career_plan_y_uuid?: string | null;
+    }[],
     accountId: number,
     manager?: EntityManager,
   ): Promise<void> {
@@ -210,16 +246,19 @@ export class CareerPlansService extends BaseService<CareerPlan> {
     if (items.length === 0) return;
 
     const jobPositionIdByUuid = await this.resolveJobPositionIds(items, accountId, manager);
+    const careerPlanYIdByUuid = await this.resolveCareerPlanYIds(items, accountId, manager);
 
-    const toInsert = items.map((item) =>
-      repo.create({
+    const toInsert = items.map((item) => {
+      const careerPlanYId = item.career_plan_y_uuid
+        ? careerPlanYIdByUuid.get(item.career_plan_y_uuid) ?? null
+        : null;
+      return repo.create({
         career_plan_id: careerPlanId,
         job_position_id: jobPositionIdByUuid.get(item.job_position_uuid)!,
         order: item.order,
-        career_in_ypsilon: item.career_in_ypsilon,
-        ypsilon_after_order: item.ypsilon_after_order ?? null,
-      }),
-    );
+        career_plan_y_id: careerPlanYId,
+      });
+    });
     await repo.save(toInsert);
   }
 }
