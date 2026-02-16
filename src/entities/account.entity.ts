@@ -14,6 +14,7 @@ import { Team } from './team.entity';
 import { TeamMember } from './team-member.entity';
 import { Sector } from './sector.entity';
 import { DRD } from './drd.entity';
+import { CareerPlan } from './career-plan.entity';
 
 @Entity('accounts')
 export class Account {
@@ -108,6 +109,9 @@ export class Account {
 
   @OneToMany(() => DRD, (drd) => drd.account)
   drds: DRD[];
+
+  @OneToMany(() => CareerPlan, (careerPlan) => careerPlan.account)
+  careerPlans: CareerPlan[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

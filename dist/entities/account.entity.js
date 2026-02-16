@@ -26,6 +26,7 @@ const team_entity_1 = require("./team.entity");
 const team_member_entity_1 = require("./team-member.entity");
 const sector_entity_1 = require("./sector.entity");
 const drd_entity_1 = require("./drd.entity");
+const career_plan_entity_1 = require("./career-plan.entity");
 let Account = class Account {
     generateUuid() {
         this.uuid = (0, uuid_1.v4)();
@@ -149,6 +150,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => drd_entity_1.DRD, (drd) => drd.account),
     __metadata("design:type", Array)
 ], Account.prototype, "drds", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => career_plan_entity_1.CareerPlan, (careerPlan) => careerPlan.account),
+    __metadata("design:type", Array)
+], Account.prototype, "careerPlans", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)

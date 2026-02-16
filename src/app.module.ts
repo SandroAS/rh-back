@@ -53,6 +53,7 @@ import { AccountSeedsModule } from './modules/account-seeds/account-seeds.module
 
 // Commands
 import { CreateAccountSeedCommand } from './commands/create-account-seed-command.command';
+import { CareerPlansModule } from './modules/career-plans/career-plans.module';
 
 const cookieSession = require('cookie-session');
 
@@ -130,7 +131,8 @@ const cookieSession = require('cookie-session');
     FormTopicsModule,
     FormApplicationTopicsModule,
     NotificationsModule,
-    AccountSeedsModule
+    AccountSeedsModule,
+    CareerPlansModule
   ],
   controllers: [AppController],
   providers: [

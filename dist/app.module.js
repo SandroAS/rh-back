@@ -61,6 +61,7 @@ const form_application_topics_module_1 = require("./modules/form-application-top
 const notifications_module_1 = require("./modules/notifications/notifications.module");
 const account_seeds_module_1 = require("./modules/account-seeds/account-seeds.module");
 const create_account_seed_command_command_1 = require("./commands/create-account-seed-command.command");
+const career_plans_module_1 = require("./modules/career-plans/career-plans.module");
 const cookieSession = require('cookie-session');
 let AppModule = class AppModule {
     constructor(configService) {
@@ -150,7 +151,8 @@ exports.AppModule = AppModule = __decorate([
             form_topics_module_1.FormTopicsModule,
             form_application_topics_module_1.FormApplicationTopicsModule,
             notifications_module_1.NotificationsModule,
-            account_seeds_module_1.AccountSeedsModule
+            account_seeds_module_1.AccountSeedsModule,
+            career_plans_module_1.CareerPlansModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [

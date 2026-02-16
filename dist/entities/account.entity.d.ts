@@ -12,6 +12,7 @@ import { Team } from './team.entity';
 import { TeamMember } from './team-member.entity';
 import { Sector } from './sector.entity';
 import { DRD } from './drd.entity';
+import { CareerPlan } from './career-plan.entity';
 export declare class Account {
     id: number;
     uuid: string;
@@ -38,6 +39,7 @@ export declare class Account {
     teamMembers: TeamMember[];
     sectors: Sector[];
     drds: DRD[];
+    careerPlans: CareerPlan[];
     created_at: Date;
     updated_at: Date;
 }
