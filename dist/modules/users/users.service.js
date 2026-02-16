@@ -189,6 +189,7 @@ let UsersService = class UsersService {
             .createQueryBuilder('user')
             .leftJoinAndSelect('user.role', 'role')
             .leftJoinAndSelect('user.jobPosition', 'jobPosition')
+            .leftJoinAndSelect('user.jobPositionCurrentLevel', 'jobPositionCurrentLevel')
             .leftJoinAndSelect('user.sectors', 'sectors')
             .where('user.account_id = :accountId', { accountId });
         if (searchTerm) {

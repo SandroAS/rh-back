@@ -3,6 +3,7 @@ import { RoleResponseDto } from '@/modules/roles/dtos/role-response.dto';
 import { Expose, Type } from 'class-transformer';
 import JobPositionSimpleResponseDto from '@/modules/job-positions/dtos/job-position-simple-response.dto';
 import { SectorResponseDto } from '@/modules/sectors/dtos/sector-response.dto';
+import JobPositionLevelResponseDto from '@/modules/job-positions-levels/dtos/job-positions-level-response.dto';
 
 export class UserResponseDto {
   @Expose()
@@ -37,6 +38,10 @@ export class UserResponseDto {
   jobPosition: JobPositionSimpleResponseDto | null;
 
   @Expose()
+  @Type(() => JobPositionLevelResponseDto)
+  jobPositionCurrentLevel: JobPositionLevelResponseDto | null;
+
+  @Expose()
   @Type(() => SectorResponseDto)
   sectors: SectorResponseDto[] | null;
 
@@ -54,7 +59,13 @@ export class UserResponseDto {
       this.role = new RoleResponseDto(partial.role);
     }
 
-    this.jobPosition = partial.jobPosition ? new JobPositionSimpleResponseDto(partial.jobPosition) : null;
+    if (partial.jobPosition) {
+      this.jobPosition = new JobPositionSimpleResponseDto(partial.jobPosition);
+    }
+
+    if (partial.jobPositionCurrentLevel) {
+      this.jobPositionCurrentLevel = new JobPositionLevelResponseDto(partial.jobPositionCurrentLevel);
+    }
 
     if (partial.sectors) {
       const sectors = partial.sectors.map(sector => new SectorResponseDto(sector));
