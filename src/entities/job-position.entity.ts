@@ -4,6 +4,7 @@ import { Account } from './account.entity';
 import { JobPositionsLevelsGroup } from './job-positions-levels-group.entity';
 import { BaseEntity } from '../common/entities/base.entity';
 import { DRD } from './drd.entity';
+import { CareerPlanJobPosition } from './career-plan-job-position.entity';
 
 @Entity('job_positions')
 export class JobPosition extends BaseEntity {
@@ -38,4 +39,10 @@ export class JobPosition extends BaseEntity {
 
   @OneToOne(() => DRD, (drd) => drd.jobPosition)
   drd: DRD;
+
+  @OneToMany(
+    () => CareerPlanJobPosition,
+    (careerPlanJobPosition) => careerPlanJobPosition.jobPosition,
+  )
+  careerPlanJobPositions: CareerPlanJobPosition[];
 }
