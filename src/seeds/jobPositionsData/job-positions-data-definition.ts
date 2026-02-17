@@ -39,6 +39,21 @@ import developerSeed from './developer.seed';
 import analistaOperacoesComercialSeed from './analista-operacoes-comercial.seed';
 import analistaProcessosSeed from './analista-processos.seed';
 import analistaDadosSeed from './analista-dados.seed';
+import staffSoftwareEngineerSeed from './staff-software-engineer.seed';
+import principalSoftwareEngineerSeed from './principal-software-engineer.seed';
+import qaLeadSeed from './qa-lead.seed';
+import staffQaEngineerSeed from './staff-qa-engineer.seed';
+import principalQaEngineerSeed from './principal-qa-engineer.seed';
+import engineeringManagerSeed from './engineering-manager.seed';
+import headOfEngineeringSeed from './head-of-engineering.seed';
+import ctoSeed from './cto.seed';
+import productManagerSeed from './product-manager.seed';
+import groupProductManagerSeed from './group-product-manager.seed';
+import headOfProductSeed from './head-of-product.seed';
+import cpoSeed from './cpo.seed';
+import sreSeed from './sre.seed';
+import staffUxEngineerSeed from './staff-ux-engineer.seed';
+import principalUxEngineerSeed from './principal-ux-engineer.seed';
 
 export const jobPositionDefinitions = [
   techRecuiterSeed,
@@ -81,6 +96,21 @@ export const jobPositionDefinitions = [
   analistaOperacoesComercialSeed,
   analistaProcessosSeed,
   analistaDadosSeed,
+  staffSoftwareEngineerSeed,
+  principalSoftwareEngineerSeed,
+  qaLeadSeed,
+  staffQaEngineerSeed,
+  principalQaEngineerSeed,
+  engineeringManagerSeed,
+  headOfEngineeringSeed,
+  ctoSeed,
+  productManagerSeed,
+  groupProductManagerSeed,
+  headOfProductSeed,
+  cpoSeed,
+  sreSeed,
+  staffUxEngineerSeed,
+  principalUxEngineerSeed,
 ];
 
 export interface JobPositionDefinitionMetric {
