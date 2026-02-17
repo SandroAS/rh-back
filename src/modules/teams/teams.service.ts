@@ -132,8 +132,9 @@ export class TeamsService extends BaseService<Team> {
 
   /**
    * Retorna o time em que o usuário logado é membro, com todos os relacionamentos.
+   * Se não houver time vinculado, retorna null (200 com corpo vazio).
    */
-  async findTeamByUserLogged(userId: number, accountId: number): Promise<Team> {
+  async findTeamByUserLogged(userId: number, accountId: number): Promise<Team | null> {
     const team = await this.repository
       .createQueryBuilder('team')
       .innerJoin('team.teamMembers', 'tm', 'tm.user_id = :userId AND tm.account_id = :accountId', { userId, accountId })
@@ -146,10 +147,7 @@ export class TeamsService extends BaseService<Team> {
       .where('team.account_id = :accountId', { accountId })
       .getOne();
 
-    if (!team) {
-      throw new NotFoundException('Você não está vinculado a nenhum time.');
-    }
-    return team;
+    return team ?? null;
   }
 
   async updateWithAccountId(uuid: string, dto: UpdateTeamDto, accountId: number): Promise<Team> {

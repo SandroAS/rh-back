@@ -43,8 +43,11 @@ export class TeamsController {
   }
 
   @Get('user-logged-members')
-  async getUserLoggedTeam(@AuthUser() user: User): Promise<TeamResponseDto> {
+  async getUserLoggedTeam(@AuthUser() user: User): Promise<TeamResponseDto | Record<string, never>> {
     const team = await this.service.findTeamByUserLogged(user.id, user.account_id);
+    if (!team) {
+      return {};
+    }
     return new TeamResponseDto(team);
   }
 
