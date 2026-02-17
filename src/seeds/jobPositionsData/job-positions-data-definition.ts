@@ -2,6 +2,8 @@ import { MetricPrefix, MetricType } from '@/entities/drd-metric.entity';
 import techRecuiterSeed from './tech-recuiter.seed';
 import assistenteDepartamentoPessoalSeed from './assistente-departamento-pessoal.seed';
 import coordenadorRhSeed from './coordenador-rh.seed';
+import gerenteRhSeed from './gerente-rh.seed';
+import gerenteComercialSeed from './gerente-comercial.seed';
 import analistaFinanceiroSeed from './analista-financeiro.seed';
 import assistenteComplianceSeed from './assistente-compliance.seed';
 import assistenteFinanceiroSeed from './assistente-financeiro.seed';
@@ -59,6 +61,8 @@ export const jobPositionDefinitions = [
   techRecuiterSeed,
   assistenteDepartamentoPessoalSeed,
   coordenadorRhSeed,
+  gerenteRhSeed,
+  gerenteComercialSeed,
   analistaFinanceiroSeed,
   assistenteComplianceSeed,
   assistenteFinanceiroSeed,

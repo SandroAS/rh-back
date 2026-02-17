@@ -12,11 +12,14 @@ import { SectorsSeed } from '@/seeds/sectors.seed';
 import { DRDsSeed } from '@/seeds/drds.seed';
 import { EvaluationSeeder } from '@/seeds/evaluation.seed';
 import { EvaluationsModule } from '../evaluations/evaluations.module';
+import { CareerPlansSeed } from '@/seeds/career-plans.seed';
+import { CareerPlansModule } from '../career-plans/career-plans.module';
 
 @Module({
   imports: [
     UsersModule,
     JobPositionsModule,
+    CareerPlansModule,
     JobPositionsLevelsGroupsModule,
     SectorsModule,
     DrdsModule,
@@ -30,6 +33,7 @@ import { EvaluationsModule } from '../evaluations/evaluations.module';
     SectorsSeed,
     DRDsSeed,
     EvaluationSeeder,
+    CareerPlansSeed,
   ],
   exports: [AccountSeedsService]
 })

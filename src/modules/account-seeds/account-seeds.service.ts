@@ -5,6 +5,7 @@ import { JobLevelsGroupsSeed } from '@/seeds/job-levels-groups.seed';
 import { JobPositionsSeed } from '@/seeds/job-positions.seed';
 import { DRDsSeed } from '@/seeds/drds.seed';
 import { EvaluationSeeder } from '@/seeds/evaluation.seed';
+import { CareerPlansSeed } from '@/seeds/career-plans.seed';
 
 @Injectable()
 export class AccountSeedsService {
@@ -15,6 +16,7 @@ export class AccountSeedsService {
     private readonly sectorsSeed: SectorsSeed,
     private readonly jobLevelsGroupsSeed: JobLevelsGroupsSeed,
     private readonly jobPositionsSeed: JobPositionsSeed,
+    private readonly careerPlansSeed: CareerPlansSeed,
     private readonly drdsSeed: DRDsSeed,
     private readonly evaluationSeeder: EvaluationSeeder,
   ) {}
@@ -41,6 +43,8 @@ export class AccountSeedsService {
       const defaultGroupId = await this.jobLevelsGroupsSeed.run(accountId, user);
 
       await this.jobPositionsSeed.run(accountId, defaultGroupId);
+
+      await this.careerPlansSeed.run(accountId);
 
       await this.drdsSeed.seed(accountId, user);
 
