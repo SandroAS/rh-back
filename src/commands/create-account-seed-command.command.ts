@@ -4,12 +4,27 @@ import { UsersService } from '@/modules/users/users.service';
 import { TeamsService } from '@/modules/teams/teams.service';
 import { SectorsService } from '@/modules/sectors/sectors.service';
 import { JobPositionService } from '@/modules/job-positions/job-positions.service';
+import { EvaluationsService } from '@/modules/evaluations/evaluations.service';
+import { FormApplicationsService } from '@/modules/form-applications/form-applications.service';
+import { FormAnswersService } from '@/modules/form-answers/form-answers.service';
+import { CareerPlansService } from '@/modules/career-plans/career-plans.service';
 import { RolesTypes } from '@/modules/roles/dtos/roles-types.dto';
 import { SystemModuleName } from '@/entities/system-module.entity';
+import {
+  EvaluationApplication,
+  EvaluationApplicationStatus,
+  EvaluationType,
+} from '@/entities/evaluation-application.entity';
+import { FormResponse } from '@/entities/form-response.entity';
+import { Evaluation } from '@/entities/evaluation.entity';
+import { User } from '@/entities/user.entity';
+import { Team } from '@/entities/team.entity';
 import AppDataSource from '@/data-source';
 import { faker } from '@faker-js/faker';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
+import { QuestionType } from '@/common/enums/question-type.enum';
+import type { EntityManager } from 'typeorm';
 
 const scrypt = promisify(_scrypt);
 
@@ -22,9 +37,17 @@ interface CommandOptions {
   password?: string;
 }
 
-@Command({ 
-  name: 'seed:account', 
-  description: 'Cria uma conta master via AuthService e gera 20 usuários membros com dados fake, setores, cargos e times' 
+/** Estrutura de papéis do usuário no time (para avaliação 360). */
+interface UserTeamRole {
+  leaderId: number | null;
+  peerIds: number[];
+  subordinateIds: number[];
+}
+
+@Command({
+  name: 'seed:account',
+  description:
+    'Cria uma conta master via AuthService e gera 20 usuários membros com dados fake, setores, cargos, times e avaliações 360 + plano de carreira',
 })
 export class CreateAccountSeedCommand extends CommandRunner {
   constructor(
@@ -33,6 +56,10 @@ export class CreateAccountSeedCommand extends CommandRunner {
     private readonly teamsService: TeamsService,
     private readonly sectorsService: SectorsService,
     private readonly jobPositionService: JobPositionService,
+    private readonly evaluationsService: EvaluationsService,
+    private readonly formApplicationsService: FormApplicationsService,
+    private readonly formAnswersService: FormAnswersService,
+    private readonly careerPlansService: CareerPlansService,
   ) {
     super();
   }
@@ -235,6 +262,48 @@ export class CreateAccountSeedCommand extends CommandRunner {
         usuarioIndexTime = endIndex;
       }
 
+      // 7. Aguardar avaliações (criadas pelos seeders) e popular evaluation-applications 360 + plano de carreira
+      const maxWaitMs = 30_000;
+      const intervalMs = 2_000;
+      let evaluationByJobPositionUuid: Map<string, Evaluation> = new Map();
+      const startedAt = Date.now();
+      console.log(`⏳ Aguardando avaliações (DRD/Evaluation) dos seeders (retentativas a cada ${intervalMs / 1000}s, até ${maxWaitMs / 1000}s)...`);
+      while (Date.now() - startedAt < maxWaitMs) {
+        evaluationByJobPositionUuid = await this.buildEvaluationByJobPositionUuid(accountId);
+        if (evaluationByJobPositionUuid.size > 0) break;
+        await new Promise((r) => setTimeout(r, intervalMs));
+      }
+
+      if (evaluationByJobPositionUuid.size === 0) {
+        console.log(`   ⚠️ Nenhuma avaliação encontrada para a conta após ${maxWaitMs / 1000}s; pulando seed de evaluation-applications.`);
+      } else {
+        console.log(`   ✓ ${evaluationByJobPositionUuid.size} avaliação(ões) por cargo encontrada(s).`);
+        const jobPositionIdToUuid = new Map(cargosCriados.map((jp) => [jp.id, jp.uuid]));
+        const teamsWithLeaderAndMembers = await AppDataSource.getRepository(Team).find({
+          where: { account_id: accountId },
+          relations: ['leader', 'teamMembers', 'teamMembers.user'],
+        });
+        const userTeamRoleMap = this.buildUserTeamRoleMap(teamsWithLeaderAndMembers);
+        const allUsers: User[] = [user, ...usuariosCriados];
+        const careerPlanNextJobMap = await this.buildCareerPlanNextJobMap(accountId);
+
+        await this.seedEvaluationApplications360(
+          accountId,
+          allUsers,
+          userTeamRoleMap,
+          evaluationByJobPositionUuid,
+          jobPositionIdToUuid,
+        );
+        await this.seedCareerPlanEvaluationApplications(
+          accountId,
+          allUsers,
+          userTeamRoleMap,
+          evaluationByJobPositionUuid,
+          jobPositionIdToUuid,
+          careerPlanNextJobMap,
+        );
+      }
+
       console.log(`\n✨ Seed finalizado com sucesso!`);
       console.log(`🔗 Conta ID: ${accountId}`);
       console.log(`📧 Login Admin: ${email}`);
@@ -248,6 +317,298 @@ export class CreateAccountSeedCommand extends CommandRunner {
       console.error('❌ Falha ao executar comando de seed:');
       console.error(error.message);
     }
+  }
+
+  /** Mapa job_position_uuid -> Evaluation (com form.topics.questions) para a conta. Usa uuid já retornado pelas queries do service. */
+  private async buildEvaluationByJobPositionUuid(
+    accountId: number,
+  ): Promise<Map<string, Evaluation>> {
+    const evaluations = await this.evaluationsService.findAllWithAccountId(accountId);
+    const map = new Map<string, Evaluation>();
+    for (const ev of evaluations) {
+      const jobPositionUuid = ev.drd?.jobPosition?.uuid;
+      if (!jobPositionUuid) continue;
+      try {
+        const full = await this.evaluationsService.findOneWithRelations(ev.uuid, accountId);
+        const uuid = full?.drd?.jobPosition?.uuid;
+        if (uuid && full?.form?.topics?.length) map.set(uuid, full);
+      } catch {
+        // ignorar avaliação sem form/tópicos
+      }
+    }
+    return map;
+  }
+
+  /** Mapa user_id -> { leaderId, peerIds, subordinateIds } a partir dos times. */
+  private buildUserTeamRoleMap(
+    teams: Array<Team & { leader?: User; teamMembers?: Array<{ user_id: number; user?: User }> }>,
+  ): Map<number, UserTeamRole> {
+    const map = new Map<number, UserTeamRole>();
+    for (const team of teams) {
+      const leaderId = team.leader_user_id ?? team.leader?.id;
+      const memberIds = (team.teamMembers ?? [])
+        .map((m) => m.user_id ?? m.user?.id)
+        .filter((id): id is number => id != null);
+      if (leaderId == null) continue;
+      for (const uid of memberIds) {
+        const current = map.get(uid) ?? {
+          leaderId: null,
+          peerIds: [],
+          subordinateIds: [],
+        };
+        if (uid === leaderId) {
+          current.subordinateIds = memberIds.filter((id) => id !== leaderId);
+        } else {
+          current.leaderId = leaderId;
+          current.peerIds = memberIds.filter((id) => id !== uid && id !== leaderId);
+        }
+        map.set(uid, current);
+      }
+    }
+    return map;
+  }
+
+  /** Mapa user.job_position_id -> próximo job_position_id na sequência do plano de carreira (quando existir). */
+  private async buildCareerPlanNextJobMap(
+    accountId: number,
+  ): Promise<Map<number, number>> {
+    const plans = await this.careerPlansService.findAllWithAccountId(accountId);
+    const nextByCurrentJobId = new Map<number, number>();
+    for (const plan of plans) {
+      const steps = (plan.careerPlanJobPositions ?? []).sort(
+        (a, b) => (a.order ?? 0) - (b.order ?? 0),
+      );
+      for (let i = 0; i < steps.length - 1; i++) {
+        const current = steps[i].job_position_id;
+        const next = steps[i + 1].job_position_id;
+        if (current != null && next != null) nextByCurrentJobId.set(current, next);
+      }
+    }
+    return nextByCurrentJobId;
+  }
+
+  /**
+   * Cria evaluation-applications no formato 360 (SELF, LEADER, PEER, SUBORDINATE) para cada usuário,
+   * 1 ciclo por mês nos últimos 6 meses, com status FINISHED e form-responses.
+   */
+  private async seedEvaluationApplications360(
+    accountId: number,
+    users: User[],
+    userTeamRoleMap: Map<number, UserTeamRole>,
+    evaluationByJobPositionUuid: Map<string, Evaluation>,
+    jobPositionIdToUuid: Map<number, string>,
+  ): Promise<void> {
+    const queryRunner = AppDataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const now = new Date();
+      let totalApps = 0;
+      for (const evaluatedUser of users) {
+        const jobPositionUuid = evaluatedUser.job_position_id
+          ? jobPositionIdToUuid.get(evaluatedUser.job_position_id)
+          : undefined;
+        const evaluation = jobPositionUuid
+          ? evaluationByJobPositionUuid.get(jobPositionUuid)
+          : undefined;
+        if (!evaluation) continue;
+
+        const role = userTeamRoleMap.get(evaluatedUser.id) ?? {
+          leaderId: null,
+          peerIds: [],
+          subordinateIds: [],
+        };
+
+        for (let monthOffset = 5; monthOffset >= 0; monthOffset--) {
+          const finishedAt = new Date(now.getFullYear(), now.getMonth() - monthOffset, 15, 12, 0, 0, 0);
+          const startedDate = new Date(finishedAt);
+          startedDate.setDate(startedDate.getDate() - 7);
+          const expirationDate = new Date(finishedAt);
+          expirationDate.setDate(expirationDate.getDate() + 7);
+
+          const evaluators: { type: EvaluationType; submittingUserId: number }[] = [
+            { type: EvaluationType.SELF, submittingUserId: evaluatedUser.id },
+          ];
+          if (role.leaderId != null)
+            evaluators.push({ type: EvaluationType.LEADER, submittingUserId: role.leaderId });
+          for (const peerId of role.peerIds)
+            evaluators.push({ type: EvaluationType.PEER, submittingUserId: peerId });
+          for (const subId of role.subordinateIds)
+            evaluators.push({ type: EvaluationType.SUBORDINATE, submittingUserId: subId });
+
+          for (const { type, submittingUserId } of evaluators) {
+            const app = await this.createFinishedEvaluationApplication(
+              queryRunner,
+              accountId,
+              evaluation,
+              evaluatedUser.id,
+              submittingUserId,
+              type,
+              finishedAt,
+              startedDate,
+              expirationDate,
+            );
+            if (app) totalApps++;
+          }
+        }
+      }
+      await queryRunner.commitTransaction();
+      console.log(`   ✓ Avaliações 360: ${totalApps} evaluation-applications FINISHED (6 meses, 21 usuários).`);
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      console.log(`   ⚠️ Erro ao criar avaliações 360: ${err?.message}`);
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  /**
+   * Cria evaluation-applications para o próximo cargo no plano de carreira (apenas LEADER + SELF),
+   * nos últimos 3 meses, para pelo menos 3 usuários que tenham próximo cargo definido.
+   */
+  private async seedCareerPlanEvaluationApplications(
+    accountId: number,
+    users: User[],
+    userTeamRoleMap: Map<number, UserTeamRole>,
+    evaluationByJobPositionUuid: Map<string, Evaluation>,
+    jobPositionIdToUuid: Map<number, string>,
+    careerPlanNextJobMap: Map<number, number>,
+  ): Promise<void> {
+    const candidates = users.filter((u) => u.job_position_id != null && careerPlanNextJobMap.has(u.job_position_id));
+    const toProcess = candidates.length >= 3 ? candidates.slice(0, 3) : candidates;
+    if (toProcess.length === 0) {
+      console.log(`   ⚠️ Nenhum usuário com próximo cargo no plano de carreira; pulando avaliações de carreira.`);
+      return;
+    }
+
+    const queryRunner = AppDataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const now = new Date();
+      let totalApps = 0;
+      for (const evaluatedUser of toProcess) {
+        const nextJobPositionId = careerPlanNextJobMap.get(evaluatedUser.job_position_id!);
+        const nextJobPositionUuid = nextJobPositionId ? jobPositionIdToUuid.get(nextJobPositionId) : undefined;
+        const evaluation = nextJobPositionUuid
+          ? evaluationByJobPositionUuid.get(nextJobPositionUuid)
+          : undefined;
+        if (!evaluation) continue;
+
+        const role = userTeamRoleMap.get(evaluatedUser.id) ?? {
+          leaderId: null,
+          peerIds: [],
+          subordinateIds: [],
+        };
+
+        for (let monthOffset = 2; monthOffset >= 0; monthOffset--) {
+          const finishedAt = new Date(now.getFullYear(), now.getMonth() - monthOffset, 15, 12, 0, 0, 0);
+          const startedDate = new Date(finishedAt);
+          startedDate.setDate(startedDate.getDate() - 7);
+          const expirationDate = new Date(finishedAt);
+          expirationDate.setDate(expirationDate.getDate() + 7);
+
+          const evaluators: { type: EvaluationType; submittingUserId: number }[] = [
+            { type: EvaluationType.SELF, submittingUserId: evaluatedUser.id },
+          ];
+          if (role.leaderId != null)
+            evaluators.push({ type: EvaluationType.LEADER, submittingUserId: role.leaderId });
+
+          for (const { type, submittingUserId } of evaluators) {
+            const app = await this.createFinishedEvaluationApplication(
+              queryRunner,
+              accountId,
+              evaluation,
+              evaluatedUser.id,
+              submittingUserId,
+              type,
+              finishedAt,
+              startedDate,
+              expirationDate,
+            );
+            if (app) totalApps++;
+          }
+        }
+      }
+      await queryRunner.commitTransaction();
+      console.log(`   ✓ Avaliações plano de carreira (próximo cargo): ${totalApps} evaluation-applications FINISHED (3 meses, ${toProcess.length} usuários).`);
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      console.log(`   ⚠️ Erro ao criar avaliações de plano de carreira: ${err?.message}`);
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  /**
+   * Cria uma evaluation-application FINISHED com form-response e form-answers (respostas aleatórias para RATE).
+   */
+  private async createFinishedEvaluationApplication(
+    queryRunner: { manager: EntityManager },
+    accountId: number,
+    evaluation: Evaluation,
+    evaluatedUserId: number,
+    submittingUserId: number,
+    type: EvaluationType,
+    finishedAt: Date,
+    startedDate: Date,
+    expirationDate: Date,
+  ): Promise<EvaluationApplication | null> {
+    if (!evaluation?.form?.topics?.length) return null;
+
+    const formApplication = await this.formApplicationsService.createInTransaction(
+      evaluation.form,
+      accountId,
+      queryRunner.manager,
+    );
+    const rate = Number(evaluation.rate) || 5;
+
+    const app = queryRunner.manager.create(EvaluationApplication, {
+      account_id: accountId,
+      evaluation_id: evaluation.id,
+      form_application_id: formApplication.id,
+      drd_id: evaluation.drd_id ?? null,
+      name: evaluation.name,
+      description: evaluation.description ?? null,
+      rate: evaluation.rate,
+      type,
+      recurrence: null,
+      started_date: startedDate,
+      expiration_date: expirationDate,
+      expiration_days: null,
+      evaluated_user_id: evaluatedUserId,
+      submitting_user_id: submittingUserId,
+      status: EvaluationApplicationStatus.FINISHED,
+      finished_at: finishedAt,
+    });
+    const savedApp = await queryRunner.manager.save(EvaluationApplication, app);
+
+    const formResponse = queryRunner.manager.create(FormResponse, {
+      form_application_id: formApplication.id,
+      evaluation_application_id: savedApp.id,
+      user_id: submittingUserId,
+      is_completed: true,
+      submitted_at: finishedAt,
+    });
+    const savedResponse = await queryRunner.manager.save(FormResponse, formResponse);
+
+    const questions = (formApplication.applicationTopics ?? []).flatMap((t) => t.questions ?? []);
+    for (const q of questions) {
+      const numberValue =
+        q.type === QuestionType.RATE || q.type === QuestionType.NUMBER
+          ? fakerBr.number.int({ min: 1, max: Math.max(1, rate) })
+          : null;
+      await this.formAnswersService.createInTransaction(
+        savedResponse.id,
+        q,
+        {
+          application_question_uuid: q.uuid,
+          number_value: numberValue ?? undefined,
+        },
+        queryRunner.manager,
+      );
+    }
+    return savedApp;
   }
 
   @Option({
