@@ -60,4 +60,9 @@ export class UpdateAccountUserDto {
   @IsUUID(undefined, { message: 'O UUID do nível atual do cargo é inválido.' })
   @IsOptional()
   job_position_current_level_uuid?: string | null;
+
+  @IsUUID()
+  @IsString()
+  @IsOptional()
+  career_plan_uuid?: string;
 }

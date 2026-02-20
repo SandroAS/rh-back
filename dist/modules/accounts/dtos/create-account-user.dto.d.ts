@@ -8,4 +8,7 @@ export declare class CreateAccountUserDto {
     confirmPassword?: string;
     role: RolesTypes;
     job_position_uuid?: string;
+    sector_uuid?: string;
+    job_position_current_level_uuid?: string | null;
+    career_plan_uuid?: string;
 }

@@ -4,6 +4,7 @@ import { Expose, Type } from 'class-transformer';
 import JobPositionSimpleResponseDto from '@/modules/job-positions/dtos/job-position-simple-response.dto';
 import { SectorResponseDto } from '@/modules/sectors/dtos/sector-response.dto';
 import JobPositionLevelResponseDto from '@/modules/job-positions-levels/dtos/job-positions-level-response.dto';
+import { CareerPlanResponseDto } from '@/modules/career-plans/dtos/career-plan-response.dto';
 
 export class UserResponseDto {
   @Expose()
@@ -45,6 +46,10 @@ export class UserResponseDto {
   @Type(() => SectorResponseDto)
   sectors: SectorResponseDto[] | null;
 
+  @Expose()
+  @Type(() => CareerPlanResponseDto)
+  careerPlan: CareerPlanResponseDto | null;
+
   constructor(partial: User) {
     this.uuid = partial.uuid;
     this.name = partial.name;
@@ -70,6 +75,10 @@ export class UserResponseDto {
     if (partial.sectors) {
       const sectors = partial.sectors.map(sector => new SectorResponseDto(sector));
       this.sectors = sectors;
+    }
+
+    if (partial.careerPlan) {
+      this.careerPlan = new CareerPlanResponseDto(partial.careerPlan);
     }
   }
 }
