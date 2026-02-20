@@ -429,7 +429,7 @@ export class EvaluationApplicationsService extends BaseService<EvaluationApplica
       .andWhere('entity.status = :statusFinished', { statusFinished: EvaluationApplicationStatus.FINISHED });
 
     if (name) {
-      query.andWhere('(entity.name ILIKE :name OR evaluation.name ILIKE :name)', { name: `%${name}%` });
+      query.andWhere('(entity.name LIKE :name OR evaluation.name LIKE :name)', { name: `%${name}%` });
     }
 
     if (type) {
