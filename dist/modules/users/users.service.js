@@ -203,6 +203,7 @@ let UsersService = class UsersService {
             .leftJoinAndSelect('user.jobPosition', 'jobPosition')
             .leftJoinAndSelect('user.jobPositionCurrentLevel', 'jobPositionCurrentLevel')
             .leftJoinAndSelect('user.sectors', 'sectors')
+            .leftJoinAndSelect('user.careerPlan', 'careerPlan')
             .where('user.account_id = :accountId', { accountId });
         if (searchTerm) {
             queryBuilder.andWhere(`(LOWER(user.name) LIKE LOWER(:searchTerm) OR 

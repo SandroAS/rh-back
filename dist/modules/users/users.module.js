@@ -28,7 +28,7 @@ exports.UsersModule = UsersModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.User]),
             roles_module_1.RolesModule,
             minio_module_1.MinioModule,
-            job_positions_module_1.JobPositionsModule
+            job_positions_module_1.JobPositionsModule,
         ],
         controllers: [users_controller_1.UsersController],
         providers: [

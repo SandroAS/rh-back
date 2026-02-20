@@ -27,7 +27,7 @@ export class UsersService {
     private userRepository: Repository<User>,
     private readonly rolesService: RolesService,
     private readonly minioService: MinioService,
-    private readonly jobPositionsService: JobPositionService
+    private readonly jobPositionsService: JobPositionService,
   ) {}
 
   async create(roleName: RolesTypes, controllerProfile?: AuthSignupDto, googleProfile?: GoogleProfileParsed, manager?: EntityManager): Promise<User> {

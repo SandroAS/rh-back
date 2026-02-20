@@ -15,7 +15,7 @@ import { JobPositionsModule } from '../job-positions/job-positions.module';
     TypeOrmModule.forFeature([User]),
     RolesModule,
     MinioModule,
-    JobPositionsModule
+    JobPositionsModule,
   ],
   controllers: [UsersController],
   providers: [
