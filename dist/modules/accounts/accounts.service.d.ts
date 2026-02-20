@@ -17,6 +17,7 @@ import { JobPositionsLevelsService } from '../job-positions-levels/job-positions
 import { SectorsService } from '../sectors/sectors.service';
 import { EvaluationApplicationsService } from '../evaluation-applications/evaluation-applications.service';
 import { FormResponsesService } from '../form-responses/form-responses.service';
+import { CareerPlansService } from '../career-plans/career-plans.service';
 export declare class AccountsService {
     private readonly accountRepository;
     private readonly dataSource;
@@ -29,7 +30,8 @@ export declare class AccountsService {
     private readonly sectorsService;
     private readonly evaluationApplicationsService;
     private readonly formResponsesService;
-    constructor(accountRepository: Repository<Account>, dataSource: DataSource, systemModuleService: SystemModulesService, minioService: MinioService, usersService: UsersService, rolesService: RolesService, jobPositionsService: JobPositionService, jobPositionsLevelsService: JobPositionsLevelsService, sectorsService: SectorsService, evaluationApplicationsService: EvaluationApplicationsService, formResponsesService: FormResponsesService);
+    private readonly careerPlansService;
+    constructor(accountRepository: Repository<Account>, dataSource: DataSource, systemModuleService: SystemModulesService, minioService: MinioService, usersService: UsersService, rolesService: RolesService, jobPositionsService: JobPositionService, jobPositionsLevelsService: JobPositionsLevelsService, sectorsService: SectorsService, evaluationApplicationsService: EvaluationApplicationsService, formResponsesService: FormResponsesService, careerPlansService: CareerPlansService);
     create(data: CreateAccountDto, manager?: EntityManager): Promise<Account>;
     createAccountUser(accountUser: CreateAccountUserDto, user: User): Promise<{
         uuid: string;

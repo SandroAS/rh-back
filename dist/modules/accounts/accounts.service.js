@@ -32,9 +32,10 @@ const job_positions_levels_service_1 = require("../job-positions-levels/job-posi
 const sectors_service_1 = require("../sectors/sectors.service");
 const evaluation_applications_service_1 = require("../evaluation-applications/evaluation-applications.service");
 const form_responses_service_1 = require("../form-responses/form-responses.service");
+const career_plans_service_1 = require("../career-plans/career-plans.service");
 const scrypt = (0, util_1.promisify)(crypto_1.scrypt);
 let AccountsService = class AccountsService {
-    constructor(accountRepository, dataSource, systemModuleService, minioService, usersService, rolesService, jobPositionsService, jobPositionsLevelsService, sectorsService, evaluationApplicationsService, formResponsesService) {
+    constructor(accountRepository, dataSource, systemModuleService, minioService, usersService, rolesService, jobPositionsService, jobPositionsLevelsService, sectorsService, evaluationApplicationsService, formResponsesService, careerPlansService) {
         this.accountRepository = accountRepository;
         this.dataSource = dataSource;
         this.systemModuleService = systemModuleService;
@@ -46,6 +47,7 @@ let AccountsService = class AccountsService {
         this.sectorsService = sectorsService;
         this.evaluationApplicationsService = evaluationApplicationsService;
         this.formResponsesService = formResponsesService;
+        this.careerPlansService = careerPlansService;
     }
     async create(data, manager) {
         const accountRepository = manager ? manager.getRepository(account_entity_1.Account) : this.accountRepository;
@@ -184,6 +186,7 @@ let AccountsService = class AccountsService {
         delete updateData.confirmPassword;
         delete updateData.sector_uuid;
         delete updateData.job_position_uuid;
+        delete updateData.career_plan_uuid;
         delete user.profile_img_url;
         Object.assign(user, updateData);
         user.role = role;
@@ -202,6 +205,17 @@ let AccountsService = class AccountsService {
             else {
                 const level = await this.jobPositionsLevelsService.findOneWithAccountId(accountUser.job_position_current_level_uuid, authUser.account_id);
                 user.jobPositionCurrentLevel = level;
+            }
+        }
+        if (accountUser.career_plan_uuid !== undefined) {
+            if (accountUser.career_plan_uuid == null || accountUser.career_plan_uuid === '') {
+                user.careerPlan = null;
+                user.career_plan_id = null;
+            }
+            else {
+                const careerPlan = await this.careerPlansService.findOneByUuidOrThrow(accountUser.career_plan_uuid, authUser.account_id);
+                user.careerPlan = careerPlan;
+                user.career_plan_id = careerPlan.id;
             }
         }
         await this.usersService.saveUser(user);
@@ -256,6 +270,7 @@ exports.AccountsService = AccountsService = __decorate([
         job_positions_levels_service_1.JobPositionsLevelsService,
         sectors_service_1.SectorsService,
         evaluation_applications_service_1.EvaluationApplicationsService,
-        form_responses_service_1.FormResponsesService])
+        form_responses_service_1.FormResponsesService,
+        career_plans_service_1.CareerPlansService])
 ], AccountsService);
 //# sourceMappingURL=accounts.service.js.map

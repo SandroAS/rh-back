@@ -23,6 +23,7 @@ import { JobPositionsLevelsService } from '../job-positions-levels/job-positions
 import { SectorsService } from '../sectors/sectors.service';
 import { EvaluationApplicationsService } from '../evaluation-applications/evaluation-applications.service';
 import { FormResponsesService } from '../form-responses/form-responses.service';
+import { CareerPlansService } from '../career-plans/career-plans.service';
 
 const scrypt = promisify(_scrypt);
 
@@ -41,6 +42,7 @@ export class AccountsService {
     private readonly sectorsService: SectorsService,
     private readonly evaluationApplicationsService: EvaluationApplicationsService,
     private readonly formResponsesService: FormResponsesService,
+    private readonly careerPlansService: CareerPlansService,
   ) {}
 
   async create(data: CreateAccountDto, manager?: EntityManager): Promise<Account> {
@@ -237,6 +239,7 @@ export class AccountsService {
     delete updateData.confirmPassword; // Campo de confirmação não é salvo
     delete updateData.sector_uuid; // Relacionamento já foi tratado acima
     delete updateData.job_position_uuid; // Já foi tratado acima
+    delete updateData.career_plan_uuid; // Relacionamento tratado abaixo
     delete user.profile_img_url // Já foi tratado acima
 
     Object.assign(user, updateData);
@@ -266,7 +269,21 @@ export class AccountsService {
       }
     }
 
-    // Salvar o usuário com o relacionamento Many-to-Many preservado
+    // Atualizar plano de carreira (career_plan_id)
+    if (accountUser.career_plan_uuid !== undefined) {
+      if (accountUser.career_plan_uuid == null || accountUser.career_plan_uuid === '') {
+        user.careerPlan = null;
+        user.career_plan_id = null;
+      } else {
+        const careerPlan = await this.careerPlansService.findOneByUuidOrThrow(
+          accountUser.career_plan_uuid,
+          authUser.account_id,
+        );
+        user.careerPlan = careerPlan;
+        user.career_plan_id = careerPlan.id;
+      }
+    }
+
     await this.usersService.saveUser(user);
 
     return { uuid, role: { uuid: role.uuid } };

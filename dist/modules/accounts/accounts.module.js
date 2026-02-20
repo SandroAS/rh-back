@@ -21,6 +21,7 @@ const job_positions_levels_module_1 = require("../job-positions-levels/job-posit
 const sectors_module_1 = require("../sectors/sectors.module");
 const evaluation_applications_module_1 = require("../evaluation-applications/evaluation-applications.module");
 const form_responses_module_1 = require("../form-responses/form-responses.module");
+const career_plans_module_1 = require("../career-plans/career-plans.module");
 let AccountsModule = class AccountsModule {
 };
 exports.AccountsModule = AccountsModule;
@@ -37,6 +38,7 @@ exports.AccountsModule = AccountsModule = __decorate([
             sectors_module_1.SectorsModule,
             evaluation_applications_module_1.EvaluationApplicationsModule,
             form_responses_module_1.FormResponsesModule,
+            career_plans_module_1.CareerPlansModule,
         ],
         providers: [accounts_service_1.AccountsService],
         controllers: [accounts_controller_1.AccountsController],

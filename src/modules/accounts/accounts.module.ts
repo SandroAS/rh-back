@@ -12,6 +12,7 @@ import { JobPositionsLevelsModule } from '../job-positions-levels/job-positions-
 import { SectorsModule } from '../sectors/sectors.module';
 import { EvaluationApplicationsModule } from '../evaluation-applications/evaluation-applications.module';
 import { FormResponsesModule } from '../form-responses/form-responses.module';
+import { CareerPlansModule } from '../career-plans/career-plans.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { FormResponsesModule } from '../form-responses/form-responses.module';
     SectorsModule,
     EvaluationApplicationsModule,
     FormResponsesModule,
+    CareerPlansModule,
   ],
   providers: [AccountsService],
   controllers: [AccountsController],
