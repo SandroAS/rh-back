@@ -30,6 +30,7 @@ const drd_entity_1 = require("./drd.entity");
 const evaluation_entity_1 = require("./evaluation.entity");
 const evaluation_application_entity_1 = require("./evaluation-application.entity");
 const notification_entity_1 = require("./notification.entity");
+const career_plan_entity_1 = require("./career-plan.entity");
 var Gender;
 (function (Gender) {
     Gender["MALE"] = "MALE";
@@ -149,6 +150,15 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'job_positions_current_level_id' }),
     __metadata("design:type", job_position_level_entity_1.JobPositionsLevel)
 ], User.prototype, "jobPositionCurrentLevel", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true, name: 'career_plan_id' }),
+    __metadata("design:type", Number)
+], User.prototype, "career_plan_id", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => career_plan_entity_1.CareerPlan, (careerPlan) => careerPlan.users, { onDelete: 'SET NULL', nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: 'career_plan_id' }),
+    __metadata("design:type", career_plan_entity_1.CareerPlan)
+], User.prototype, "careerPlan", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => job_positions_levels_group_entity_1.JobPositionsLevelsGroup, (jobPositionsLevelsGroup) => jobPositionsLevelsGroup.createdBy),
     __metadata("design:type", Array)

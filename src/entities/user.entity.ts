@@ -18,6 +18,7 @@ import { DRD } from './drd.entity';
 import { Evaluation } from './evaluation.entity';
 import { EvaluationApplication } from './evaluation-application.entity';
 import { Notification } from './notification.entity';
+import { CareerPlan } from './career-plan.entity';
 
 export enum Gender {
   MALE = 'MALE',
@@ -108,6 +109,13 @@ export class User {
   @ManyToOne(() => JobPositionsLevel, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'job_positions_current_level_id' })
   jobPositionCurrentLevel: JobPositionsLevel | null;
+
+  @Column({ nullable: true, name: 'career_plan_id' })
+  career_plan_id: number | null;
+
+  @ManyToOne(() => CareerPlan, (careerPlan) => careerPlan.users, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'career_plan_id' })
+  careerPlan: CareerPlan | null;
 
   @OneToMany(() => JobPositionsLevelsGroup, (jobPositionsLevelsGroup) => jobPositionsLevelsGroup.createdBy)
   jobPositionsLevelsGroups: JobPositionsLevelsGroup[];

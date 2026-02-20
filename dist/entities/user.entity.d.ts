@@ -15,6 +15,7 @@ import { DRD } from './drd.entity';
 import { Evaluation } from './evaluation.entity';
 import { EvaluationApplication } from './evaluation-application.entity';
 import { Notification } from './notification.entity';
+import { CareerPlan } from './career-plan.entity';
 export declare enum Gender {
     MALE = "MALE",
     FEMALE = "FEMALE"
@@ -45,6 +46,8 @@ export declare class User {
     job_position_id: number;
     jobPosition: JobPosition;
     jobPositionCurrentLevel: JobPositionsLevel | null;
+    career_plan_id: number | null;
+    careerPlan: CareerPlan | null;
     jobPositionsLevelsGroups: JobPositionsLevelsGroup[];
     teams: Team[];
     teamMembers: TeamMember[];

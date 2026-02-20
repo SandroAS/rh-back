@@ -2,6 +2,7 @@ import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from '../common/entities/base.entity';
 import { CareerPlanJobPosition } from './career-plan-job-position.entity';
 import { Account } from './account.entity';
+import type { User } from './user.entity';
 
 @Entity('career_plans')
 export class CareerPlan extends BaseEntity {
@@ -27,4 +28,7 @@ export class CareerPlan extends BaseEntity {
     (careerPlanJobPosition) => careerPlanJobPosition.careerPlanY,
   )
   careerPlanJobPositionsAsY: CareerPlanJobPosition[];
+
+  @OneToMany('User', 'careerPlan')
+  users: User[];
 }
