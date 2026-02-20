@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException, Injectable, InternalServerError
 import { EntityManager, In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../entities/user.entity';
+import { JobPositionsLevel } from '../../entities/job-position-level.entity';
 import { randomBytes, timingSafeEqual, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
 import { UpdateUserDto } from './dtos/update-user.dto';
@@ -54,7 +55,14 @@ export class UsersService {
     return userRepository.save(user);
   }
 
-  async createSecondaryUser(roleName: RolesTypes, accountUser: CreateAccountUserDto, account_id: number, manager?: EntityManager, job_position_id?: number): Promise<User> {
+  async createSecondaryUser(
+    roleName: RolesTypes,
+    accountUser: CreateAccountUserDto,
+    account_id: number,
+    manager?: EntityManager,
+    job_position_id?: number,
+    job_positions_current_level_id?: number,
+  ): Promise<User> {
     const userRepository = manager ? manager.getRepository(User) : this.userRepository;
     const role = await this.rolesService.findByName(roleName);
 
@@ -63,7 +71,19 @@ export class UsersService {
     }
 
     const { email, password, name, cellphone, cpf } = accountUser;
-    const user = userRepository.create({ role, email, password, name, cellphone, cpf, account_id, job_position_id });
+    const user = userRepository.create({
+      role,
+      email,
+      password,
+      name,
+      cellphone,
+      cpf,
+      account_id,
+      job_position_id,
+      jobPositionCurrentLevel: job_positions_current_level_id
+        ? ({ id: job_positions_current_level_id } as JobPositionsLevel)
+        : null,
+    });
 
     return userRepository.save(user);
   }

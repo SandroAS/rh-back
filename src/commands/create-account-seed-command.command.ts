@@ -119,10 +119,18 @@ export class CreateAccountSeedCommand extends CommandRunner {
           const nome = fakerBr.person.fullName();
           const cpf = fakerBr.string.numeric({ length: 11 });
           const cellphone = `11${fakerBr.string.numeric({ length: 9 })}`;
-          // Selecionar cargo aleatório, mas garantir que há cargos disponíveis
-          const cargoId = cargosCriados.length > 0 
-            ? cargosCriados[fakerBr.number.int({ min: 0, max: cargosCriados.length - 1 })].id
-            : undefined;
+          // Selecionar cargo aleatório e um nível desse cargo (cada cargo tem seu próprio grupo de níveis)
+          let cargoId: number | undefined;
+          let levelId: number | undefined;
+          if (cargosCriados.length > 0) {
+            const cargo = cargosCriados[fakerBr.number.int({ min: 0, max: cargosCriados.length - 1 })];
+            cargoId = cargo.id;
+            const levels = cargo.levelsGroup?.jobPositionsLevels;
+            if (levels?.length) {
+              const nivelEscolhido = levels[fakerBr.number.int({ min: 0, max: levels.length - 1 })];
+              levelId = nivelEscolhido.id;
+            }
+          }
 
           const salt = randomBytes(8).toString('hex');
           const hashBuffer = (await scrypt(password, salt, 32)) as Buffer;
@@ -140,7 +148,8 @@ export class CreateAccountSeedCommand extends CommandRunner {
             },
             accountId,
             queryRunner.manager,
-            cargoId
+            cargoId,
+            levelId
           );
           
           usuariosCriados.push(novoUsuario);

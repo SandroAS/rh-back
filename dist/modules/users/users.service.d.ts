@@ -19,7 +19,7 @@ export declare class UsersService {
     private readonly jobPositionsService;
     constructor(userRepository: Repository<User>, rolesService: RolesService, minioService: MinioService, jobPositionsService: JobPositionService);
     create(roleName: RolesTypes, controllerProfile?: AuthSignupDto, googleProfile?: GoogleProfileParsed, manager?: EntityManager): Promise<User>;
-    createSecondaryUser(roleName: RolesTypes, accountUser: CreateAccountUserDto, account_id: number, manager?: EntityManager, job_position_id?: number): Promise<User>;
+    createSecondaryUser(roleName: RolesTypes, accountUser: CreateAccountUserDto, account_id: number, manager?: EntityManager, job_position_id?: number, job_positions_current_level_id?: number): Promise<User>;
     findOne(id: number, relations?: string[], manager?: EntityManager): Promise<User | undefined>;
     findByEmail(email: string, relations?: string[]): Promise<User | undefined>;
     findByUuid(uuid: string, select?: string[]): Promise<User>;

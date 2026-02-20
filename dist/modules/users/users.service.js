@@ -52,14 +52,26 @@ let UsersService = class UsersService {
         user.role.permissions = role.permissions;
         return userRepository.save(user);
     }
-    async createSecondaryUser(roleName, accountUser, account_id, manager, job_position_id) {
+    async createSecondaryUser(roleName, accountUser, account_id, manager, job_position_id, job_positions_current_level_id) {
         const userRepository = manager ? manager.getRepository(user_entity_1.User) : this.userRepository;
         const role = await this.rolesService.findByName(roleName);
         if (!role) {
             throw new common_1.NotFoundException('Tipo de usuário não encontrado');
         }
         const { email, password, name, cellphone, cpf } = accountUser;
-        const user = userRepository.create({ role, email, password, name, cellphone, cpf, account_id, job_position_id });
+        const user = userRepository.create({
+            role,
+            email,
+            password,
+            name,
+            cellphone,
+            cpf,
+            account_id,
+            job_position_id,
+            jobPositionCurrentLevel: job_positions_current_level_id
+                ? { id: job_positions_current_level_id }
+                : null,
+        });
         return userRepository.save(user);
     }
     async findOne(id, relations, manager) {
